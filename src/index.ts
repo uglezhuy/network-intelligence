@@ -1,6 +1,8 @@
-const dns = require("node:dns/promises");
-const tls = require("node:tls");
-const net = require("node:net");
+import dns from "node:dns/promises";
+
+import tls from "node:tls";
+
+import net from "node:net";
 
 console.log("Network Intelligence");
 
@@ -13,7 +15,7 @@ if (!target) {
 
 console.log("Target:", target);
 
-async function getDNS(domain) {
+async function getDNS(domain: string) {
   const addresses = await Promise.allSettled([
     dns.resolve4(domain),
 
@@ -59,7 +61,7 @@ async function getDNS(domain) {
 //   console.log("No NS found");
 // }
 
-async function HTTP_Analyzer(target) {
+async function HTTP_Analyzer(target: string) {
   const start = Date.now();
   const response = await fetch(target);
   const responseTime = Date.now() - start;
@@ -107,13 +109,13 @@ async function HTTP_Analyzer(target) {
   };
 }
 
-async function IP_Analyzer(ip) {
+async function IP_Analyzer(ip: string) {
   const response = await fetch(`https://api.ipapi.is/?q=${ip}`);
   const data = await response.json();
   return data;
 }
 
-async function TLS_Analyzer(hostname) {
+async function TLS_Analyzer(hostname:string) {
   const socket = tls.connect({
     host: hostname,
     port: 443,
@@ -129,13 +131,13 @@ async function TLS_Analyzer(hostname) {
 
       socket.destroy();
     });
-    socket.on("error", (error) => {
+    socket.on("error", (error:Error) => {
       reject(error);
     });
   });
 }
 
-async function PORT_Analyzer(hostname) {
+async function PORT_Analyzer(hostname:string) {
   const ports = [21, 22, 25, 53, 80, 443, 8080];
 
   const results = await Promise.all(
@@ -166,11 +168,11 @@ async function PORT_Analyzer(hostname) {
           socket.destroy();
         });
 
-        socket.on("error", (error) => {
+        socket.on("error", (error:Error) => {
           resolve({
             port: port,
             status: "closed",
-            error: error.code,
+            error: error,
           });
         });
       });
@@ -186,8 +188,12 @@ async function main() {
 
   console.log("==============DNS info================");
   const dnsInfo = await getDNS(hostname);
+  if (dnsInfo.ipv4.status === "fulfilled") {
   console.log("IP:", dnsInfo.ipv4.value[0]);
-  console.log(dnsInfo);
+
+}
+
+console.log(dnsInfo);
 
   console.log("==============HTTP info================");
 
@@ -196,8 +202,13 @@ async function main() {
 
   console.log("==============IP info================");
 
-  const IPInfo = await IP_Analyzer(dnsInfo.ipv4.value[0]);
-  console.log(IPInfo);
+  let ip = ""; 
+  if (dnsInfo.ipv4.status === "fulfilled") {
+  ip = dnsInfo.ipv4.value[0];
+
+}
+
+const IPInfo = await IP_Analyzer(ip);
 
   console.log("==============TLS info================");
   const TLSInfo = await TLS_Analyzer(hostname);
@@ -217,7 +228,7 @@ async function main() {
     ports: PORTInfo,
   };
 
-  //console.log(allResults);
+  console.log(allResults);
 }
 
 main();
