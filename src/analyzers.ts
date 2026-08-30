@@ -5,20 +5,12 @@ import { IP_Analyzer } from "./analyzers/ip.js";
 import { TLS_Analyzer } from "./analyzers/tls.js";
 
 
-async function analyzers() {
+async function analyzers(target: string) {
     
-    console.log("Network Intelligence");
-    const target = process.argv[2];
-    if (!target) {
-    console.log("Usage: node index.js <domain>");
-    process.exit(1);
-    }
+
     console.log("Target:", target);
 
-
-
   const url = target.startsWith("http") ? target : `https://${target}`;
-
   const hostname = new URL(url).hostname;
 
   console.log("==============DNS info================");
