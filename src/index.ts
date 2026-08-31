@@ -1,5 +1,6 @@
 import {analyzers} from "./analyzers.js"
 import {monitor} from "./monitor.js"
+import {printResult} from "./printResult.js"
 
 
 async function  main()
@@ -18,8 +19,8 @@ async function  main()
       process.exit(1);
       
     }
-    await analyzers(target);
-    }
+    const result = await analyzers(target);
+    printResult(result);    }
 
 
     else if (useFunction=='monitor') {

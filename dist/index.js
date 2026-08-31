@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const analyzers_js_1 = require("./analyzers.js");
 const monitor_js_1 = require("./monitor.js");
+const printResult_js_1 = require("./printResult.js");
 async function main() {
     const useFunction = process.argv[2];
     if (useFunction == 'scan') {
@@ -11,7 +12,8 @@ async function main() {
             console.log("Usage: node index.js <domain>");
             process.exit(1);
         }
-        await (0, analyzers_js_1.analyzers)(target);
+        const result = await (0, analyzers_js_1.analyzers)(target);
+        (0, printResult_js_1.printResult)(result);
     }
     else if (useFunction == 'monitor') {
         console.log("use monitor function");
