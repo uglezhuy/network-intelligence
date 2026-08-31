@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const analyzers_js_1 = require("./analyzers.js");
 const monitor_js_1 = require("./monitor.js");
 const printResult_js_1 = require("./printResult.js");
+const results_js_1 = require("./database/results.js");
 async function main() {
     const useFunction = process.argv[2];
     if (useFunction == 'scan') {
@@ -13,6 +14,7 @@ async function main() {
             process.exit(1);
         }
         const result = await (0, analyzers_js_1.analyzers)(target);
+        (0, results_js_1.saveResult)(result);
         (0, printResult_js_1.printResult)(result);
     }
     else if (useFunction == 'monitor') {

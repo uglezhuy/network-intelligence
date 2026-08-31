@@ -23,7 +23,7 @@ async function analyzers(target) {
     const TLSInfo = await (0, tls_js_1.TLS_Analyzer)(hostname);
     //console.log("==============PORT info================");
     const PORTInfo = await (0, ports_js_1.PORT_Analyzer)(hostname);
-    const allResults = {
+    const result = {
         target: target,
         hostname: hostname,
         dns: dnsInfo,
@@ -32,5 +32,5 @@ async function analyzers(target) {
         tls: TLSInfo,
         ports: PORTInfo,
     };
-    return allResults;
+    return result;
 }

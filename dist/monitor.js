@@ -16,5 +16,6 @@ async function monitor(target, min) {
         results.push(result);
         console.log("============================ ТЕСТ " + i + "============================");
         console.log(results);
+        // по аналогии saveResult ()  при обычном scan токо в дргую таблицу и со строгой схемой}
     }
 }

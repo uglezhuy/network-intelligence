@@ -1,6 +1,7 @@
 import {analyzers} from "./analyzers.js"
 import {monitor} from "./monitor.js"
 import {printResult} from "./printResult.js"
+import {saveResult} from "./database/results.js"
 
 
 async function  main()
@@ -20,7 +21,8 @@ async function  main()
       
     }
     const result = await analyzers(target);
-    printResult(result);    }
+    saveResult(result); 
+    printResult(result);  }
 
 
     else if (useFunction=='monitor') {

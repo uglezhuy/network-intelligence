@@ -30,7 +30,7 @@ async function analyzers(target: string) {
   const PORTInfo = await PORT_Analyzer(hostname);
   
 
-  const allResults = {
+  const result = {
     target: target,
     hostname: hostname,
     dns: dnsInfo,
@@ -40,7 +40,7 @@ async function analyzers(target: string) {
     ports: PORTInfo,
   };
 
-  return allResults;
+  return result;
 }
 
 
