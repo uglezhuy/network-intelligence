@@ -1,30 +1,48 @@
-import {analyzers} from "./analyzers.js"
+import { analyzers } from "./analyzers.js";
+import { saveResultinMonitors } from "./database/results.js";
+import { saveInMonitor_results } from "./database/results.js";
+import { checkStateMonitorById } from "./database/results.js";
 
 function wait(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function monitor(target: string,min: number) {
-console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!use monitor function");
+async function monitor(target: string, min: number) {
 
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!use monitor function");
+
+    const monitorId = await saveResultinMonitors(target, min);
+
+    console.log("Monitor created. ID:", monitorId);
 
     const results = [];
     let i = 0;
-    while (true) {
+
+    let StateMonitorById = true;
+
+    while (StateMonitorById) {
+
         i++;
+
         const result = await analyzers(target);
 
-        await wait(min * 60 * 100); // при 1 каждые 6 секунд 
+        await saveInMonitor_results(result, monitorId);
 
         results.push(result);
-        console.log("============================ ТЕСТ "+i+"============================");
+
+        console.log("============================ ТЕСТ " + i + "============================");
         console.log(results);
 
+        const flag = await checkStateMonitorById(monitorId);
 
-        // по аналогии saveResult ()  при обычном scan токо в дргую таблицу и со строгой схемой}
-    
+        if (flag == "stopped") {
+            StateMonitorById = false;
+            console.log("Monitor stopped");
+            break;
+        }
 
+        await wait(min * 60 * 100);
     }
 }
 
-export {monitor};
+export { monitor };
