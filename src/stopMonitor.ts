@@ -1,6 +1,6 @@
 import { connection } from "./database/connection.js";
 
-async function stopMonitor(monitorId: number) {
+async function stopMonitorID(monitorId: any) {
 
     const db = await connection;
 
@@ -14,4 +14,21 @@ async function stopMonitor(monitorId: number) {
     console.log(`Monitor ${monitorId} stopped`);
 }
 
-export { stopMonitor };
+async function stopMonitorAll() {
+    console.log("stopMonitorAll");
+    const db = await connection;
+
+    await db.execute(
+        "UPDATE monitors SET status = 'stopped' WHERE status = 'active'",
+    );
+
+    console.log(` ALL Monitor stopped`);
+}
+
+
+
+
+
+
+export { stopMonitorID };
+export {stopMonitorAll};

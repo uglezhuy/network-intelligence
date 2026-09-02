@@ -5,11 +5,10 @@ const monitor_js_1 = require("./monitor.js");
 const printResult_js_1 = require("./printResult.js");
 const results_js_1 = require("./database/results.js");
 const stopMonitor_js_1 = require("./stopMonitor.js");
+const stopMonitor_js_2 = require("./stopMonitor.js");
 async function main() {
     const useFunction = process.argv[2];
-    // =========================
     // SCAN
-    // =========================
     if (useFunction == "scan") {
         console.log("use scan function");
         const target = process.argv[3];
@@ -21,20 +20,18 @@ async function main() {
         await (0, results_js_1.saveResultinScan)(result);
         (0, printResult_js_1.printResult)(result);
     }
-    // =========================
     // MONITOR
-    // =========================
     else if (useFunction == "monitor") {
         console.log("use monitor function");
         const target = process.argv[3];
         // monitor stop <id>
         if (target == "stop") {
-            const monitorId = Number(process.argv[4]);
-            if (!monitorId || monitorId <= 0) {
-                console.log("Usage: node dist/index.js monitor stop <monitorId>");
-                process.exit(1);
+            const monitorId = process.argv[4];
+            if (monitorId == 'all') {
+                await (0, stopMonitor_js_2.stopMonitorAll)();
+                return;
             }
-            await (0, stopMonitor_js_1.stopMonitor)(monitorId);
+            await (0, stopMonitor_js_1.stopMonitorID)(monitorId);
             return;
         }
         // monitor <domain> <minutes>
@@ -49,21 +46,7 @@ async function main() {
         }
         await (0, monitor_js_1.monitor)(target, min);
     }
-    // =========================
-    // STOP
-    // =========================
-    else if (useFunction == "stop") {
-        console.log("use stop function");
-        const monitorId = Number(process.argv[3]);
-        if (!monitorId || monitorId <= 0) {
-            console.log("Usage: node dist/index.js stop <monitorId>");
-            process.exit(1);
-        }
-        await (0, stopMonitor_js_1.stopMonitor)(monitorId);
-    }
-    // =========================
     // UNKNOWN COMMAND
-    // =========================
     else {
         console.log("Usage:");
         console.log("node dist/index.js scan <domain>");

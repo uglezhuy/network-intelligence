@@ -2,7 +2,10 @@ import { analyzers } from "./analyzers.js";
 import { monitor } from "./monitor.js";
 import { printResult } from "./printResult.js";
 import { saveResultinScan } from "./database/results.js";
-import { stopMonitor } from "./stopMonitor.js";
+import { stopMonitorID } from "./stopMonitor.js";
+import { stopMonitorAll } from "./stopMonitor.js";
+
+
 
 
 async function main() {
@@ -44,15 +47,12 @@ async function main() {
         // monitor stop <id>
         if (target == "stop") {
 
-            const monitorId = Number(process.argv[4]);
-
-            if (!monitorId || monitorId <= 0) {
-                console.log("Usage: node dist/index.js monitor stop <monitorId>");
-                process.exit(1);
-            }
-
-            await stopMonitor(monitorId);
-
+            const monitorId = process.argv[4];
+            
+            if (monitorId=='all') {
+            await stopMonitorAll();return; }
+            
+            await stopMonitorID(monitorId);
             return;
         }
 
@@ -72,30 +72,10 @@ async function main() {
 
         await monitor(target, min);
     }
-
-
-    // STOP
-
-    else if (useFunction == "stop") {
-
-        console.log("use stop function");
-
-        const monitorId = Number(process.argv[3]);
-
-        if (!monitorId || monitorId <= 0) {
-            console.log("Usage: node dist/index.js stop <monitorId>");
-            process.exit(1);
-        }
-
-        await stopMonitor(monitorId);
-    }
-
-
     
     // UNKNOWN COMMAND
 
     else {
-
         console.log("Usage:");
         console.log("node dist/index.js scan <domain>");
         console.log("node dist/index.js monitor <domain> <minutes>");

@@ -22,8 +22,9 @@ async function monitor(target: string, min: number) {
 
     while (StateMonitorById) {
 
-        i++;
+    i++;
 
+    try {
         const result = await analyzers(target);
 
         await saveInMonitor_results(result, monitorId);
@@ -33,16 +34,20 @@ async function monitor(target: string, min: number) {
         console.log("============================ ТЕСТ " + i + "============================");
         console.log(results);
 
-        const flag = await checkStateMonitorById(monitorId);
-
-        if (flag == "stopped") {
-            StateMonitorById = false;
-            console.log("Monitor stopped");
-            break;
-        }
-
-        await wait(min * 60 * 100);
+    } catch (error) { // чтоб не падал весь монитор доделать обработку ошибки
+        console.log("Analyzer error:", error);
     }
+
+    const flag = await checkStateMonitorById(monitorId);
+
+    if (flag == "stopped") {
+        StateMonitorById = false;
+        console.log("Monitor stopped");
+        break;
+    }
+
+    await wait(min * 60 * 100);
+}
 }
 
 export { monitor };
