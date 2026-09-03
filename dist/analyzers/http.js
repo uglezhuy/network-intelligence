@@ -24,6 +24,7 @@ async function HTTP_Analyzer(target) {
     const bodySize = new TextEncoder().encode(body).length;
     const bodySizeKB = (bodySize / 1024).toFixed(1);
     return {
+        responseTime: responseTime,
         finalUrl: response.url,
         status: response.status,
         proto: protocol,
