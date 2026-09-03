@@ -3,6 +3,8 @@ import { saveResultinMonitors } from "./database/results.js";
 import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 
+import {monitor_events} from "./monitor_events.js";
+
 function wait(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -33,6 +35,7 @@ async function monitor(target: string, min: number) {
 
         console.log("============================ ТЕСТ " + i + "============================");
         console.log(results);
+        await monitor_events(monitorId);
 
     } catch (error) { // чтоб не падал весь монитор доделать обработку ошибки
         console.log("Analyzer error:", error);
@@ -43,6 +46,7 @@ async function monitor(target: string, min: number) {
     if (flag == "stopped") {
         StateMonitorById = false;
         console.log("Monitor stopped");
+        
         break;
     }
 
