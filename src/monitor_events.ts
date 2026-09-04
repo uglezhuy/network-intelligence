@@ -16,18 +16,52 @@ async function monitor_events(monitorId: number) {
     const previousResult = resultRows[1].data;
 
     await pustEventToDatabase(
-        monitorId,
-        "responseTime",
-        lastResult.http.responseTime,
-        previousResult.http.responseTime
-    );
+    monitorId,
+    "responseTime",
+    previousResult.http.responseTime,
+    lastResult.http.responseTime,
+    1000
+);
 
-    await pustEventToDatabase(
-        monitorId,
-        "ip",
-        lastResult.dns.ipv4.value[0],
-        previousResult.dns.ipv4.value[0],
-        );
+await pustEventToDatabase(
+    monitorId,
+    "dnsInfo ip",
+    previousResult.dns.ipv4.value[0],
+    lastResult.dns.ipv4.value[0],
+    0
+);
+
+await pustEventToDatabase(
+    monitorId,
+    "http status",
+    previousResult.http.status,
+    lastResult.http.status,
+    0
+);
+
+await pustEventToDatabase(
+    monitorId,
+    "http server",
+    previousResult.http.server,
+    lastResult.http.server,
+    0
+);
+
+await pustEventToDatabase(
+    monitorId,
+    "http bodySize",
+    previousResult.http.bodySize,
+    lastResult.http.bodySize,
+    1000
+);
+
+await pustEventToDatabase(
+    monitorId,
+    "PORT ports",
+    JSON.stringify(previousResult.ports),
+    JSON.stringify(lastResult.ports),
+    0
+);
 }
 
 
@@ -35,52 +69,59 @@ async function monitor_events(monitorId: number) {
 
 async function pustEventToDatabase(
     monitorId: number,
-    event: string,
-    data0: number | string,
-    data1: number | string
-)
-{
-    const difference =
-    typeof data0 === "number" && typeof data1 === "number"
-        ? data0 - data1
-        : data0 !== data1 ? "IP changed" : "no change";
+    parameter: string,
+    oldValue: number | string,
+    newValue: number | string,
+    parameterValue: number
+) {
 
-    console.log("Event:", event);
-    console.log("data0:", data0, "ms");
-    console.log("data1:", data1, "ms");
-    console.log("Difference:", difference);
+    let changed = false;
 
-    if (event === "responseTime" && Math.abs(Number(data0) - Number(data1)) > 100) {
+    if (typeof oldValue === "number" && typeof newValue === "number") {
+
+        const difference = newValue - oldValue;
+
+        console.log("Parameter:", parameter);
+        console.log("Old:", oldValue);
+        console.log("New:", newValue);
+        console.log("Difference:", difference);
+
+        if (Math.abs(difference) > parameterValue) {
+            changed = true;
+        }
+
+    } else {
+
+        console.log("Parameter:", parameter);
+        console.log("Old:", oldValue);
+        console.log("New:", newValue);
+
+        if (oldValue !== newValue) {
+            changed = true;
+        }
+    }
+
+    if (!changed) {
+        return;
+    }
 
     const db = await connection;
 
     await db.execute(
-        "INSERT INTO monitor_events (monitor_id, parameter, old_value, new_value) VALUES (?, ?, ?, ?)",
+        `INSERT INTO monitor_events
+        (monitor_id, parameter, old_value, new_value)
+        VALUES (?, ?, ?, ?)`,
         [
             monitorId,
-            event,
-            data1,
-            data0
+            parameter,
+            oldValue,
+            newValue
         ]
     );
 }
 
 
-if (event === "ip" && data0 !== data1) {
 
-    const db = await connection;
-
-    await db.execute(
-        "INSERT INTO monitor_events (monitor_id, parameter, old_value, new_value) VALUES (?, ?, ?, ?)",
-        [
-            monitorId,
-            event,
-            data1,
-            data0
-        ]
-    );
-}
-}
 
 
 
