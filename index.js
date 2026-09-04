@@ -108,6 +108,7 @@ async function HTTP_Analyzer(target) {
 }
 
 async function IP_Analyzer(ip) {
+  // Внешний открытый сервис ipapi.is (атрибуция: data/ipapi/README.md)
   const response = await fetch(`https://api.ipapi.is/?q=${ip}`);
   const data = await response.json();
   return data;

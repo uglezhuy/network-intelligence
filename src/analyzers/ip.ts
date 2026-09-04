@@ -45,6 +45,7 @@ async function loadDatabase(): Promise<GeoRecord[]> {
         return database;
     }
 
+    // Гео-база — сторонние открытые данные от ipapi.is (атрибуция: data/ipapi/README.md)
     const filePath = path.resolve(
         process.cwd(),
         "data/ipapi/geolocationDatabaseIPv4.csv"

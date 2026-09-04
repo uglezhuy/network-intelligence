@@ -22,6 +22,7 @@ async function loadDatabase() {
     if (database !== null) {
         return database;
     }
+    // Гео-база — сторонние открытые данные от ipapi.is (атрибуция: data/ipapi/README.md)
     const filePath = node_path_1.default.resolve(process.cwd(), "data/ipapi/geolocationDatabaseIPv4.csv");
     const csv = await (0, promises_1.readFile)(filePath, "utf-8");
     const lines = csv
