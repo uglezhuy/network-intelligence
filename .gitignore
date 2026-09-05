@@ -1,6 +1,11 @@
+# скопилированые js файлы
 dist/
 
+
 node_modules/
+
+#.env  токены бота tg
+.env
 
 # Локальная гео-база ipapi.is скачивается отдельно (файл >100 МБ, GitHub его не примет)
 data/ipapi/geolocationDatabaseIPv4.csv

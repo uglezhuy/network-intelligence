@@ -1,5 +1,7 @@
 import { connection } from "./database/connection.js";
 
+import { alert } from "./alert.js";
+
 async function monitor_events(monitorId: number) {
 
     console.log("==============================  СТАТУСА МОНИТОРА =========================================");
@@ -15,59 +17,90 @@ async function monitor_events(monitorId: number) {
     const lastResult = resultRows[0].data;
     const previousResult = resultRows[1].data;
 
-    await pustEventToDatabase(
-    monitorId,
-    "responseTime",
-    previousResult.http.responseTime,
-    lastResult.http.responseTime,
-    1000
-);
+    const parameters = [
+    {
+        name: "responseTime",
+        oldValue: previousResult.http.responseTime,
+        newValue: lastResult.http.responseTime,
+        threshold: 200
+    },
 
-await pustEventToDatabase(
-    monitorId,
-    "dnsInfo ip",
-    previousResult.dns.ipv4.value[0],
-    lastResult.dns.ipv4.value[0],
-    0
-);
+    {
+        name: "dnsInfo ipv4",
+        oldValue: previousResult.dns.ipv4.value[0],
+        newValue: lastResult.dns.ipv4.value[0],
+        threshold: 0
+    },
 
-await pustEventToDatabase(
-    monitorId,
-    "http status",
-    previousResult.http.status,
-    lastResult.http.status,
-    0
-);
+    // {
+    //     name: "dnsInfo ipv6",
+    //     oldValue: previousResult.dns.ipv6.value[0],
+    //     newValue: lastResult.dns.ipv6.value[0],
+    //     threshold: 0
+    // },
 
-await pustEventToDatabase(
-    monitorId,
-    "http server",
-    previousResult.http.server,
-    lastResult.http.server,
-    0
-);
+    {
+        name: "dnsInfo MX",
+        oldValue: JSON.stringify(previousResult.dns.mx.value),
+        newValue: JSON.stringify(lastResult.dns.mx.value),
+        threshold: 0
+    },
 
-await pustEventToDatabase(
-    monitorId,
-    "http bodySize",
-    previousResult.http.bodySize,
-    lastResult.http.bodySize,
-    1000
-);
+    {
+        name: "dnsInfo NS",
+        oldValue: JSON.stringify(previousResult.dns.ns.value),
+        newValue: JSON.stringify(lastResult.dns.ns.value),
+        threshold: 0
+    },
 
-await pustEventToDatabase(
-    monitorId,
-    "PORT ports",
-    JSON.stringify(previousResult.ports),
-    JSON.stringify(lastResult.ports),
-    0
-);
+    {
+        name: "http status",
+        oldValue: previousResult.http.status,
+        newValue: lastResult.http.status,
+        threshold: 0
+    },
+
+    {
+        name: "http server",
+        oldValue: previousResult.http.server,
+        newValue: lastResult.http.server,
+        threshold: 0
+    },
+
+    {
+        name: "http bodySize",
+        oldValue: previousResult.http.bodySize,
+        newValue: lastResult.http.bodySize,
+        threshold: 1000
+    },
+
+    {
+        name: "PORT ports",
+        oldValue: JSON.stringify(previousResult.ports),
+        newValue: JSON.stringify(lastResult.ports),
+        threshold: 0
+    }
+
+];
+
+
+for (const parameter of parameters) {
+
+    await pushEventToDatabase(
+        monitorId,
+        parameter.name,
+        parameter.oldValue,
+        parameter.newValue,
+        parameter.threshold
+
+    );
+    
+
+}
 }
 
 
-
-
-async function pustEventToDatabase(
+async function pushEventToDatabase(
     monitorId: number,
     parameter: string,
     oldValue: number | string,
@@ -118,6 +151,18 @@ async function pustEventToDatabase(
             newValue
         ]
     );
+
+
+alert(
+        monitorId,
+        parameter,
+        oldValue,
+        newValue,
+        parameterValue,
+
+    );
+
+
 }
 
 
@@ -129,4 +174,4 @@ async function pustEventToDatabase(
 
 
 export { monitor_events };
-export {pustEventToDatabase};
+export {pushEventToDatabase};
