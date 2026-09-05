@@ -3,14 +3,14 @@
 Данные в этом каталоге — **сторонний открытый источник данных**, они не являются
 частью исходного кода этого репозитория и передаются как есть.
 
-| Поле | Значение |
-| --- | --- |
-| Источник | ipapi.is — бесплатные IP-базы данных |
-| URL | https://ipapi.is/ (раздел «Databases» / «IP to Geolocation») |
-| Файл | `geolocationDatabaseIPv4.csv` |
-| Формат | CSV: `ip_version,start_ip,end_ip,continent,country_code,country,state,city,zip,timezone,latitude,longitude,accuracy,source` |
-| Записей | 1 802 746 (без строки заголовка) |
-| Дата файла | 01.08.2026 |
+| Поле       | Значение                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Источник   | ipapi.is — бесплатные IP-базы данных                                                                                        |
+| URL        | https://ipapi.is/ (раздел «Databases» / «IP to Geolocation»)                                                                |
+| Файл       | `geolocationDatabaseIPv4.csv`                                                                                               |
+| Формат     | CSV: `ip_version,start_ip,end_ip,continent,country_code,country,state,city,zip,timezone,latitude,longitude,accuracy,source` |
+| Записей    | 1 802 746 (без строки заголовка)                                                                                            |
+| Дата файла | 01.08.2026                                                                                                                  |
 
 ## Установка базы данных
 
