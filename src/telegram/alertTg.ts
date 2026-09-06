@@ -1,5 +1,11 @@
 import "dotenv/config";
 
+
+
+
+
+
+
 async function alertTg(
     monitorId: number,
     parameter: string,
@@ -27,6 +33,9 @@ async function alertTg(
 
     Порог изменения: ${parameterValue}
     `;
+
+
+
 
     try {
 

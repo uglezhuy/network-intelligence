@@ -1,4 +1,5 @@
-import { alertTg } from "./alertTg.js";
+
+
 
 async function alert(
     monitorId: number,
@@ -14,19 +15,6 @@ async function alert(
     console.log("Old:", oldValue);
     console.log("New:", newValue);
     console.log("!!!!!!!!!!!!!!!!!!!!!!! EAND ALERT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-
-    await alertTg(
-        monitorId,
-        parameter,
-        oldValue,
-        newValue,
-        parameterValue
-    );
-
-
-
-
 }
 
 
