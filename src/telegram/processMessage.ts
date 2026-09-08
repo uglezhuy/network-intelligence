@@ -4,12 +4,13 @@ import { printResult } from "../printResult.js";
 import { monitor } from "../monitor.js";
 import { stopMonitorAll } from "../stopMonitor.js";
 import { stopMonitorID } from "../stopMonitor.js";
+import { tgPrintResultScan } from "./tgPrintResultScan.js";
 
 
 
 type TelegramMessage = {
-    from?: {
-        id?: number;
+    from: {
+        id: number;
         username?: string;
     };
     chat: {
@@ -40,21 +41,22 @@ async function processMessage(message: TelegramMessage) {
     if (command === "/scan") {
         console.log("команда /scan");
         const result = await analyzers(target);
-        await saveResultinScan(result);
-        printResult(result);
+        await saveResultinScan(result, telegramUserId);
+        tgPrintResultScan(result, telegramUserId);
     }
     if (command === "/monitor") {
         console.log("команда /monitor");
-        await monitor(target, Number(interval));
+        monitor(target, Number(interval), telegramUserId);
+
     }
 
-    if (command === "/stop") { // доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
-        if (interval === 'all') {
-            await stopMonitorAll(); return;
-        }
-        await stopMonitorID(Number(interval));// доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
-        return;
-    }
+    // if (command === "/stop") { // доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
+    //     if (interval === 'all') {
+    //         await stopMonitorAll(); return;
+    //     }
+    //     await stopMonitorID(Number(interval));// доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
+    //     return;
+    // }
 
 
 

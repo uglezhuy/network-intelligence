@@ -3,55 +3,152 @@ import { saveResultinMonitors } from "./database/results.js";
 import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 
-import {monitor_events} from "./monitor_events.js";
+import { monitor_events } from "./monitor_events.js";
+import { tgPrintResultScan } from "./telegram/tgPrintResultMonitor.js";
+import { connection } from "./database/connection.js";
+
+
+
 
 function wait(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function monitor(target: string, min: number) {
+async function monitor(
 
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!use monitor function");
+    target: string,
 
-    const monitorId = await saveResultinMonitors(target, min);
+    min: number,
+
+    telegramUserId?: number
+
+) {
+
+    let monitorId: number;
+
+    if (telegramUserId) {
+
+        monitorId = await saveResultinMonitors(
+
+            target,
+
+            min,
+
+            telegramUserId
+
+        );
+
+    } else {
+
+        monitorId = await saveResultinMonitors(
+
+            target,
+
+            min
+
+        );
+
+    }
 
     console.log("Monitor created. ID:", monitorId);
 
-    const results = [];
+    runMonitor(
+
+        monitorId,
+
+        target,
+
+        min,
+
+        telegramUserId
+
+    );
+
+}
+async function runMonitor(
+    monitorId: number,
+    target: string,
+    min: number,
+    telegramUserId?: number
+) {
+    let StateMonitorById = true;
     let i = 0;
 
-    let StateMonitorById = true;
-
     while (StateMonitorById) {
+        i++;
 
-    i++;
+        try {
+            const result = await analyzers(target);
 
-    try {
-        const result = await analyzers(target);
+            await saveInMonitor_results(result, monitorId);
 
-        await saveInMonitor_results(result, monitorId);
+            console.log(
+                "============================ ТЕСТ " +
+                i +
+                "============================"
+            );
 
-        results.push(result);
+            console.log(
+                "Monitor ID:",
+                monitorId
+            );
 
-        console.log("============================ ТЕСТ " + i + "============================");
-        console.log(results);
-        await monitor_events(monitorId);
+            console.log(
+                "Telegram User ID:",
+                telegramUserId
+            );
 
-    } catch (error) { // чтоб не падал весь монитор доделать обработку ошибки
-        console.log("Analyzer error:", error);
+            const tgEvents = await monitor_events(monitorId);
+
+            if (telegramUserId && tgEvents.length > 0) {
+                await tgPrintResultScan(
+                    tgEvents[0],
+                    telegramUserId
+                );
+            }
+
+        } catch (error) {
+            console.log("Analyzer error:", error);
+        }
+
+        const flag = await checkStateMonitorById(monitorId);
+
+        if (flag === "stopped") {
+            StateMonitorById = false;
+
+            console.log("Monitor stopped");
+
+            break;
+        }
+
+        await wait(min * 60 * 100);
     }
+}
+async function startActiveMonitors(activeMonitors: any) {
 
-    const flag = await checkStateMonitorById(monitorId);
+    for (const monitor of activeMonitors) {
+        console.log(
+            "востанволенные мониторы",
+            monitor.id,
+            monitor.target
+        );
 
-    if (flag == "stopped") {
-        StateMonitorById = false;
-        console.log("Monitor stopped");
-        
-        break;
+        runMonitor(
+            monitor.id,
+            monitor.target,
+            monitor.interval_minutes,
+            monitor.telegram_user_id ?? undefined
+        );
+
     }
+}
 
-    await wait(min * 60 * 100);
-}
-}
+
+
+
+
+
+
 
 export { monitor };
+export { startActiveMonitors };

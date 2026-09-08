@@ -2,46 +2,82 @@ import { connection } from "./connection.js";
 
 
 
-let monitorResult: any=[];
+let monitorResult: any = [];
 let monitorId: number;
-async function saveResultinScan(result: any) {
+async function saveResultinScan(
+    result: any,
+    telegramUserId?: number
+) {
 
     const db = await connection;
 
-    await db.execute(
-        "INSERT INTO scans (target, data) VALUES (?, ?)",
-        [
-            result.target,
-            JSON.stringify(result)
-        ]
-    );
+    if (telegramUserId) {
+        await db.execute(
+            "INSERT INTO scans (target, data, telegram_user_id) VALUES (?, ?, ?)",
+            [
+                result.target,
+                JSON.stringify(result),
+                telegramUserId
+            ]
+        );
+    }
+    else {
+        await db.execute(
+            "INSERT INTO scans (target, data) VALUES (?, ?)",
+            [
+                result.target,
+                JSON.stringify(result)
+            ]
+        );
+    }
+
 }
 
 
-async function saveResultinMonitors(target: string, min: number) {
-
+async function saveResultinMonitors(
+    target: string,
+    min: number,
+    telegramUserId?: number
+) {
     const db = await connection;
 
-    //монитор
-    monitorResult = await db.execute(
-        "INSERT INTO monitors (target, interval_minutes, status) VALUES (?, ?, ?)",
-        [
-            target,
-            min,
-            "active"
-        ]
+    if (telegramUserId) {
+        await db.execute(
+            "INSERT INTO monitors (target, interval_minutes, status, telegram_user_id) VALUES (?, ?, ?, ?)",
+            [
+                target,
+                min,
+                "active",
+                telegramUserId
+            ]
+        );
+    } else {
+        await db.execute(
+            "INSERT INTO monitors (target, interval_minutes, status) VALUES (?, ?, ?)",
+            [
+                target,
+                min,
+                "active"
+            ]
+        );
+    }
+
+    // ID последнего созданного монитора
+    const [rows]: any = await db.execute(
+        "SELECT id FROM monitors WHERE target = ? ORDER BY id DESC LIMIT 1",
+        [target]
     );
 
-    // id  монитора
-    monitorId = monitorResult[0].insertId;
+    monitorId = rows[0].id;
+
     return monitorId;
 }
 
 
 // первый и послед результаты монитора
-async function  saveInMonitor_results(result: any, monitorId: number) {
+async function saveInMonitor_results(result: any, monitorId: number) {
     const db = await connection;
-     //  первый результат монитора
+    //  первый результат монитора
     await db.execute(
         "INSERT INTO monitor_results (monitor_id, data) VALUES (?, ?)",
         [
@@ -56,8 +92,7 @@ async function  saveInMonitor_results(result: any, monitorId: number) {
 
 
 
-async function checkStateMonitorById(monitorId: number)
-{
+async function checkStateMonitorById(monitorId: number) {
     const db = await connection;
     const [rows]: any = await db.execute(
         "SELECT status FROM monitors WHERE id = ?",
@@ -72,6 +107,6 @@ async function checkStateMonitorById(monitorId: number)
 export { saveResultinScan };
 
 export { saveResultinMonitors };
-export{ saveInMonitor_results}
+export { saveInMonitor_results }
 
-export {checkStateMonitorById}
+export { checkStateMonitorById }

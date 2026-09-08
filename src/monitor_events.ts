@@ -4,7 +4,7 @@ import { alert } from "./alert.js";
 
 async function monitor_events(monitorId: number) {
 
-    console.log("==============================  СТАТУСА МОНИТОРА =========================================");
+    console.log("============================== СТАТУС МОНИТОРА =========================================");
 
     const db = await connection;
 
@@ -13,90 +13,95 @@ async function monitor_events(monitorId: number) {
         [monitorId]
     );
 
-    
+    if (resultRows.length < 2) {
+        console.log("Недостаточно данных для сравнения");
+        return [];
+    }
+
     const lastResult = resultRows[0].data;
     const previousResult = resultRows[1].data;
 
     const parameters = [
-    {
-        name: "responseTime",
-        oldValue: previousResult.http.responseTime,
-        newValue: lastResult.http.responseTime,
-        threshold: 200
-    },
 
-    {
-        name: "dnsInfo ipv4",
-        oldValue: previousResult.dns.ipv4.value[0],
-        newValue: lastResult.dns.ipv4.value[0],
-        threshold: 0
-    },
+        {
+            name: "responseTime",
+            oldValue: previousResult.http.responseTime,
+            newValue: lastResult.http.responseTime,
+            threshold: 20
+        },
+        {
+            name: "dnsInfo ipv4",
+            oldValue: previousResult.dns.ipv4.value[0],
+            newValue: lastResult.dns.ipv4.value[0],
+            threshold: 0
+        },
+        {
+            name: "dnsInfo MX",
+            oldValue: JSON.stringify(previousResult.dns.mx.value),
+            newValue: JSON.stringify(lastResult.dns.mx.value),
+            threshold: 0
+        },
+        {
+            name: "dnsInfo NS",
+            oldValue: JSON.stringify(previousResult.dns.ns.value),
+            newValue: JSON.stringify(lastResult.dns.ns.value),
+            threshold: 0
+        },
+        {
+            name: "http status",
+            oldValue: previousResult.http.status,
+            newValue: lastResult.http.status,
+            threshold: 0
+        },
+        {
+            name: "http server",
+            oldValue: previousResult.http.server,
+            newValue: lastResult.http.server,
+            threshold: 0
+        },
+        {
+            name: "http bodySize",
+            oldValue: previousResult.http.bodySize,
+            newValue: lastResult.http.bodySize,
+            threshold: 1000
+        },
+        {
+            name: "PORT ports",
+            oldValue: JSON.stringify(previousResult.ports),
+            newValue: JSON.stringify(lastResult.ports),
+            threshold: 0
+        }
+    ];
 
-    // {
-    //     name: "dnsInfo ipv6",
-    //     oldValue: previousResult.dns.ipv6.value[0],
-    //     newValue: lastResult.dns.ipv6.value[0],
-    //     threshold: 0
-    // },
+    const events: any[] = [];
 
-    {
-        name: "dnsInfo MX",
-        oldValue: JSON.stringify(previousResult.dns.mx.value),
-        newValue: JSON.stringify(lastResult.dns.mx.value),
-        threshold: 0
-    },
+    for (const parameter of parameters) {
 
-    {
-        name: "dnsInfo NS",
-        oldValue: JSON.stringify(previousResult.dns.ns.value),
-        newValue: JSON.stringify(lastResult.dns.ns.value),
-        threshold: 0
-    },
+        const event = await pushEventToDatabase(
+            monitorId,
+            parameter.name,
+            parameter.oldValue,
+            parameter.newValue,
+            parameter.threshold
+        );
 
-    {
-        name: "http status",
-        oldValue: previousResult.http.status,
-        newValue: lastResult.http.status,
-        threshold: 0
-    },
-
-    {
-        name: "http server",
-        oldValue: previousResult.http.server,
-        newValue: lastResult.http.server,
-        threshold: 0
-    },
-
-    {
-        name: "http bodySize",
-        oldValue: previousResult.http.bodySize,
-        newValue: lastResult.http.bodySize,
-        threshold: 1000
-    },
-
-    {
-        name: "PORT ports",
-        oldValue: JSON.stringify(previousResult.ports),
-        newValue: JSON.stringify(lastResult.ports),
-        threshold: 0
+        if (event) {
+            events.push(event);
+        }
     }
 
-];
+    console.log("Изменения:", events);
 
+    if (events.length > 0) {
+        await alert(
+            events[0].monitorId,
+            events[0].parameter,
+            events[0].oldValue,
+            events[0].newValue,
+            events[0].parameterValue);
+    }
 
-for (const parameter of parameters) {
-
-    await pushEventToDatabase(
-        monitorId,
-        parameter.name,
-        parameter.oldValue,
-        parameter.newValue,
-        parameter.threshold
-
-    );
-    
-
-}
+    return events;
 }
 
 
@@ -107,7 +112,6 @@ async function pushEventToDatabase(
     newValue: number | string,
     parameterValue: number
 ) {
-
     let changed = false;
 
     if (typeof oldValue === "number" && typeof newValue === "number") {
@@ -135,7 +139,7 @@ async function pushEventToDatabase(
     }
 
     if (!changed) {
-        return;
+        return null;
     }
 
     const db = await connection;
@@ -152,17 +156,13 @@ async function pushEventToDatabase(
         ]
     );
 
-
-alert(
+    return {
         monitorId,
         parameter,
         oldValue,
         newValue,
-        parameterValue,
-
-    );
-
-
+        parameterValue
+    };
 }
 
 
@@ -174,4 +174,4 @@ alert(
 
 
 export { monitor_events };
-export {pushEventToDatabase};
+export { pushEventToDatabase };
