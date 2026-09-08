@@ -103,7 +103,7 @@ async function runMonitor(
             if (telegramUserId && tgEvents.length > 0) {
                 await tgPrintResultMonitor(
                     tgEvents[0],
-                    telegramUserId
+                    telegramUserId, target
                 );
             }
 

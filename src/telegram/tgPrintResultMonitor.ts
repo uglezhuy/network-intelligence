@@ -2,11 +2,11 @@ import "dotenv/config";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
-async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number) {
+async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number, target: string) {
 
 
     const message = `
-            Изменения на сайте:";
+            Изменения на сайте:${target}";
             ==============monitorId================
             parameter:", ${tgEvents.monitorId};
             ==============parameter================
