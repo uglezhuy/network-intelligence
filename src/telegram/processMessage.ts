@@ -1,11 +1,11 @@
 import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
-import { printResult } from "../printResult.js";
 import { monitor } from "../monitor.js";
 import { stopMonitorAll } from "../stopMonitor.js";
 import { stopMonitorID } from "../stopMonitor.js";
 import { tgPrintResultScan } from "./tgPrintResultScan.js";
 import { stopMyMonitor } from "../stopMonitor.js";
+import { showMonitorsByTelegramUserId } from "./selectMonitorsByTelegramUserId.js";
 
 
 
@@ -70,6 +70,15 @@ async function processMessage(message: TelegramMessage) {
         console.log("команда /stop");
         stopMonitorID(Number(target));
         console.log("команда /stop id " + target + " выполнена ");
+    }
+
+    if (command === "/monitors") {
+        console.log("команда /monitors");
+
+        showMonitorsByTelegramUserId(telegramUserId);
+        console.log("команда /monitors выполнена ");
+
+
     }
 
 
