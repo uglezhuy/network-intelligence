@@ -5,6 +5,7 @@ import { monitor } from "../monitor.js";
 import { stopMonitorAll } from "../stopMonitor.js";
 import { stopMonitorID } from "../stopMonitor.js";
 import { tgPrintResultScan } from "./tgPrintResultScan.js";
+import { stopMyMonitor } from "../stopMonitor.js";
 
 
 
@@ -50,17 +51,26 @@ async function processMessage(message: TelegramMessage) {
 
     }
 
-    // if (command === "/stop") { // доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
-    //     if (interval === 'all') {
-    //         await stopMonitorAll(); return;
-    //     }
-    //     await stopMonitorID(Number(interval));// доделат не рабоатет хз почему!!!!!!!!!!!!!!!!!!
-    //     return;
-    // }
+    if (command === "/stop" && !target) {
+        console.log("команда /stop");
+        stopMyMonitor(telegramUserId);
+        console.log("команда /stop выполнена ");
+    }
+
+
+    if (command === "/stop" && target === "all") {
+        console.log("команда /stop");
+        stopMonitorAll();
+        console.log("команда /stop выполнена ");
+    }
 
 
 
-
+    if (command === "/stop" && target) {
+        console.log("команда /stop");
+        stopMonitorID(Number(target));
+        console.log("команда /stop id " + target + " выполнена ");
+    }
 
 
 }

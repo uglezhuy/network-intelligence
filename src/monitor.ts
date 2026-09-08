@@ -4,7 +4,7 @@ import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
-import { tgPrintResultScan } from "./telegram/tgPrintResultMonitor.js";
+import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
 import { connection } from "./database/connection.js";
 
 
@@ -101,7 +101,7 @@ async function runMonitor(
             const tgEvents = await monitor_events(monitorId);
 
             if (telegramUserId && tgEvents.length > 0) {
-                await tgPrintResultScan(
+                await tgPrintResultMonitor(
                     tgEvents[0],
                     telegramUserId
                 );
@@ -139,7 +139,7 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.interval_minutes,
             monitor.telegram_user_id ?? undefined
         );
-
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
 

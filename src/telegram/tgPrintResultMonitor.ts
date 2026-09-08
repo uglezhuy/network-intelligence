@@ -1,17 +1,13 @@
 import "dotenv/config";
 
+const token = process.env.TELEGRAM_BOT_TOKEN;
 
-
-async function tgPrintResultScan(tgEvents: any, telegramUserId: number) {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-
-
+async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number) {
 
 
     const message = `
             Изменения на сайте:";
             ==============monitorId================
-
             parameter:", ${tgEvents.monitorId};
             ==============parameter================
             ${tgEvents.parameter};
@@ -22,7 +18,6 @@ async function tgPrintResultScan(tgEvents: any, telegramUserId: number) {
             ==============parameterValue================
             ${tgEvents.parameterValue};
             `;
-
 
     try {
 
@@ -42,7 +37,36 @@ async function tgPrintResultScan(tgEvents: any, telegramUserId: number) {
             }
         );
 
+    } catch (error) {
+        console.error("Ошибка при отправке сообщения:", error);
+    }
 
+}
+async function tgPrintStopMonitor(monitorId: number, telegramUserId: number) {
+
+    const message = `
+            Монитор остановлен:";
+            ==============monitorId================
+            ${monitorId};
+            `;
+
+    try {
+
+        await fetch(
+            `https://api.telegram.org/bot${token}/sendMessage`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    chat_id: telegramUserId,
+                    text: message
+                })
+            }
+        );
 
     } catch (error) {
         console.error("Ошибка при отправке сообщения:", error);
@@ -50,6 +74,10 @@ async function tgPrintResultScan(tgEvents: any, telegramUserId: number) {
 
 
 
-
 }
-export { tgPrintResultScan }
+
+
+
+
+export { tgPrintResultMonitor }
+export { tgPrintStopMonitor }
