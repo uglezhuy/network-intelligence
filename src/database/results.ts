@@ -37,27 +37,30 @@ async function saveResultinScan(
 async function saveResultinMonitors(
     target: string,
     min: number,
+    mode: string,
     telegramUserId?: number
 ) {
     const db = await connection;
 
     if (telegramUserId) {
         await db.execute(
-            "INSERT INTO monitors (target, interval_minutes, status, telegram_user_id) VALUES (?, ?, ?, ?)",
+            "INSERT INTO monitors (target, interval_minutes, status, telegram_user_id, type) VALUES (?, ?, ?, ?, ?)",
             [
                 target,
                 min,
                 "active",
-                telegramUserId
+                telegramUserId,
+                mode
             ]
         );
     } else {
         await db.execute(
-            "INSERT INTO monitors (target, interval_minutes, status) VALUES (?, ?, ?)",
+            "INSERT INTO monitors (target, interval_minutes, status, type) VALUES (?, ?, ?, ?)",
             [
                 target,
                 min,
-                "active"
+                "active",
+                mode
             ]
         );
     }

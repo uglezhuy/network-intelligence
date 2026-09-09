@@ -5,7 +5,8 @@ import { checkStateMonitorById } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
 import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
-import { connection } from "./database/connection.js";
+import { tgPrintResultScan } from "./telegram/tgPrintResultScan.js";
+
 
 
 
@@ -15,13 +16,10 @@ function wait(ms: number): Promise<void> {
 }
 
 async function monitor(
-
     target: string,
-
     min: number,
-
-    telegramUserId?: number
-
+    mode: string,
+    telegramUserId?: number,
 ) {
 
     let monitorId: number;
@@ -29,25 +27,20 @@ async function monitor(
     if (telegramUserId) {
 
         monitorId = await saveResultinMonitors(
-
             target,
-
             min,
-
-            telegramUserId
+            mode,
+            telegramUserId,
 
         );
 
     } else {
 
         monitorId = await saveResultinMonitors(
-
             target,
-
-            min
-
+            min,
+            mode
         );
-
     }
 
     console.log("Monitor created. ID:", monitorId);
@@ -60,6 +53,8 @@ async function monitor(
 
         min,
 
+        mode,
+
         telegramUserId
 
     );
@@ -69,6 +64,7 @@ async function runMonitor(
     monitorId: number,
     target: string,
     min: number,
+    mode: string,
     telegramUserId?: number
 ) {
     let StateMonitorById = true;
@@ -98,14 +94,25 @@ async function runMonitor(
                 telegramUserId
             );
 
-            const tgEvents = await monitor_events(monitorId);
 
-            if (telegramUserId && tgEvents.length > 0) {
-                await tgPrintResultMonitor(
-                    tgEvents[0],
-                    telegramUserId, target
-                );
+
+
+
+            if (mode === "events") {
+                const tgEvents = await monitor_events(monitorId);
+
+                if (telegramUserId && tgEvents.length > 0) {
+                    await tgPrintResultMonitor(
+                        tgEvents[0],
+                        telegramUserId, target
+                    );
+                }
             }
+
+            if (mode === "scan" && telegramUserId) {
+                await tgPrintResultScan(result, telegramUserId);
+            }
+
 
         } catch (error) {
             console.log("Analyzer error:", error);
@@ -128,15 +135,18 @@ async function startActiveMonitors(activeMonitors: any) {
 
     for (const monitor of activeMonitors) {
         console.log(
-            "востанволенные мониторы",
+            "востанволенные мониторы или ",
             monitor.id,
-            monitor.target
+            monitor.target,
+            monitor.interval_minutes,
+            monitor.type
         );
 
         runMonitor(
             monitor.id,
             monitor.target,
             monitor.interval_minutes,
+            monitor.type,
             monitor.telegram_user_id ?? undefined
         );
         await new Promise(resolve => setTimeout(resolve, 1000));

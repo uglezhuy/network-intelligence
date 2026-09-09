@@ -38,40 +38,43 @@ async function processMessage(message: TelegramMessage) {
     const command = parts[0];
     const target = parts[1];
     const interval = parts[2];
-
+    //scan
     if (command === "/scan") {
         console.log("команда /scan");
         const result = await analyzers(target);
         await saveResultinScan(result, telegramUserId);
         tgPrintResultScan(result, telegramUserId);
     }
+    //events
+    if (command === "/events") {
+        console.log("команда /events");
+        monitor(target, Number(interval), "events", telegramUserId);
+
+    }
+    //monitor
     if (command === "/monitor") {
-        console.log("команда /monitor");
-        monitor(target, Number(interval), telegramUserId);
+        console.log("команда /monitors");
+        monitor(target, Number(interval), "monitors", telegramUserId);
 
     }
 
+    //stop  
     if (command === "/stop" && !target) {
         console.log("команда /stop");
         stopMyMonitor(telegramUserId);
         console.log("команда /stop выполнена ");
     }
-
-
     if (command === "/stop" && target === "all") {
         console.log("команда /stop");
         stopMonitorAll();
         console.log("команда /stop выполнена ");
     }
-
-
-
     if (command === "/stop" && target) {
         console.log("команда /stop");
         stopMonitorID(Number(target));
         console.log("команда /stop id " + target + " выполнена ");
     }
-
+    //show monitors
     if (command === "/monitors") {
         console.log("команда /monitors");
 

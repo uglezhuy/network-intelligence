@@ -14,7 +14,7 @@ async function main() {
 
 
     // SCAN
-    
+
 
     if (useFunction == "scan") {
 
@@ -48,10 +48,11 @@ async function main() {
         if (target == "stop") {
 
             const monitorId = process.argv[4];
-            
-            if (monitorId=='all') {
-            await stopMonitorAll();return; }
-            
+
+            if (monitorId == 'all') {
+                await stopMonitorAll(); return;
+            }
+
             await stopMonitorID(monitorId);
             return;
         }
@@ -70,9 +71,9 @@ async function main() {
             process.exit(1);
         }
 
-        await monitor(target, min);
+        await monitor(target, min, "events", undefined);// для теста undefined
     }
-    
+
     // UNKNOWN COMMAND
 
     else {

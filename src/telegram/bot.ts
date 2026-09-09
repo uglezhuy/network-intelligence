@@ -7,7 +7,7 @@ import { startActiveMonitors } from "../monitor.js";
 async function startBot() {
     console.log("Telegram bot started");
     const activeMonitors = await tgCheckActiveMonitors();
-    startActiveMonitors(activeMonitors);
+    startActiveMonitors(activeMonitors,);
     while (true) {
         await getTelegramChatIdAndLastUpdateId();
 
