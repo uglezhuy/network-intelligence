@@ -1,7 +1,7 @@
 
 import tls from "node:tls";
 
-async function TLS_Analyzer(hostname:string) {
+async function TLS_Analyzer(hostname: string) {
   const socket = tls.connect({
     host: hostname,
     port: 443,
@@ -17,7 +17,7 @@ async function TLS_Analyzer(hostname:string) {
 
       socket.destroy();
     });
-    socket.on("error", (error:Error) => {
+    socket.on("error", (error: Error) => {
       reject(error);
     });
   });
