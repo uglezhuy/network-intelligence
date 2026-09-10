@@ -109,7 +109,7 @@ async function runMonitor(
                 }
             }
 
-            if (mode === "scan" && telegramUserId) {
+            if (mode === "monitors" && telegramUserId) {
                 await tgPrintResultScan(result, telegramUserId);
             }
 

@@ -22,6 +22,40 @@ async function getTelegramChatIdAndLastUpdateId() {
         return;
     }
 
+    await fetch(
+        `https://api.telegram.org/bot${token}/setMyCommands`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                commands: [
+                    {
+                        command: "scan",
+                        description: "Сканирование: /scan <домен или IP>"
+                    },
+                    {
+                        command: "monitor",
+                        description: "Мониторинг: /monitor <домен> <сек>"
+                    },
+                    {
+                        command: "monitors",
+                        description: "Мои мониторы"
+                    },
+                    {
+                        command: "events",
+                        description: "События: /events <ID>"
+                    },
+                    {
+                        command: "stop",
+                        description: "Остановить: /stop <ID>"
+                    }
+                ]
+            })
+        }
+    );
+
 
     const response = await fetch(
         `https://api.telegram.org/bot${token}/getUpdates?offset=${offset}`
