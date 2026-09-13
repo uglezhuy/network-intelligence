@@ -6,6 +6,7 @@ import { stopMonitorID } from "../stopMonitor.js";
 import { tgPrintResultScan } from "./tgPrintResultScan.js";
 import { stopMyMonitor } from "../stopMonitor.js";
 import { showMonitorsByTelegramUserId } from "./selectMonitorsByTelegramUserId.js";
+import { tgPrintAllMyMonitors } from "./tgPrintResultMonitor.js";
 
 
 
@@ -78,12 +79,50 @@ async function processMessage(message: TelegramMessage) {
     if (command === "/monitors") {
         console.log("команда /monitors");
 
-        showMonitorsByTelegramUserId(telegramUserId);
+        const resultRows = await showMonitorsByTelegramUserId(telegramUserId);
+        tgPrintAllMyMonitors(resultRows, telegramUserId);
+
+
+
+
         console.log("команда /monitors выполнена ");
-
-
     }
+    //tg mini app
+    if (command === "/app") {
+        const token = process.env.TELEGRAM_BOT_TOKEN;
 
+        if (!token) {
+            console.log("TELEGRAM_BOT_TOKEN не найден");
+            return;
+        }
+        console.log("команда /app");
+        await fetch(
+            `https://api.telegram.org/bot${token}/sendMessage`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: "Network Intelligence",
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: "🚀 Открыть Network Intelligence",
+                                    web_app: {
+                                        url: "https://aluminum-outside-wide-interests.trycloudflare.com"
+                                    }
+                                }
+                            ]
+                        ]
+                    }
+                })
+            }
+        );
+        console.log("команда /app завершена ");
+    }
 
 }
 
