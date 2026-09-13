@@ -13,7 +13,10 @@ async function showMonitorsByTelegramUserId(telegramUserId: number) {
     );
 
 
-    return tgPrintAllMyMonitors(resultRows[0], telegramUserId);
+    return resultRows[0];
+
+
+
 
 
 

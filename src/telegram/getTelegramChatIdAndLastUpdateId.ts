@@ -70,13 +70,9 @@ async function getTelegramChatIdAndLastUpdateId() {
 
     for (const update of data.result) {
 
-
-
         if (!update.message) {
             continue;
         }
-
-
 
         await db.execute(
 
