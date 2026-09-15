@@ -4,6 +4,7 @@ import { showMonitorsByTelegramUserId } from "../telegram/selectMonitorsByTelegr
 function startApiServer() {
     const server = createServer(async (req, res) => {
 
+        res.setHeader("Access-Control-Allow-Origin", "*");
         if (req.method === "GET" && req.url?.startsWith("/api/monitors/")) {
 
             const telegramUserId = Number(
@@ -61,5 +62,6 @@ function startApiServer() {
         console.log("API server started: http://localhost:3000");
     });
 }
+startApiServer();
 
 export { startApiServer };
