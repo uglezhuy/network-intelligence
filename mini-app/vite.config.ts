@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'aluminum-outside-wide-interests.trycloudflare.com',
+      'wellness-nearby-occurrence-rise.trycloudflare.com',
     ],
   },
 })

@@ -112,7 +112,7 @@ async function processMessage(message: TelegramMessage) {
                                 {
                                     text: "🚀 Открыть Network Intelligence",
                                     web_app: {
-                                        url: "https://aluminum-outside-wide-interests.trycloudflare.com"
+                                        url: "https://wellness-nearby-occurrence-rise.trycloudflare.com"
                                     }
                                 }
                             ]
