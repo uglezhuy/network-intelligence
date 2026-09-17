@@ -7,7 +7,7 @@ async function showMonitorsByTelegramUserId(telegramUserId: number) {
     const db = await connection;
 
     const resultRows: any = await db.execute(
-        "SELECT * FROM monitors WHERE telegram_user_id = ? AND status = 'active'",
+        "SELECT * FROM monitors WHERE telegram_user_id = ?",
         [telegramUserId]
     );
 

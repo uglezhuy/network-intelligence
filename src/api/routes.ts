@@ -1,8 +1,9 @@
 import { IncomingMessage, ServerResponse } from "node:http";
-import { showMonitorsByTelegramUserId } from "../telegram/selectMonitorsByTelegramUserId.js";
+import { showMonitorsByUser } from "../showMonitorsByUser";
 import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
 import { stopMonitorID } from "../stopMonitor.js"
+import { startMonitorID } from "../startMonitor"
 
 
 
@@ -25,12 +26,12 @@ async function handleApiRequest(
     // /api/monitors//////////////////////////////////////////////////////////////////////////////
     if (
         req.method === "GET" &&
-        req.url?.startsWith("/api/monitors/")
+        req.url?.startsWith("/api/monitorsUser/")
     ) {
-        console.log("ROUTE: /api/monitors/");
+        console.log("ROUTE: /api/monitorsUser/");
 
         const telegramUserId = Number(
-            req.url.split("/api/monitors/")[1]
+            req.url.split("/api/monitorsUser/")[1]
         );
 
         console.log("Telegram User ID:", telegramUserId);
@@ -49,7 +50,7 @@ async function handleApiRequest(
 
         try {
             const monitors =
-                await showMonitorsByTelegramUserId(telegramUserId);
+                await showMonitorsByUser(telegramUserId);
 
             res.writeHead(200, {
                 "Content-Type": "application/json"
@@ -188,6 +189,54 @@ async function handleApiRequest(
     ///////////////////////////////////////////////////////////////////////////////
 
 
+
+    //запуск //////////////////////////////////////////////////////////////////////////////
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/startMonitor/")
+    ) {
+        console.log("ROUTE: /api/startMonitor/");
+
+        const target =
+            req.url.split("/api/startMonitor/")[1];
+
+        console.log("Target:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный URL"
+            }));
+
+            return;
+        }
+
+        try {
+            console.log("Запускаем startMonitorID:", target);
+
+
+            await startMonitorID(target);
+
+            console.log("Запуск завершено");
+
+        } catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+
+        return;
+    }
+    ///////////////////////////////////////////////////////////////////////////////
 
 
 
