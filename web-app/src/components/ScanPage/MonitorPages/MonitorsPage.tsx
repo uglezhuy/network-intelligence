@@ -18,11 +18,11 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     [],
   );
 
-  async function ShowMonitors() {
+  async function ShowMonitorsALL() {
     console.log("Вывод доступных мониторов:", URL);
 
     const response = await fetch(
-      `http://localhost:3000/api/monitors/503362430`, // pfхарженный айди для тестов
+      `http://localhost:3000/api/monitorsUser/503362430`, // pfхарженный айди для тестов
     );
 
     const data = await response.json();
@@ -38,14 +38,28 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     await fetch(`http://localhost:3000/api/stopMonitor/${monitorId}`);
 
     console.log("Остановка монитора завершена:", monitorId);
-    ShowMonitors();
+    ShowMonitorsALL();
+  }
+  async function StartMonitorID(monitorId: number) {
+    console.log("Запуск  монитора:", URL);
+
+    await fetch(`http://localhost:3000/api/startMonitor/${monitorId}`);
+
+    console.log("Запуск монитора завершен:", monitorId);
+    ShowMonitorsALL();
+  }
+  async function deleteMonitorID(monitorId: number) {
+    console.log("Удаление  монитора:", URL);
+
+    await fetch(`http://localhost:3000/api/deleteMonitor/${monitorId}`);
+
+    console.log("Удаление монитора завершено:", monitorId);
+    ShowMonitorsALL();
   }
 
   useEffect(() => {
-    ShowMonitors();
+    ShowMonitorsALL();
   }, []);
-
-  async function montoring() {}
 
   return (
     <>
@@ -61,7 +75,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           onChange={(event) => setURL(event.target.value)}
         />
       </div>
-      <button onClick={montoring}>Мониторить</button>
+      <button>Мониторить</button>
       <div>Результаты мониторинга:</div>
       {resultMyMonitors.map((monitor) => (
         <div key={monitor.id}>
@@ -74,8 +88,9 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           <div>Статус: {monitor.status}</div>
 
           <button>Отобразить</button>
+          <button onClick={() => StartMonitorID(monitor.id)}>Запустить</button>
           <button onClick={() => stopMonitorID(monitor.id)}>Остановить</button>
-          <button>Удалить</button>
+          <button onClick={() => deleteMonitorID(monitor.id)}>Удалить</button>
         </div>
       ))}
     </>
