@@ -1,6 +1,4 @@
 import { getTelegramChatIdAndLastUpdateId } from "./getTelegramChatIdAndLastUpdateId.js";
-import { tgCheckActiveMonitors } from "./tgCheckActiveMonitors.js";
-import { startActiveMonitors } from "../monitor.js";
 import { startApiServer } from "../api/startApiServer.js";
 
 
@@ -10,9 +8,7 @@ async function startBot() {
 
 
 
-    const activeMonitors = await tgCheckActiveMonitors();
 
-    startActiveMonitors(activeMonitors);
 
     while (true) {
 
@@ -25,6 +21,6 @@ async function startBot() {
 }
 
 
-startBot();
+
 
 export { startBot };

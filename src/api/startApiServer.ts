@@ -11,6 +11,5 @@ function startApiServer() {
     });
 }
 
-startApiServer();
 
 export { startApiServer };
