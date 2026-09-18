@@ -4,6 +4,7 @@ import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
 import { stopMonitorID } from "../stopMonitor.js"
 import { startMonitorID } from "../startMonitor"
+import { deleteMonitorID } from "../deleteMonitor"
 
 
 
@@ -240,7 +241,53 @@ async function handleApiRequest(
 
 
 
+    //удаление //////////////////////////////////////////////////////////////////////////////
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/deleteMonitor/")
+    ) {
+        console.log("ROUTE: /api/deleteMonitor/");
 
+        const target =
+            req.url.split("/api/deleteMonitor/")[1];
+
+        console.log("Target:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный URL"
+            }));
+
+            return;
+        }
+
+        try {
+            console.log("Запускаем deleteMonitorID:", target);
+
+
+            await deleteMonitorID(target);
+
+            console.log("Удаление завершено");
+
+        } catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+
+        return;
+    }
+    ///////////////////////////////////////////////////////////////////////////////
 
 
 
