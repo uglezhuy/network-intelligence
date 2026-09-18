@@ -2,6 +2,8 @@ import { startBot } from "./telegram/bot.js";
 import { startApiServer } from "./api/startApiServer.js";
 import { CheckActiveMonitors } from "./CheckActiveMonitors.js";
 import { startActiveMonitors } from "./monitor.js";
+import { startBotMax } from "./maxBot/botMax.js";
+
 
 
 async function startAPIMonitorsBots() {
@@ -24,7 +26,7 @@ async function startAPIMonitorsBots() {
     ///////////////////////////////////////////////////
 
     //////////////////////////MAX///////////////////////
-    //startBotMAX(); 
+    startBotMax();
     ///////////////////////////////////////////////////
 
 
