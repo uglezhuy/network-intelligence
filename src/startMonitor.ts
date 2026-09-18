@@ -1,4 +1,8 @@
 import { connection } from "./database/connection.js";
+import { startActiveMonitors } from "./monitor.js";
+
+
+
 
 async function startMonitorID(monitorId: any) {
 
@@ -12,5 +16,8 @@ async function startMonitorID(monitorId: any) {
     );
 
     console.log(`Monitor ${monitorId} started`);
+
+    startActiveMonitors(monitorId);
+    console.log(`Monitor ${monitorId} started and active monitors started`);
 }
 export { startMonitorID };

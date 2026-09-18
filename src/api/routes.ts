@@ -3,7 +3,7 @@ import { showMonitorsByUser } from "../showMonitorsByUser";
 import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
 import { stopMonitorID } from "../stopMonitor.js"
-import { startMonitorID } from "../startMonitor"
+import { startMonitorID } from "../startMonitorID.js"
 import { deleteMonitorID } from "../deleteMonitor"
 
 
@@ -219,9 +219,15 @@ async function handleApiRequest(
             console.log("Запускаем startMonitorID:", target);
 
 
-            await startMonitorID(target);
+            await startMonitorID(Number(target));
 
             console.log("Запуск завершено");
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+
 
         } catch (error) {
             console.error("Ошибка API:", error);

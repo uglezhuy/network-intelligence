@@ -162,3 +162,4 @@ async function startActiveMonitors(activeMonitors: any) {
 
 export { monitor };
 export { startActiveMonitors };
+export { runMonitor };
