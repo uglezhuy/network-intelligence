@@ -4,11 +4,8 @@ import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
-import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
-import { tgPrintResultScan } from "./telegram/tgPrintResultScan.js";
-
-
-
+import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
+import { MaxPrintResultScan } from "./maxBot/MaxPrintResultScan.js";
 
 
 function wait(ms: number): Promise<void> {
@@ -60,6 +57,7 @@ async function monitor(
     );
 
 }
+
 async function runMonitor(
     monitorId: number,
     target: string,
@@ -95,22 +93,23 @@ async function runMonitor(
             );
 
 
-
-
-
             if (mode === "events") {
                 const tgEvents = await monitor_events(monitorId);
 
                 if (telegramUserId && tgEvents.length > 0) {
-                    await tgPrintResultMonitor(
+                    await MaxPrintResultMonitor(
                         tgEvents[0],
-                        telegramUserId, target
+                        telegramUserId,
+                        target
                     );
                 }
             }
 
             if (mode === "monitors" && telegramUserId) {
-                await tgPrintResultScan(result, telegramUserId);
+                await MaxPrintResultScan(
+                    result,
+                    telegramUserId
+                );
             }
 
 
@@ -150,15 +149,10 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.type,
             monitor.telegram_user_id ?? undefined
         );
+
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
-
-
-
-
-
-
 
 
 export { monitor };

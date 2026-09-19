@@ -3,10 +3,10 @@ import { saveResultinScan } from "../database/results.js";
 import { monitor } from "../monitor.js";
 import { stopMonitorAll } from "../stopMonitor.js";
 import { stopMonitorID } from "../stopMonitor.js";
-import { tgPrintResultScan } from "./tgPrintResultScan.js";
+import { MaxPrintResultScan } from "./MaxPrintResultScan.js";
 import { stopMyMonitor } from "../stopMonitor.js";
 import { showMonitorsByTelegramUserId } from "./selectMonitorsByTelegramUserId.js";
-import { tgPrintAllMyMonitors } from "./tgPrintResultMonitor.js";
+import { MaxPrintAllMyMonitors } from "./tgPrintResultMonitor.js";
 
 
 
@@ -44,7 +44,8 @@ async function processMessage(message: TelegramMessage) {
         console.log("команда /scan");
         const result = await analyzers(target);
         await saveResultinScan(result, telegramUserId);
-        tgPrintResultScan(result, telegramUserId);
+        await MaxPrintResultScan(result, telegramUserId);
+
     }
     //events
     if (command === "/events") {
@@ -80,8 +81,8 @@ async function processMessage(message: TelegramMessage) {
         console.log("команда /monitors");
 
         const resultRows = await showMonitorsByTelegramUserId(telegramUserId);
-        tgPrintAllMyMonitors(resultRows, telegramUserId);
-
+        console.log("Результат showMonitorsByTelegramUserId:", resultRows);
+        await MaxPrintAllMyMonitors(resultRows, telegramUserId);
 
 
 

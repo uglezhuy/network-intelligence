@@ -1,139 +1,170 @@
 import "dotenv/config";
 
-const token = process.env.TELEGRAM_BOT_TOKEN;
-
-async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number, target: string) {
+const token = process.env.MAX_BOT_TOKEN;
 
 
+async function MaxPrintResultMonitor(
+    maxEvents: any,
+    maxUserId: number,
+    target: string
+) {
     const message = `
-            Изменения на сайте:${target}";
-            ==============monitorId================
-            parameter:", ${tgEvents.monitorId};
-            ==============parameter================
-            ${tgEvents.parameter};
-            ==============oldValue================
-            ${tgEvents.oldValue};
-            ==============newValue================
-            ${tgEvents.newValue};
-            ==============parameterValue================
-            ${tgEvents.parameterValue};
-            `;
+Изменения на сайте: ${target}
+
+============== Monitor ID ==============
+${maxEvents.monitorId}
+
+============== Parameter ==============
+${maxEvents.parameter}
+
+============== Old Value ==============
+${maxEvents.oldValue}
+
+============== New Value ==============
+${maxEvents.newValue}
+
+============== Parameter Value ==============
+${maxEvents.parameterValue}
+`;
+
+    if (!token) {
+        console.log("MAX_BOT_TOKEN не найден");
+        return;
+    }
 
     try {
-
-        await fetch(
-            `https://api.telegram.org/bot${token}/sendMessage`,
+        const response = await fetch(
+            `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
                 method: "POST",
 
                 headers: {
+                    "Authorization": token,
                     "Content-Type": "application/json"
                 },
 
                 body: JSON.stringify({
-                    chat_id: telegramUserId,
                     text: message
                 })
             }
         );
 
+        const data = await response.json();
+
+        console.log("MAX sendMessage:", data);
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+        console.error(
+            "Ошибка при отправке сообщения MAX:",
+            error
+        );
+    }
+}
+
+
+async function MaxPrintStopMonitor(
+    monitorId: number,
+    maxUserId: number
+) {
+    const message = `
+Монитор остановлен.
+
+============== Monitor ID ==============
+${monitorId}
+`;
+
+    if (!token) {
+        console.log("MAX_BOT_TOKEN не найден");
+        return;
     }
 
-}
-async function tgPrintStopMonitor(monitorId: number, telegramUserId: number) {
-
-    const message = `
-            Монитор остановлен:";
-            ==============monitorId================
-            ${monitorId};
-            `;
-
     try {
-
-        await fetch(
-            `https://api.telegram.org/bot${token}/sendMessage`,
+        const response = await fetch(
+            `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
                 method: "POST",
 
                 headers: {
+                    "Authorization": token,
                     "Content-Type": "application/json"
                 },
 
                 body: JSON.stringify({
-                    chat_id: telegramUserId,
                     text: message
                 })
             }
         );
 
+        const data = await response.json();
+
+        console.log("MAX sendMessage:", data);
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+        console.error(
+            "Ошибка при отправке сообщения MAX:",
+            error
+        );
     }
-
-
-
 }
 
 
+async function MaxPrintAllMyMonitors(
+    monitors: any,
+    maxUserId: number
+) {
+    let message =
+        `Все мониторы пользователя: ${maxUserId}:\n`;
 
-
-
-async function tgPrintAllMyMonitors(monitors: any, telegramUserId: number) {
-
-    let message = `Все мониторы пользователя:${telegramUserId}:`;
     const blocks: string[] = [];
 
     for (const monitor of monitors) {
         blocks.push(`
-    #${monitor.id}
-    Сайт: ${monitor.target}
-    Интервал: ${monitor.interval_minutes} мин.
-    Статус: ${monitor.status}
-    `);
-
+#${monitor.id}
+Сайт: ${monitor.target}
+Интервал: ${monitor.interval_minutes} мин.
+Статус: ${monitor.status}
+`);
     }
+
     message += blocks.join("\n");
 
-
+    if (!token) {
+        console.log("MAX_BOT_TOKEN не найден");
+        return;
+    }
 
     try {
-
-        await fetch(
-            `https://api.telegram.org/bot${token}/sendMessage`,
+        const response = await fetch(
+            `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
                 method: "POST",
 
                 headers: {
+                    "Authorization": token,
                     "Content-Type": "application/json"
                 },
 
                 body: JSON.stringify({
-                    chat_id: telegramUserId,
                     text: message
                 })
             }
         );
 
+        const data = await response.json();
+
+        console.log("MAX sendMessage:", data);
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+        console.error(
+            "Ошибка при отправке сообщения MAX:",
+            error
+        );
     }
-
-
-
-
-
-
-
-
-
 }
 
 
-
-
-
-export { tgPrintResultMonitor }
-export { tgPrintStopMonitor }
-export { tgPrintAllMyMonitors }
+export {
+    MaxPrintResultMonitor,
+    MaxPrintStopMonitor,
+    MaxPrintAllMyMonitors
+};
