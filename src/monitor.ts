@@ -128,9 +128,10 @@ async function runMonitor(
             break;
         }
 
-        await wait(min * 60 * 100);
+        await wait(min * 60 * 1000);
     }
 }
+
 async function startActiveMonitors(activeMonitors: any) {
 
     for (const monitor of activeMonitors) {
