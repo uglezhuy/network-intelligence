@@ -140,6 +140,83 @@ async function handleApiRequest(
 
 
 
+    ///////////////////////eavents
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/eavents/")
+    ) {
+        console.log("ROUTE: /api/eavents/");
+
+        const target =
+            req.url.split("/api/eavents/")[1];
+
+        console.log("id monitor for eavents:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный id монитора"
+            }));
+
+            return;
+        }
+
+        try {
+            console.log("Запускаем analyzers:", target);
+
+            const scanResult =
+                await analyzers(target);
+
+            console.log("Сканирование завершено");
+            await saveResultinScan(scanResult, TEST_TELEGRAM_USER_ID);
+            console.log("Результат сохранен в базе данных");
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify(scanResult));
+        } catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+
+        return;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //остановка //////////////////////////////////////////////////////////////////////////////
     if (
