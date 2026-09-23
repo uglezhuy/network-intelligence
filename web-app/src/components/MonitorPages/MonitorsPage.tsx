@@ -1,3 +1,5 @@
+import ResoltMonitorScan from "./ResoltMonitorScan";
+
 import { useEffect, useState } from "react";
 
 type MonitorsPageProps = {
@@ -93,6 +95,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           <button onClick={() => deleteMonitorID(monitor.id)}>Удалить</button>
         </div>
       ))}
+
+      <ResoltMonitorScan />
     </>
   );
 }

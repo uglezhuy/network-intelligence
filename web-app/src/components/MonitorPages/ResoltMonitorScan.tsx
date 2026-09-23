@@ -5,7 +5,12 @@ type MonitorsPageProps = {
 };
 
 function ResoltMonitorScan({ page }: MonitorsPageProps) {
-  return <> </>;
+  return (
+    <>
+      <div>Результат сканирования:</div>
+      <div>МОНИТОРИНГ:</div>
+    </>
+  );
 }
 
 export default ResoltMonitorScan;

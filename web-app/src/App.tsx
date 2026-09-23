@@ -2,8 +2,8 @@ import { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/ScanPage/Dashboard";
 import ScanPage from "./components/ScanPage/ScanPage";
-import MonitorsPage from "./components/ScanPage/MonitorPages/MonitorsPage";
-import EaventsPage from "./components/ScanPage/EaventsPage";
+import MonitorsPage from "./components/MonitorPages/MonitorsPage";
+import EaventsPage from "./components/EaventsPage/EaventsPage";
 
 function App() {
   const [page, setPage] = useState("Главная");

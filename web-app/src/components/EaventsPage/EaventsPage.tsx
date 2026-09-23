@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ResoltMonitorEaventsnts from "./ResoltMonitorScan";
 
 type EaventsPageProps = {
   page: string;
@@ -111,9 +112,7 @@ function EaventsPage({ page }: EaventsPageProps) {
         </div>
       ))}
 
-      <div>Результат сканирования:</div>
-
-      <pre>{resultScanEavents}</pre>
+      <ResoltMonitorEaventsnts page={page} />
     </>
   );
 }
