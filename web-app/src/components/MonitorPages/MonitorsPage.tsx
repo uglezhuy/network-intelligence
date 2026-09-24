@@ -20,6 +20,10 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     [],
   );
 
+  const [selectedMonitorId, setSelectedMonitorId] = useState<number | null>(
+    null,
+  );
+
   async function ShowMonitorsALL() {
     console.log("Вывод доступных мониторов:", URL);
 
@@ -84,19 +88,18 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           <div>
             #{monitor.id} — {monitor.target}
           </div>
-
           <div>Интервал: {monitor.interval_minutes} мин</div>
-
           <div>Статус: {monitor.status}</div>
-
-          <button>Отобразить</button>
+          <button onClick={() => setSelectedMonitorId(monitor.id)}>
+            Отобразить данные
+          </button>
           <button onClick={() => StartMonitorID(monitor.id)}>Запустить</button>
           <button onClick={() => stopMonitorID(monitor.id)}>Остановить</button>
           <button onClick={() => deleteMonitorID(monitor.id)}>Удалить</button>
         </div>
       ))}
 
-      <ResoltMonitorScan />
+      <ResoltMonitorScan page={page} monitorId={selectedMonitorId} />
     </>
   );
 }
