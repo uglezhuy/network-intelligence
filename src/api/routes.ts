@@ -1,11 +1,11 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { showMonitorsByUser } from "../showMonitorsByUser";
-import { analyzers } from "../analyzers.js";
-import { saveResultinScan } from "../database/results.js";
-import { stopMonitorID } from "../stopMonitor.js"
-import { startMonitorID } from "../startMonitorID.js"
+import { analyzers } from "../analyzers";
+import { saveResultinScan } from "../database/results";
+import { stopMonitorID } from "../stopMonitor"
+import { startMonitorID } from "../startMonitorID"
 import { deleteMonitorID } from "../deleteMonitor"
-
+import { MonitorFullResultByID } from "../MonitorFullResultByID";
 
 
 async function handleApiRequest(
@@ -136,8 +136,59 @@ async function handleApiRequest(
 
 
 
+    // /api/monitorsResolts/ //////////////////////////////////////////////////////////////////////////////
 
 
+    if (req.method === "GET" && req.url?.startsWith("/api/monitorsResolts/")) {
+        console.log("ROUTE: /api/monitorsResolts/");
+
+        const target = req.url.split("/api/monitorsResolts/")[1];
+
+        console.log("Target:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный id монитора"
+            }));
+
+            return;
+        }
+        try {
+            console.log("Запускаем вывод всех мониторов по id:", target);
+
+            const FullMonitorsResultByID = await MonitorFullResultByID(target);
+
+
+
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify(FullMonitorsResultByID));
+
+
+
+        }
+        catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+
+
+        return;
+    }
 
 
     ///////////////////////eavents
