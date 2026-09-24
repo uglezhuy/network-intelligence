@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ResoltScan from "./ResoltScan";
 
 type ScanPageProps = {
   page: string;
@@ -37,7 +38,7 @@ function ScanPage({ page }: ScanPageProps) {
 
       <div>Результат сканирования:</div>
 
-      <pre>{resultScan}</pre>
+      <ResoltScan resultScan={resultScan} />
     </aside>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar";
-import Dashboard from "./components/ScanPage/Dashboard";
+import Dashboard from "./components/mainPage/Dashboard";
 import ScanPage from "./components/ScanPage/ScanPage";
 import MonitorsPage from "./components/MonitorPages/MonitorsPage";
 import EaventsPage from "./components/EaventsPage/EaventsPage";
