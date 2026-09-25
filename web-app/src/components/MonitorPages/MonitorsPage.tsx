@@ -25,17 +25,17 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   );
 
   async function ShowMonitorsALL() {
-    console.log("Вывод доступных мониторов:", URL);
-
     const response = await fetch(
       `http://localhost:3000/api/monitorsUser/503362430`, // pfхарженный айди для тестов
     );
-
     const data = await response.json();
-
-    console.log("Поток сканирования:", data);
-
     setResultMyMonitors(data);
+  }
+  function insertMonitorURL() {
+    console.log("Добавление монитора:", URL);
+    fetch(`http://localhost:3000/api/insertMonitor/${URL}`);
+    console.log("Добавление монитора завершено:", URL);
+    ShowMonitorsALL();
   }
 
   async function stopMonitorID(monitorId: number) {
