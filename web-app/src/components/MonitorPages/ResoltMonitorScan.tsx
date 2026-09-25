@@ -6,17 +6,11 @@ type ResoltMonitorScanProps = {
 };
 
 function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
-  const [resultMonitor, setResultMonitor] = useState("Идет загрузка монитора");
-
+  const [resultMonitor, setResultMonitor] = useState<any[]>([]);
   console.log("Вывод монитора с ID:", monitorId);
 
   useEffect(() => {
     async function getMonitorResult() {
-      if (monitorId === null) {
-        setResultMonitor("Монитор не выбран");
-        return;
-      }
-
       try {
         const resoltMonitor = await fetch(
           `http://localhost:3000/api/monitorsResolts/${monitorId}`,
@@ -26,11 +20,9 @@ function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
 
         console.log("Все данные монитора:", data);
 
-        setResultMonitor(JSON.stringify(data, null, 2));
+        setResultMonitor(data);
       } catch (error) {
         console.error("Ошибка получения результата монитора:", error);
-
-        setResultMonitor("Ошибка получения данных монитора");
       }
     }
 
@@ -45,7 +37,20 @@ function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
 
       <div>Выбран монитор с ID: {monitorId}</div>
 
-      <div>{resultMonitor}</div>
+      {resultMonitor.map((result) => (
+        <div key={result.id}>
+          <hr />
+          <hr />
+          <hr />
+
+          <div>ID результата: {result.id}</div>
+          <div>Дата: {result.created_at}</div>
+          <div>{JSON.stringify(result.data, null, 2)}</div>
+          <hr />
+          <hr />
+          <hr />
+        </div>
+      ))}
     </>
   );
 }
