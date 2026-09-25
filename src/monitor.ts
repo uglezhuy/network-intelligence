@@ -4,8 +4,13 @@ import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
+
+
 import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
 import { MaxPrintResultScan } from "./maxBot/MaxPrintResultScan.js";
+
+import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
+import { tgPrintResultScan } from "./telegram/tgPrintResultScan.js";
 
 
 function wait(ms: number): Promise<void> {
@@ -92,7 +97,7 @@ async function runMonitor(
                 telegramUserId
             );
 
-
+            /////////////////////for MAX////////////////////////
             if (mode === "events") {
                 const tgEvents = await monitor_events(monitorId);
 
@@ -111,6 +116,33 @@ async function runMonitor(
                     telegramUserId
                 );
             }
+            ///////////////////////////////////////////////////
+            // переделать то что свреху и снизу вроде работает но поидеи рабоать не долдно полюбому что то сверху и снизу от этого комента 
+
+            //////////////////////////////////////// for Telegram ///////////////////////////////////////////////////
+
+            if (mode === "events") {
+                const tgEvents = await monitor_events(monitorId);
+
+                if (telegramUserId && tgEvents.length > 0) {
+                    await tgPrintResultMonitor(
+                        tgEvents[0],
+                        telegramUserId,
+                        target
+                    );
+                }
+            }
+
+            if (mode === "monitors" && telegramUserId) {
+                await tgPrintResultScan(
+                    result,
+                    telegramUserId
+                );
+            }
+
+
+
+            //////////////////////////////////
 
 
         } catch (error) {
