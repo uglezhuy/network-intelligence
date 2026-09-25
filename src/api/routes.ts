@@ -6,6 +6,7 @@ import { stopMonitorID } from "../stopMonitor"
 import { startMonitorID } from "../startMonitorID"
 import { deleteMonitorID } from "../deleteMonitor"
 import { MonitorFullResultByID } from "../MonitorFullResultByID";
+import { monitor } from "../monitor"
 
 
 async function handleApiRequest(
@@ -185,10 +186,64 @@ async function handleApiRequest(
                 error: "Ошибка сервера"
             }));
         }
-
-
         return;
     }
+
+
+
+    //////////////////////addMonitor
+    if (
+
+        req.url?.startsWith("/api/addMonitor/")
+    ) {
+        console.log("ROUTE: /api/addMonitor/");
+
+        const target =
+            req.url.split("/api/addMonitor/")[1];
+
+        console.log("Target:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный URL"
+            }));
+
+            return;
+        }
+
+        try {
+            console.log("Добавление монитора:", target);
+
+            await monitor(target, 1, "monitors", 503362430); // тестовые данные
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+        }
+        catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+        return;
+    }
+
+
+
+
+
+
+
 
 
     ///////////////////////eavents

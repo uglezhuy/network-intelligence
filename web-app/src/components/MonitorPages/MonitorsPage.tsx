@@ -33,7 +33,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   }
   function insertMonitorURL() {
     console.log("Добавление монитора:", URL);
-    fetch(`http://localhost:3000/api/insertMonitor/${URL}`);
+    fetch(`http://localhost:3000/api/addMonitor/${URL}`);
     console.log("Добавление монитора завершено:", URL);
     ShowMonitorsALL();
   }
@@ -80,6 +80,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           value={URL}
           onChange={(event) => setURL(event.target.value)}
         />
+
+        <button onClick={insertMonitorURL}>Мониторить</button>
       </div>
       <button>Мониторить</button>
       <div>Результаты мониторинга:</div>
