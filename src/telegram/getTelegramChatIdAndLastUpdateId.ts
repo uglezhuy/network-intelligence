@@ -4,7 +4,8 @@ import { processMessage } from "./processMessage.js";
 
 
 
-async function getTelegramChatIdAndLastUpdateId() {
+async function
+    getTelegramChatIdAndLastUpdateId() {
     const db = await connection;
 
     const [stateRows]: any = await db.execute(
