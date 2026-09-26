@@ -8,6 +8,20 @@ type MonitorsPageProps = {
 
 function MonitorsPage({ page }: MonitorsPageProps) {
   const [URL, setURL] = useState("");
+  const [min, setMin] = useState(0.1);
+
+  ///TG///
+  const [TgSendMonitorNotifications, TgSetSendMonitorNotifications] =
+    useState(false);
+  const [TgSendEventNotifications, TgSetSendEventNotifications] =
+    useState(false);
+  //////////////////////////////////////////////
+  ///MAX///
+  const [MaxSendMonitorNotifications, MaxSetSendMonitorNotifications] =
+    useState(false);
+  const [MaxSendEventNotifications, MaxSetSendEventNotifications] =
+    useState(false);
+  //////////////////////////////////////////////
   type ResultMyMonitor = {
     id: number;
     target: string;
@@ -31,10 +45,36 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     const data = await response.json();
     setResultMyMonitors(data);
   }
-  function insertMonitorURL() {
-    console.log("Добавление монитора:", URL);
-    fetch(`http://localhost:3000/api/addMonitor/${URL}`);
-    console.log("Добавление монитора завершено:", URL);
+  function insertMonitorURL(min: number) {
+    console.log("Добавление монитора:", URL, min);
+    console.log(
+      "параметры уведомлений TG и MAX:",
+      "TgSendMonitorNotifications",
+      TgSendMonitorNotifications,
+      "TgSendEventNotifications",
+      TgSendEventNotifications,
+      "MaxSendMonitorNotifications",
+      MaxSendMonitorNotifications,
+      "MaxSendEventNotifications",
+      MaxSendEventNotifications,
+    );
+    fetch("http://localhost:3000/api/addMonitor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        target: URL,
+        interval_minutes: min,
+
+        send_monitor_notificationsBot: TgSendMonitorNotifications,
+        send_event_notificationsBot: TgSendEventNotifications,
+
+        send_monitor_notificationsMAX: MaxSendMonitorNotifications,
+        send_event_notificationsMAX: MaxSendEventNotifications,
+      }),
+    });
+    console.log("Добавление монитора завершено:", URL, min);
     ShowMonitorsALL();
   }
 
@@ -72,18 +112,82 @@ function MonitorsPage({ page }: MonitorsPageProps) {
       <div>Активные моинторы на id 503362430 захаржено {}</div>
       <div>
         {page}
-
         <div>Введите URL для мониторинга </div>
-
         <input
           type="text"
           value={URL}
           onChange={(event) => setURL(event.target.value)}
         />
+        <div>Введите интервал в минутах </div>
+        <input
+          type="number"
+          value={min}
+          onChange={(event) => setMin(Number(event.target.value))}
+        />
+        /////////////////////////////TG///////////////////////////
+        <div>
+          <div>Уведомления в Telegram</div>
 
-        <button onClick={insertMonitorURL}>Мониторить</button>
+          <label>
+            <input
+              type="checkbox"
+              checked={TgSendMonitorNotifications}
+              onChange={(event) =>
+                TgSetSendMonitorNotifications(event.target.checked)
+              }
+            />
+            Результаты проверок
+          </label>
+
+          <div>Получать уведомление после каждой проверки</div>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={TgSendEventNotifications}
+              onChange={(event) =>
+                TgSetSendEventNotifications(event.target.checked)
+              }
+            />
+            События
+          </label>
+
+          <div>Получать уведомление, если обнаружено изменение</div>
+        </div>
+        ////////////////////////MAX//////////////////////////////////////
+        <div>
+          <div>Уведомления в MAX</div>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={MaxSendMonitorNotifications}
+              onChange={(event) =>
+                MaxSetSendMonitorNotifications(event.target.checked)
+              }
+            />
+            Результаты проверок
+          </label>
+
+          <div>Получать уведомление после каждой проверки</div>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={MaxSendEventNotifications}
+              onChange={(event) =>
+                MaxSetSendEventNotifications(event.target.checked)
+              }
+            />
+            События
+          </label>
+
+          <div>Получать уведомление, если обнаружено изменение</div>
+        </div>
+        //////////////////////////////////////////////////////////////
+        <button onClick={() => insertMonitorURL(min)}>Мониторить</button>{" "}
       </div>
-      <button>Мониторить</button>
+
       <div>Результаты мониторинга:</div>
       {resultMyMonitors.map((monitor) => (
         <div key={monitor.id}>
