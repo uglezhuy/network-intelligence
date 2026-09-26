@@ -71,7 +71,16 @@ async function main() {
             process.exit(1);
         }
 
-        await monitor(target, min, "events", undefined);// для теста undefined
+        await monitor(
+            target,
+            min,
+            "events",
+            false,
+            false,
+            false,
+            false,
+            undefined
+        );
     }
 
     // UNKNOWN COMMAND

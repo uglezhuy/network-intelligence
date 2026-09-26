@@ -21,7 +21,13 @@ async function monitor(
     target: string,
     min: number,
     mode: string,
+    sendMonitorNotificationsBot: boolean,
+    sendEventNotificationsBot: boolean,
+
+    sendMonitorNotificationsMAX: boolean,
+    sendEventNotificationsMAX: boolean,
     telegramUserId?: number,
+
 ) {
 
     let monitorId: number;
@@ -32,7 +38,13 @@ async function monitor(
             target,
             min,
             mode,
-            telegramUserId,
+            sendMonitorNotificationsBot,
+            sendEventNotificationsBot,
+
+            sendMonitorNotificationsMAX,
+            sendEventNotificationsMAX,
+            telegramUserId
+
 
         );
 
@@ -41,7 +53,11 @@ async function monitor(
         monitorId = await saveResultinMonitors(
             target,
             min,
-            mode
+            mode,
+            false,
+            false,
+            false,
+            false,
         );
     }
 

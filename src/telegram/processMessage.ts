@@ -49,14 +49,31 @@ async function processMessage(message: TelegramMessage) {
     //events
     if (command === "/events") {
         console.log("команда /events");
-        monitor(target, Number(interval), "events", telegramUserId);
+        monitor(
+            target,
+            Number(interval),
+            "events",
+            false,
+            false,
+            false,
+            false,
+            telegramUserId
+        );
 
     }
     //monitor
     if (command === "/monitor") {
         console.log("команда /monitors");
-        monitor(target, Number(interval), "monitors", telegramUserId);
-
+        monitor(
+            target,
+            Number(interval),
+            "monitors",
+            false,
+            false,
+            false,
+            false,
+            telegramUserId
+        );
     }
 
     //stop  

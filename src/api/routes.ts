@@ -25,6 +25,22 @@ async function handleApiRequest(
 
     res.setHeader("Access-Control-Allow-Origin", "*");
 
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, OPTIONS"
+    );
+
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type"
+    );
+
+    if (req.method === "OPTIONS") {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
     // /api/monitors//////////////////////////////////////////////////////////////////////////////
     if (
         req.method === "GET" &&
@@ -192,57 +208,102 @@ async function handleApiRequest(
 
 
     //////////////////////addMonitor
-    if (
+    if (req.url === "/api/addMonitor" && req.method === "POST") {
+        console.log("ROUTE: /api/addMonitor");
 
-        req.url?.startsWith("/api/addMonitor/")
-    ) {
-        console.log("ROUTE: /api/addMonitor/");
+        let body = "";
 
-        const target =
-            req.url.split("/api/addMonitor/")[1];
+        req.on("data", (chunk) => {
+            body += chunk;
+        });
 
-        console.log("Target:", target);
+        req.on("end", async () => {
+            try {
+                const data = JSON.parse(body);
 
-        if (!target) {
-            res.writeHead(400, {
-                "Content-Type": "application/json"
-            });
+                const target = data.target;
+                const min = data.interval_minutes;
 
-            res.end(JSON.stringify({
-                error: "Некорректный URL"
-            }));
+                const sendMonitorNotificationsBot =
+                    data.send_monitor_notificationsBot;
 
-            return;
-        }
+                const sendEventNotificationsBot =
+                    data.send_event_notificationsBot;
 
-        try {
-            console.log("Добавление монитора:", target);
+                const sendMonitorNotificationsMAX =
+                    data.send_monitor_notificationsMAX;
 
-            await monitor(target, 1, "monitors", 503362430); // тестовые данные
+                const sendEventNotificationsMAX =
+                    data.send_event_notificationsMAX;
 
-            res.writeHead(200, {
-                "Content-Type": "application/json"
-            });
-        }
-        catch (error) {
-            console.error("Ошибка API:", error);
+                console.log("URL:", target);
+                console.log("MIN:", min);
 
-            res.writeHead(500, {
-                "Content-Type": "application/json"
-            });
+                console.log(
+                    "TG:",
+                    sendMonitorNotificationsBot,
+                    sendEventNotificationsBot
+                );
 
-            res.end(JSON.stringify({
-                error: "Ошибка сервера"
-            }));
-        }
+                console.log(
+                    "MAX:",
+                    sendMonitorNotificationsMAX,
+                    sendEventNotificationsMAX
+                );
+
+                if (!target) {
+                    res.writeHead(400, {
+                        "Content-Type": "application/json",
+                    });
+
+                    res.end(
+                        JSON.stringify({
+                            error: "Некорректный URL",
+                        })
+                    );
+
+                    return;
+                }
+
+                console.log("Добавление монитора:", target);
+
+                await monitor(
+                    target,
+                    Number(min),
+                    "monitors",
+                    sendMonitorNotificationsBot,
+                    sendEventNotificationsBot,
+                    sendMonitorNotificationsMAX,
+                    sendEventNotificationsMAX,
+                    503362430
+                );
+
+                res.writeHead(200, {
+                    "Content-Type": "application/json",
+                });
+
+                res.end(
+                    JSON.stringify({
+                        message: "Монитор добавлен",
+                    })
+                );
+            } catch (error) {
+                console.error("Ошибка API:", error);
+
+                res.writeHead(500, {
+                    "Content-Type": "application/json",
+                });
+
+                res.end(
+                    JSON.stringify({
+                        error: "Ошибка сервера",
+                    })
+                );
+            }
+        });
+
         return;
     }
-
-
-
-
-
-
 
 
 

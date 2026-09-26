@@ -38,24 +38,47 @@ async function saveResultinMonitors(
     target: string,
     min: number,
     mode: string,
+    sendMonitorNotificationsTG: boolean,
+    sendEventNotificationsTG: boolean,
+    sendMonitorNotificationsMAX: boolean,
+    sendEventNotificationsMAX: boolean,
     telegramUserId?: number
 ) {
     const db = await connection;
 
     if (telegramUserId) {
         await db.execute(
-            "INSERT INTO monitors (target, interval_minutes, status, telegram_user_id, type) VALUES (?, ?, ?, ?, ?)",
+            `INSERT INTO monitors (
+                target,
+                interval_minutes,
+                status,
+                telegram_user_id,
+                type,
+                send_monitor_notificationsTG,
+                send_event_notificationsTG,
+                send_monitor_notificationsMAX,
+                send_event_notificationsMAX
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 target,
                 min,
                 "active",
                 telegramUserId,
-                mode
+                mode,
+                sendMonitorNotificationsTG,
+                sendEventNotificationsTG,
+                sendMonitorNotificationsMAX,
+                sendEventNotificationsMAX
             ]
         );
     } else {
         await db.execute(
-            "INSERT INTO monitors (target, interval_minutes, status, type) VALUES (?, ?, ?, ?)",
+            `INSERT INTO monitors (
+                target,
+                interval_minutes,
+                status,
+                type
+            ) VALUES (?, ?, ?, ?)`,
             [
                 target,
                 min,
