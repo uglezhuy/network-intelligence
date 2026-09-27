@@ -100,7 +100,7 @@ async function
 
 
         const [userRows]: any = await db.execute(
-            "SELECT id FROM telegram_users WHERE telegram_user_id = ?",
+            "SELECT id FROM telegram_max_web_users WHERE telegram_user_id = ?",
             [telegram_user_id]
         );
 
@@ -109,7 +109,7 @@ async function
 
 
             await db.execute(
-                `INSERT INTO telegram_users
+                `INSERT INTO telegram_max_web_users
                     (telegram_chat_id, username, telegram_user_id)
                     VALUES (?, ?,?)`,
                 [

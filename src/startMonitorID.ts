@@ -12,7 +12,7 @@ async function startMonitorID(monitorId: number) {
     );
 
     const [rows]: any = await db.execute(
-        `SELECT id, target, interval_minutes, type, telegram_user_id
+        `SELECT id, target, interval_minutes, type, telegram_user_id, send_monitor_notificationsTG, send_event_notificationsTG, send_monitor_notificationsMAX, send_event_notificationsMAX
          FROM monitors
          WHERE id = ?`,
         [monitorId]
@@ -38,6 +38,13 @@ async function startMonitorID(monitorId: number) {
         monitor.target,
         monitor.interval_minutes,
         monitor.type,
+
+        monitor.send_monitor_notificationsTG,
+        monitor.send_event_notificationsTG,
+
+        monitor.send_monitor_notificationsMAX,
+        monitor.send_event_notificationsMAX,
+
         monitor.telegram_user_id ?? undefined
     );
 }

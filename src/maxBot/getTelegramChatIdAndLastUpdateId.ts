@@ -17,6 +17,18 @@ async function getTelegramChatIdAndLastUpdateId() {
         return;
     }
 
+    // Получаем последний marker из базы
+    const [stateRows]: any = await db.execute(
+        "SELECT last_update_id FROM max_bot_state WHERE id = 1"
+    );
+
+    const lastUpdateId = stateRows[0]?.last_update_id ?? 0;
+
+    // После перезапуска берем marker из базы
+    if (marker === null && lastUpdateId > 0) {
+        marker = lastUpdateId;
+    }
+
     const url =
         marker === null
             ? "https://platform-api2.max.ru/updates"
@@ -68,8 +80,11 @@ async function getTelegramChatIdAndLastUpdateId() {
 
 
         const [userRows]: any = await db.execute(
-            "SELECT id FROM telegram_users WHERE telegram_user_id = ?",
-            [userId]
+            `SELECT id
+        FROM telegram_max_web_users
+         WHERE telegram_chat_id = ?
+         AND platform = 'max'`,
+            [chatId]
         );
 
         if (userRows.length === 0) {
@@ -77,13 +92,13 @@ async function getTelegramChatIdAndLastUpdateId() {
             console.log("Пользователь не найден");
 
             await db.execute(
-                `INSERT INTO telegram_users
-                    (telegram_chat_id, username, telegram_user_id)
-                 VALUES (?, ?, ?)`,
+                `INSERT INTO telegram_max_web_users
+                 (telegram_chat_id, username, platform)
+                VALUES (?, ?, ?)`,
                 [
                     chatId,
                     username,
-                    userId
+                    "max"
                 ]
             );
 
@@ -99,6 +114,7 @@ async function getTelegramChatIdAndLastUpdateId() {
         // к формату, который сейчас понимает processMessage()
 
         const messageForProcess = {
+
             from: {
                 id: userId,
                 username: username ?? undefined
@@ -109,14 +125,25 @@ async function getTelegramChatIdAndLastUpdateId() {
             },
 
             text: text ?? undefined
+
         };
 
         await processMessage(messageForProcess);
     }
 
 
+    // Получаем marker для следующего запроса
     if (data.marker !== undefined) {
+
         marker = data.marker;
+
+        // Сохраняем marker в базу
+        await db.execute(
+            `UPDATE max_bot_state
+             SET last_update_id = ?
+             WHERE id = 1`,
+            [marker]
+        );
     }
 }
 

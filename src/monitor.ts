@@ -64,17 +64,18 @@ async function monitor(
     console.log("Monitor created. ID:", monitorId);
 
     runMonitor(
-
         monitorId,
-
         target,
-
         min,
-
         mode,
 
-        telegramUserId
+        sendMonitorNotificationsBot,
+        sendEventNotificationsBot,
 
+        sendMonitorNotificationsMAX,
+        sendEventNotificationsMAX,
+
+        telegramUserId
     );
 
 }
@@ -84,6 +85,13 @@ async function runMonitor(
     target: string,
     min: number,
     mode: string,
+
+    send_monitor_notificationsTG: boolean,
+    send_event_notificationsTG: boolean,
+
+    send_monitor_notificationsMAX: boolean,
+    send_event_notificationsMAX: boolean,
+
     telegramUserId?: number
 ) {
     let StateMonitorById = true;
@@ -113,8 +121,8 @@ async function runMonitor(
                 telegramUserId
             );
 
-            /////////////////////for MAX////////////////////////
-            if (mode === "events") {
+            // /////////////////////for MAX////////////////////////
+            if (send_monitor_notificationsMAX === true && telegramUserId) {
                 const tgEvents = await monitor_events(monitorId);
 
                 if (telegramUserId && tgEvents.length > 0) {
@@ -126,7 +134,7 @@ async function runMonitor(
                 }
             }
 
-            if (mode === "monitors" && telegramUserId) {
+            if (send_event_notificationsMAX === true && telegramUserId) {
                 await MaxPrintResultScan(
                     result,
                     telegramUserId
@@ -137,26 +145,27 @@ async function runMonitor(
 
             //////////////////////////////////////// for Telegram ///////////////////////////////////////////////////
 
-            if (mode === "events") {
-                const tgEvents = await monitor_events(monitorId);
 
+            if (send_monitor_notificationsTG && telegramUserId) {
+                const tgEvents = await monitor_events(monitorId);
+                console.log("tgEvents ready");
                 if (telegramUserId && tgEvents.length > 0) {
                     await tgPrintResultMonitor(
                         tgEvents[0],
                         telegramUserId,
                         target
                     );
+
                 }
             }
 
-            if (mode === "monitors" && telegramUserId) {
+            if (send_event_notificationsTG && telegramUserId) {
+
                 await tgPrintResultScan(
                     result,
                     telegramUserId
                 );
             }
-
-
 
             //////////////////////////////////
 
@@ -187,7 +196,14 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.id,
             monitor.target,
             monitor.interval_minutes,
-            monitor.type
+            monitor.type,
+
+            monitor.send_monitor_notificationsTG,
+            monitor.send_event_notificationsTG,
+
+            monitor.send_monitor_notificationsMAX,
+            monitor.send_event_notificationsMAX
+
         );
 
         runMonitor(
@@ -195,6 +211,13 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.target,
             monitor.interval_minutes,
             monitor.type,
+
+            monitor.send_monitor_notificationsTG,
+            monitor.send_event_notificationsTG,
+
+            monitor.send_monitor_notificationsMAX,
+            monitor.send_event_notificationsMAX,
+
             monitor.telegram_user_id ?? undefined
         );
 

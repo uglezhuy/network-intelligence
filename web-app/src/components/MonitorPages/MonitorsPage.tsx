@@ -28,6 +28,10 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     interval_minutes: number;
     status: string;
     telegram_user_id: number;
+    send_monitor_notificationsTG: boolean;
+    send_event_notificationsTG: boolean;
+    send_monitor_notificationsMAX: boolean;
+    send_event_notificationsMAX: boolean;
   };
 
   const [resultMyMonitors, setResultMyMonitors] = useState<ResultMyMonitor[]>(
@@ -67,8 +71,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
         target: URL,
         interval_minutes: min,
 
-        send_monitor_notificationsBot: TgSendMonitorNotifications,
-        send_event_notificationsBot: TgSendEventNotifications,
+        send_monitor_notificationsTG: TgSendMonitorNotifications,
+        send_event_notificationsTG: TgSendEventNotifications,
 
         send_monitor_notificationsMAX: MaxSendMonitorNotifications,
         send_event_notificationsMAX: MaxSendEventNotifications,
@@ -196,6 +200,13 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           </div>
           <div>Интервал: {monitor.interval_minutes} мин</div>
           <div>Статус: {monitor.status}</div>
+          <div> Статусы уведомлений</div>
+          <div>Telegram монитор: {monitor.send_monitor_notificationsTG}</div>
+          <div>Telegram изменения: {monitor.send_event_notificationsTG}</div>
+
+          <div>MAX монитор: {monitor.send_monitor_notificationsMAX}</div>
+          <div>MAX изменения: {monitor.send_event_notificationsMAX}</div>
+
           <button onClick={() => setSelectedMonitorId(monitor.id)}>
             Отобразить данные
           </button>

@@ -275,7 +275,7 @@ async function handleApiRequest(
                     sendEventNotificationsBot,
                     sendMonitorNotificationsMAX,
                     sendEventNotificationsMAX,
-                    503362430
+                    TEST_TELEGRAM_USER_ID
                 );
 
                 res.writeHead(200, {
