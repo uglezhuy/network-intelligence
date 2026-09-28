@@ -122,7 +122,7 @@ async function runMonitor(
             );
 
             // /////////////////////for MAX////////////////////////
-            if (send_monitor_notificationsMAX === true && telegramUserId) {
+            if (send_monitor_notificationsMAX && telegramUserId) {
                 const tgEvents = await monitor_events(monitorId);
 
                 if (telegramUserId && tgEvents.length > 0) {
@@ -134,7 +134,7 @@ async function runMonitor(
                 }
             }
 
-            if (send_event_notificationsMAX === true && telegramUserId) {
+            if (send_event_notificationsMAX && telegramUserId) {
                 await MaxPrintResultScan(
                     result,
                     telegramUserId
