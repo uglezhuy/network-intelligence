@@ -1,38 +1,102 @@
+
 import "dotenv/config";
 
 const token = process.env.MAX_BOT_TOKEN;
 
+
+// ============================================================
+// Событие монитора
+// ============================================================
 
 async function MaxPrintResultMonitor(
     maxEvents: any,
     maxUserId: number,
     target: string
 ) {
+
+    let parameterName = maxEvents.parameter;
+
+    // Красивые названия параметров
+    if (maxEvents.parameter === "responseTime") {
+        parameterName = "Время ответа";
+    }
+
+    if (maxEvents.parameter === "dnsInfo ipv4") {
+        parameterName = "DNS IPv4";
+    }
+
+    if (maxEvents.parameter === "dnsInfo MX") {
+        parameterName = "DNS MX";
+    }
+
+    if (maxEvents.parameter === "dnsInfo NS") {
+        parameterName = "DNS NS";
+    }
+
+    if (maxEvents.parameter === "http status") {
+        parameterName = "HTTP статус";
+    }
+
+    if (maxEvents.parameter === "http server") {
+        parameterName = "HTTP сервер";
+    }
+
+    if (maxEvents.parameter === "http bodySize") {
+        parameterName = "Размер страницы";
+    }
+
+    if (maxEvents.parameter === "PORT ports") {
+        parameterName = "Открытые порты";
+    }
+
+
+    // Красивое отображение изменения
+    let changeText = "";
+
+    if (
+        maxEvents.parameter === "responseTime" &&
+        typeof maxEvents.oldValue === "number" &&
+        typeof maxEvents.newValue === "number"
+    ) {
+
+        const difference =
+            maxEvents.newValue - maxEvents.oldValue;
+
+        const sign = difference > 0 ? "+" : "";
+
+        changeText =
+            `\n📈 Изменение: ${sign}${difference} мс`;
+    }
+
+
     const message = `
-Изменения на сайте: ${target}
+⚠️ ОБНАРУЖЕНО ИЗМЕНЕНИЕ
 
-============== Monitor ID ==============
-${maxEvents.monitorId}
+🌐 Сайт: ${target}
 
-============== Parameter ==============
-${maxEvents.parameter}
+📊 ${parameterName}
 
-============== Old Value ==============
+Было:
 ${maxEvents.oldValue}
 
-============== New Value ==============
-${maxEvents.newValue}
+Стало:
+${maxEvents.newValue}${changeText}
 
-============== Parameter Value ==============
+🎯 Порог события:
 ${maxEvents.parameterValue}
+
+🆔 Монитор: #${maxEvents.monitorId}
 `;
+
 
     if (!token) {
         console.log("MAX_BOT_TOKEN не найден");
         return;
     }
 
+
     try {
+
         const response = await fetch(
             `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
@@ -49,36 +113,49 @@ ${maxEvents.parameterValue}
             }
         );
 
+
         const data = await response.json();
 
         console.log("MAX sendMessage:", data);
 
     } catch (error) {
+
         console.error(
             "Ошибка при отправке сообщения MAX:",
             error
         );
+
     }
 }
 
+
+
+// ============================================================
+// Остановка монитора
+// ============================================================
 
 async function MaxPrintStopMonitor(
     monitorId: number,
     maxUserId: number
 ) {
-    const message = `
-Монитор остановлен.
 
-============== Monitor ID ==============
-${monitorId}
+    const message = `
+🛑 МОНИТОР ОСТАНОВЛЕН
+
+🆔 Монитор: #${monitorId}
+
+Проверки больше не выполняются.
 `;
+
 
     if (!token) {
         console.log("MAX_BOT_TOKEN не найден");
         return;
     }
 
+
     try {
+
         const response = await fetch(
             `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
@@ -95,38 +172,61 @@ ${monitorId}
             }
         );
 
+
         const data = await response.json();
 
         console.log("MAX sendMessage:", data);
 
     } catch (error) {
+
         console.error(
             "Ошибка при отправке сообщения MAX:",
             error
         );
+
     }
 }
 
+
+
+// ============================================================
+// Все мониторы пользователя
+// ============================================================
 
 async function MaxPrintAllMyMonitors(
     monitors: any,
     maxUserId: number
 ) {
-    let message =
-        `Все мониторы пользователя: ${maxUserId}:\n`;
+
+    console.log("MaxPrintAllMyMonitors запущена");
+
+    console.log("monitors:", monitors);
+
+    console.log("maxUserId:", maxUserId);
+
+    let message = `📋 МОИ МОНИТОРЫ\n`;
 
     const blocks: string[] = [];
 
     for (const monitor of monitors) {
+
+        const status =
+            monitor.status === "active"
+                ? "🟢 Активен"
+                : "🔴 Остановлен";
+
         blocks.push(`
-#${monitor.id}
-Сайт: ${monitor.target}
-Интервал: ${monitor.interval_minutes} мин.
-Статус: ${monitor.status}
+🆔 Монитор #${monitor.id}
+🌐 ${monitor.target}
+⏱ Интервал: ${monitor.interval_minutes} мин.
+${status}
 `);
     }
 
     message += blocks.join("\n");
+
+    console.log("Сообщение для MAX:");
+    console.log(message);
 
     if (!token) {
         console.log("MAX_BOT_TOKEN не найден");
@@ -134,6 +234,7 @@ async function MaxPrintAllMyMonitors(
     }
 
     try {
+
         const response = await fetch(
             `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
@@ -150,18 +251,27 @@ async function MaxPrintAllMyMonitors(
             }
         );
 
+        console.log("MAX HTTP status:", response.status);
+
         const data = await response.json();
 
         console.log("MAX sendMessage:", data);
 
     } catch (error) {
+
         console.error(
             "Ошибка при отправке сообщения MAX:",
             error
         );
+
     }
 }
 
+
+
+// ============================================================
+// Export
+// ============================================================
 
 export {
     MaxPrintResultMonitor,

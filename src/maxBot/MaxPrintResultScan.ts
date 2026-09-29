@@ -1,3 +1,4 @@
+
 import "dotenv/config";
 
 async function MaxPrintResultScan(
@@ -13,7 +14,11 @@ async function MaxPrintResultScan(
         return;
     }
 
+
+    // ============================================================
     // DNS
+    // ============================================================
+
     const ipv4 =
         dnsInfo.ipv4.status === "fulfilled"
             ? dnsInfo.ipv4.value.join(", ")
@@ -36,16 +41,26 @@ async function MaxPrintResultScan(
             ? dnsInfo.ns.value.join(", ")
             : "Ошибка";
 
+
+    // ============================================================
     // HTTP
+    // ============================================================
+
     console.log("HTTP:", result.http);
 
-    const HttpStatus = result.http.status;
-    const ResponseTime = result.http.responseTime;
+    const httpStatus = result.http.status;
+    const responseTime = result.http.responseTime;
 
+
+    // ============================================================
     // TLS
+    // ============================================================
+
     console.log("TLS:", result.tls);
 
-    const tlsEnabled = result.tls ? "enabled" : "disabled";
+    const tlsEnabled = result.tls
+        ? "✅ Включён"
+        : "❌ Отключён";
 
     const tlsValidFrom =
         result.tls?.getCertificate?.valid_from ?? "Не найдено";
@@ -65,7 +80,11 @@ async function MaxPrintResultScan(
             )
             : "Неизвестно";
 
+
+    // ============================================================
     // Ports
+    // ============================================================
+
     const openPorts =
         result.ports.length > 0
             ? result.ports
@@ -74,55 +93,89 @@ async function MaxPrintResultScan(
                 .join(", ")
             : "Нет открытых портов";
 
+
+    // ============================================================
+    // Сообщение
+    // ============================================================
+
     const message = `
-Сайт: ${result.target}
+🌐 ПРОВЕРКА САЙТА
 
-============= DNS =============
-IPv4: ${ipv4}
-IPv6: ${ipv6}
-MX: ${mx}
-NS: ${ns}
+${result.target}
 
-============= HTTP =============
-HTTP Status: ${HttpStatus}
-Response Time: ${ResponseTime} ms
+━━━━━━━━━━━━━━━━━━━━
+📡 DNS
+━━━━━━━━━━━━━━━━━━━━
 
-============= TLS =============
-TLS enabled: ${tlsEnabled}
-TLS version: ${tlsInfo}
-Valid from: ${tlsValidFrom}
-Valid to: ${validTo}
-TLS days left: ${tlsDaysLeft}
+• IPv4: ${ipv4}
+• IPv6: ${ipv6}
+• MX: ${mx}
+• NS: ${ns}
 
-============= Ports =============
-Open ports: ${openPorts}
+
+━━━━━━━━━━━━━━━━━━━━
+🌍 HTTP
+━━━━━━━━━━━━━━━━━━━━
+
+• Статус: ${httpStatus}
+• Время ответа: ${responseTime} мс
+
+
+━━━━━━━━━━━━━━━━━━━━
+🔐 TLS
+━━━━━━━━━━━━━━━━━━━━
+
+• Состояние: ${tlsEnabled}
+• Версия: ${tlsInfo}
+• Действует с: ${tlsValidFrom}
+• Действует до: ${validTo}
+• Осталось: ${tlsDaysLeft} дней
+
+
+━━━━━━━━━━━━━━━━━━━━
+🔌 ОТКРЫТЫЕ ПОРТЫ
+━━━━━━━━━━━━━━━━━━━━
+
+${openPorts}
 `;
 
+
+    // ============================================================
+    // Отправка сообщения
+    // ============================================================
+
     try {
+
         const response = await fetch(
             `https://platform-api2.max.ru/messages?user_id=${maxUserId}`,
             {
                 method: "POST",
+
                 headers: {
                     "Authorization": token,
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify({
                     text: message
                 })
             }
         );
 
+
         const data = await response.json();
 
         console.log("MAX sendMessage:", data);
 
     } catch (error) {
+
         console.error(
             "Ошибка при отправке сообщения MAX:",
             error
         );
+
     }
 }
+
 
 export { MaxPrintResultScan };
