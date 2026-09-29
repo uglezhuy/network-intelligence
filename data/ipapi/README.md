@@ -3,25 +3,30 @@
 Данные в этом каталоге — **сторонний открытый источник данных**, они не являются
 частью исходного кода этого репозитория и передаются как есть.
 
-| Поле       | Значение                                                                                                                    |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Источник   | ipapi.is — бесплатные IP-базы данных                                                                                        |
-| URL        | https://ipapi.is/ (раздел «Databases» / «IP to Geolocation»)                                                                |
-| Файл       | `geolocationDatabaseIPv4.csv`                                                                                               |
+| Поле       | Значение |
+| ---------- | -------- |
+| Источник   | ipapi.is — бесплатные IP-базы данных |
+| URL        | https://ipapi.is/ (раздел «Databases» / «IP to Geolocation») |
+| Файл       | `geolocationDatabaseIPv4.csv` |
 | Формат     | CSV: `ip_version,start_ip,end_ip,continent,country_code,country,state,city,zip,timezone,latitude,longitude,accuracy,source` |
-| Записей    | 1 802 746 (без строки заголовка)                                                                                            |
-| Дата файла | 01.08.2026                                                                                                                  |
+| Объём      | растёт с обновлениями проекта (~200–600 МБ, 1,8–4,8 млн записей) |
 
 ## Установка базы данных
 
-**База данных в Git не хранится** — файл весит ~209 МБ и превышает лимит GitHub
-(100 МБ). Его нужно скачать один раз и положить в этот каталог:
+**База данных в Git не хранится** — файл превышает лимит GitHub (100 МБ).
+Скачайте и распакуйте её один раз (локально или на VPS):
 
-1. Откройте https://ipapi.is/ → раздел **Databases** / **IP to Geolocation**.
-2. Скачайте **Geolocation Database IPv4** и сохраните файл как
-   `data/ipapi/geolocationDatabaseIPv4.csv` в корне проекта.
-3. Запустите приложение — анализатор `src/analyzers/ip.ts` подхватит файл
-   автоматически (при загрузке в логе будет `IP database loaded: N records`).
+```bash
+# из корня проекта
+mkdir -p data/ipapi
+curl -L -o /tmp/geo.zip https://ipapi.is/data/geolocationDatabaseIPv4.csv.zip
+unzip -o /tmp/geo.zip -d data/ipapi
+rm /tmp/geo.zip
+```
+
+Запустите приложение — анализатор `src/analyzers/ip.ts` подхватит файл
+автоматически (при загрузке в логе будет `IP database loaded: N records`).
+Если файла нет, анализатор IP вернёт ошибку, остальные проверки продолжают работать.
 
 ## Атрибуция
 
