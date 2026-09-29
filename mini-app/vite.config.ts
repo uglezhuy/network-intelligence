@@ -6,8 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: [
-      'wellness-nearby-occurrence-rise.trycloudflare.com',
-    ],
+    // Разрешаем доступ через публичные домены и туннели в dev-режиме
+    allowedHosts: true,
   },
 })
