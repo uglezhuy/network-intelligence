@@ -1,0 +1,19 @@
+# Git и окружение
+.git
+.gitignore
+.DS_Store
+*.log
+.env
+
+# Собранные артефакты и зависимости
+dist
+node_modules
+
+# Локальная гео-база (монтируется отдельным volume, в репозитории не хранится)
+data/ipapi/geolocationDatabaseIPv4.csv
+
+# Подпроекты (у каждого свой build context и Dockerfile)
+web-app/node_modules
+web-app/dist
+mini-app/node_modules
+mini-app/dist

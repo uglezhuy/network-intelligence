@@ -1,0 +1,95 @@
+# ============================================================
+# Network Intelligence — запуск всех локальных компонентов одной командой:
+#
+#   docker compose up --build
+#
+# Поднимает: MySQL → бэкенд (API + мониторинг + Telegram/MAX-боты) →
+#            веб-интерфейс → Mini App.
+# Параметры (токены, БД) берутся из .env (см. .env.example).
+# ============================================================
+
+name: network-intelligence
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: nintel-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-network_intelligence}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # Схема БД выполняется один раз при первом старте
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    # Порт MySQL наружу НЕ публикуется: бэкенд и фронтенды общаются с БД
+    # по внутренней сети compose (db:3306). Это исключает конфликты
+    # с локальной MySQL разработчика.
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD} --silent",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nintel-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_NAME: ${DB_NAME:-network_intelligence}
+      # Токен MAX обязателен: без него основной сценарий в MAX не работает
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN:?Задайте MAX_BOT_TOKEN в .env (см. .env.example)}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-503362430}
+    ports:
+      - "3000:3000"
+    volumes:
+      # Директория с локальной гео-базой ipapi.is (~209 МБ, её файл в репозитории
+      # не хранится). Если CSV нет — анализатор IP вернёт ошибку, остальные
+      # проверки продолжат работать.
+      - ./data/ipapi:/app/data/ipapi:ro
+
+  web-app:
+    build:
+      context: ./web-app
+      dockerfile: Dockerfile
+    container_name: nintel-web-app
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # Адрес API для браузера: локально по умолчанию localhost:3000,
+      # на сервере задайте в .env: VITE_API_BASE_WEB=https://api.megafonhome.ru
+      VITE_API_BASE: ${VITE_API_BASE_WEB:-http://localhost:3000}
+    ports:
+      - "5173:5173"
+
+  mini-app:
+    build:
+      context: ./mini-app
+      dockerfile: Dockerfile
+    container_name: nintel-mini-app
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # Аналогично web-app: VITE_API_BASE_MINI=https://api.megafonhome.ru
+      VITE_API_BASE: ${VITE_API_BASE_MINI:-http://localhost:3000}
+    ports:
+      - "5174:5174"
+
+volumes:
+  mysql-data:
