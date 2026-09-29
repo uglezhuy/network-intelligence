@@ -2,26 +2,135 @@ import "dotenv/config";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
-async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number, target: string) {
 
+// ============================================================
+// Событие монитора
+// ============================================================
+
+async function tgPrintResultMonitor(
+    tgEvents: any,
+    telegramUserId: number,
+    target: string
+) {
+    if (!token) {
+        console.log("TELEGRAM_BOT_TOKEN не найден");
+        return;
+    }
+
+
+    // ========================================================
+    // Название параметра
+    // ========================================================
+
+    let parameterName =
+        tgEvents.parameter;
+
+
+    if (tgEvents.parameter === "responseTime") {
+        parameterName = "Время ответа";
+    }
+
+    if (tgEvents.parameter === "dnsInfo ipv4") {
+        parameterName = "DNS IPv4";
+    }
+
+    if (tgEvents.parameter === "dnsInfo MX") {
+        parameterName = "DNS MX";
+    }
+
+    if (tgEvents.parameter === "dnsInfo NS") {
+        parameterName = "DNS NS";
+    }
+
+    if (tgEvents.parameter === "http status") {
+        parameterName = "HTTP статус";
+    }
+
+    if (tgEvents.parameter === "http server") {
+        parameterName = "HTTP сервер";
+    }
+
+    if (tgEvents.parameter === "http bodySize") {
+        parameterName = "Размер страницы";
+    }
+
+    if (tgEvents.parameter === "PORT ports") {
+        parameterName = "Открытые порты";
+    }
+
+
+    // ========================================================
+    // Изменение времени ответа
+    // ========================================================
+
+    let changeText = "";
+
+    if (
+        tgEvents.parameter === "responseTime" &&
+        typeof tgEvents.oldValue === "number" &&
+        typeof tgEvents.newValue === "number"
+    ) {
+
+        const difference =
+            tgEvents.newValue -
+            tgEvents.oldValue;
+
+        const sign =
+            difference > 0
+                ? "+"
+                : "";
+
+        changeText =
+            `\n📈 Изменение: ${sign}${difference} мс`;
+    }
+
+
+    // ========================================================
+    // Сообщение
+    // ========================================================
 
     const message = `
-            Изменения на сайте: ${target}
-            ==============monitorId================
-            ${tgEvents.monitorId}
-            ==============parameter================
-            ${tgEvents.parameter}
-            ==============oldValue================
-            ${tgEvents.oldValue}
-            ==============newValue================
-            ${tgEvents.newValue}
-            ==============parameterValue================
-            ${tgEvents.parameterValue}
-            `;
+⚠️ ОБНАРУЖЕНО ИЗМЕНЕНИЕ
+
+🌐 Сайт: ${target}
+
+━━━━━━━━━━━━━━━━━━━━
+📊 ПАРАМЕТР
+━━━━━━━━━━━━━━━━━━━━
+
+${parameterName}
+
+━━━━━━━━━━━━━━━━━━━━
+🔄 ИЗМЕНЕНИЕ
+━━━━━━━━━━━━━━━━━━━━
+
+Было:
+${tgEvents.oldValue}
+
+Стало:
+${tgEvents.newValue}${changeText}
+
+━━━━━━━━━━━━━━━━━━━━
+🎯 ПОРОГ СОБЫТИЯ
+━━━━━━━━━━━━━━━━━━━━
+
+${tgEvents.parameterValue}
+
+━━━━━━━━━━━━━━━━━━━━
+🆔 МОНИТОР
+━━━━━━━━━━━━━━━━━━━━
+
+#${tgEvents.monitorId}
+`;
+
+
+    // ========================================================
+    // Отправка
+    // ========================================================
 
     try {
 
-        await fetch(
+        const response = await fetch(
             `https://api.telegram.org/bot${token}/sendMessage`,
             {
                 method: "POST",
@@ -37,22 +146,53 @@ async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number, targe
             }
         );
 
+
+        const data = await response.json();
+
+        console.log(
+            "Telegram sendMessage:",
+            data
+        );
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+
+        console.error(
+            "Ошибка при отправке события:",
+            error
+        );
+
+    }
+}
+
+
+// ============================================================
+// Остановка монитора
+// ============================================================
+
+async function tgPrintStopMonitor(
+    monitorId: number,
+    telegramUserId: number
+) {
+    if (!token) {
+        console.log("TELEGRAM_BOT_TOKEN не найден");
+        return;
     }
 
-}
-async function tgPrintStopMonitor(monitorId: number, telegramUserId: number) {
 
     const message = `
-            Монитор остановлен:";
-            ==============monitorId================
-            ${monitorId};
-            `;
+🛑 МОНИТОР ОСТАНОВЛЕН
+
+━━━━━━━━━━━━━━━━━━━━
+
+🆔 Монитор: #${monitorId}
+
+Проверки больше не выполняются.
+`;
+
 
     try {
 
-        await fetch(
+        const response = await fetch(
             `https://api.telegram.org/bot${token}/sendMessage`,
             {
                 method: "POST",
@@ -68,39 +208,152 @@ async function tgPrintStopMonitor(monitorId: number, telegramUserId: number) {
             }
         );
 
+
+        const data = await response.json();
+
+        console.log(
+            "Telegram sendMessage:",
+            data
+        );
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+
+        console.error(
+            "Ошибка при отправке остановки монитора:",
+            error
+        );
+
     }
-
-
-
 }
 
 
+// ============================================================
+// Все мониторы пользователя
+// ============================================================
+
+async function tgPrintAllMyMonitors(
+    monitors: any,
+    telegramUserId: number
+) {
+    if (!token) {
+        console.log("TELEGRAM_BOT_TOKEN не найден");
+        return;
+    }
 
 
+    console.log(
+        "tgPrintAllMyMonitors запущена"
+    );
 
-async function tgPrintAllMyMonitors(monitors: any, telegramUserId: number) {
+    console.log(
+        "monitors:",
+        monitors
+    );
 
-    let message = `Все мониторы пользователя:${telegramUserId}:`;
+    console.log(
+        "telegramUserId:",
+        telegramUserId
+    );
+
+
+    // ========================================================
+    // Если мониторов нет
+    // ========================================================
+
+    if (
+        !Array.isArray(monitors) ||
+        monitors.length === 0
+    ) {
+
+        const message = `
+📋 МОИ МОНИТОРЫ
+
+У вас пока нет созданных мониторов.
+`;
+
+        try {
+
+            await fetch(
+                `https://api.telegram.org/bot${token}/sendMessage`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        chat_id: telegramUserId,
+                        text: message
+                    })
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Ошибка при отправке списка мониторов:",
+                error
+            );
+
+        }
+
+        return;
+    }
+
+
+    // ========================================================
+    // Формируем список
+    // ========================================================
+
     const blocks: string[] = [];
 
+
     for (const monitor of monitors) {
+
+        const status =
+            monitor.status === "active"
+                ? "🟢 Активен"
+                : "🔴 Остановлен";
+
+
         blocks.push(`
-    #${monitor.id}
-    Сайт: ${monitor.target}
-    Интервал: ${monitor.interval_minutes} мин.
-    Статус: ${monitor.status}
-    `);
+🆔 Монитор #${monitor.id}
 
+🌐 ${monitor.target}
+
+⏱ Интервал:
+${monitor.interval_minutes} мин.
+
+📊 Статус:
+${status}
+`);
     }
-    message += blocks.join("\n");
 
 
+    const message = `
+📋 МОИ МОНИТОРЫ
+
+━━━━━━━━━━━━━━━━━━━━
+
+${blocks.join("\n━━━━━━━━━━━━━━━━━━━━\n")}
+`;
+
+
+    console.log(
+        "Сообщение Telegram:"
+    );
+
+    console.log(message);
+
+
+    // ========================================================
+    // Отправка
+    // ========================================================
 
     try {
 
-        await fetch(
+        const response = await fetch(
             `https://api.telegram.org/bot${token}/sendMessage`,
             {
                 method: "POST",
@@ -116,24 +369,31 @@ async function tgPrintAllMyMonitors(monitors: any, telegramUserId: number) {
             }
         );
 
+
+        const data = await response.json();
+
+        console.log(
+            "Telegram sendMessage:",
+            data
+        );
+
     } catch (error) {
-        console.error("Ошибка при отправке сообщения:", error);
+
+        console.error(
+            "Ошибка при отправке списка мониторов:",
+            error
+        );
+
     }
-
-
-
-
-
-
-
-
-
 }
 
 
+// ============================================================
+// Export
+// ============================================================
 
-
-
-export { tgPrintResultMonitor }
-export { tgPrintStopMonitor }
-export { tgPrintAllMyMonitors }
+export {
+    tgPrintResultMonitor,
+    tgPrintStopMonitor,
+    tgPrintAllMyMonitors
+};
