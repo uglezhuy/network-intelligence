@@ -7,7 +7,7 @@ import { startMonitorID } from "../startMonitorID"
 import { deleteMonitorID } from "../deleteMonitor"
 import { MonitorFullResultByID } from "../MonitorFullResultByID";
 import { EaventsFullResultByID } from "../EaventsFullResultByID";
-
+import { MonitorHistoryByID } from "../graphics/MonitorHistoryByID";
 import { monitor } from "../monitor"
 
 
@@ -42,6 +42,52 @@ async function handleApiRequest(
         res.end();
         return;
     }
+
+
+
+
+
+
+    // /api/monitorHistory/ //////////////////////////////////////////////////////////////////////////////
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/monitorHistory/")
+    ) {
+        console.log("ROUTE: /api/monitorHistory/");
+
+        const afterBase = req.url.split("/api/monitorHistory/")[1];
+
+        if (!afterBase) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Некорректный id монитора" }));
+            return;
+        }
+
+        const [monitorId, query] = afterBase.split("?");
+        const params = new URLSearchParams(query ?? "");
+        const days = params.get("days");
+
+        console.log("Monitor ID:", monitorId);
+        console.log("Days:", days);
+
+        try {
+            const history = await MonitorHistoryByID(Number(monitorId), days);
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(history));
+        } catch (error) {
+            console.error("Ошибка API:", error);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Ошибка сервера" }));
+        }
+        return;
+    }
+
+
+
+
+
+
 
     // /api/monitors//////////////////////////////////////////////////////////////////////////////
     if (
@@ -224,6 +270,13 @@ async function handleApiRequest(
 
 
     // /api/eaventsResolts/ //////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+    //http://localhost:3000/api/monitorHistory/176?days=1
 
 
     if (req.method === "GET" && req.url?.startsWith("/api/eaventsResolts/")) {
