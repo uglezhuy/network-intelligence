@@ -5,13 +5,18 @@ type ScanPageProps = {
   page: string;
 };
 
+const TEST_USER_ID = 503362430; //временный тг айди  для тестов  247742272
+const TEST_PLATFORM = "telegram"; // telegram  web  max
+
 function ScanPage({ page }: ScanPageProps) {
   const [URL, setURL] = useState("");
   const [resultScan, setResultScan] = useState("идет скан");
   async function scan() {
     console.log("Сканирование URL:", URL);
 
-    const response = await fetch(`http://localhost:3000/api/scan/${URL}`);
+    const response = await fetch(
+      `http://localhost:3000/api/scan/${URL}/${TEST_USER_ID}/${TEST_PLATFORM}`,
+    );
 
     const data = await response.json();
 

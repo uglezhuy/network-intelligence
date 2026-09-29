@@ -6,6 +6,8 @@ type MonitorsPageProps = {
   page: string;
 };
 
+const TEST_USER_ID = 503362430; //временный тг айди  для тестов
+
 function MonitorsPage({ page }: MonitorsPageProps) {
   const [URL, setURL] = useState("");
   const [min, setMin] = useState(0.1);
@@ -44,7 +46,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
   async function ShowMonitorsALL() {
     const response = await fetch(
-      `http://localhost:3000/api/monitorsUser/503362430`, // pfхарженный айди для тестов
+      `http://localhost:3000/api/monitorsUser/${TEST_USER_ID}`, // pfхарженный айди для тестов
     );
     const data = await response.json();
     setResultMyMonitors(data);
@@ -113,7 +115,9 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
   return (
     <>
-      <div>Активные моинторы на id 503362430 захаржено {}</div>
+      <div>
+        Активные моинторы на id ${TEST_USER_ID} захаржено {}
+      </div>
       <div>
         {page}
         <div>Введите URL для мониторинга </div>

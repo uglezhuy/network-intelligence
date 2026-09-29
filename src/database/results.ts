@@ -2,22 +2,21 @@ import { connection } from "./connection.js";
 
 
 
-let monitorResult: any = [];
-let monitorId: number;
 async function saveResultinScan(
     result: any,
-    telegramUserId?: number
+    UserId?: number,
+    platform?: string
 ) {
-
     const db = await connection;
 
-    if (telegramUserId) {
+    if (UserId) {
         await db.execute(
-            "INSERT INTO scans (target, data, telegram_user_id) VALUES (?, ?, ?)",
+            "INSERT INTO scans (target, data, telegram_user_id, platform) VALUES (?, ?, ?, ?)",
             [
                 result.target,
                 JSON.stringify(result),
-                telegramUserId
+                UserId,
+                platform
             ]
         );
     }
@@ -30,7 +29,6 @@ async function saveResultinScan(
             ]
         );
     }
-
 }
 
 
@@ -42,61 +40,60 @@ async function saveResultinMonitors(
     sendEventNotificationsTG: boolean,
     sendMonitorNotificationsMAX: boolean,
     sendEventNotificationsMAX: boolean,
-    telegramUserId?: number
+    telegramUserId?: number,
+    platform?: string
 ) {
     const db = await connection;
 
     if (telegramUserId) {
-        await db.execute(
+        const [result]: any = await db.execute(
             `INSERT INTO monitors (
                 target,
                 interval_minutes,
                 status,
                 telegram_user_id,
                 type,
+                platform,
                 send_monitor_notificationsTG,
                 send_event_notificationsTG,
                 send_monitor_notificationsMAX,
                 send_event_notificationsMAX
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 target,
                 min,
                 "active",
                 telegramUserId,
                 mode,
+                platform ?? null,
                 sendMonitorNotificationsTG,
                 sendEventNotificationsTG,
                 sendMonitorNotificationsMAX,
                 sendEventNotificationsMAX
             ]
         );
+
+        return result.insertId;
     } else {
-        await db.execute(
+        const [result]: any = await db.execute(
             `INSERT INTO monitors (
                 target,
                 interval_minutes,
                 status,
-                type
-            ) VALUES (?, ?, ?, ?)`,
+                type,
+                platform
+            ) VALUES (?, ?, ?, ?, ?)`,
             [
                 target,
                 min,
                 "active",
-                mode
+                mode,
+                platform ?? null
             ]
         );
+
+        return result.insertId;
     }
-
-    // ID последнего созданного монитора
-    const [rows]: any = await db.execute(
-        "SELECT id FROM monitors WHERE target = ? ORDER BY id DESC LIMIT 1",
-        [target]
-    );
-
-    monitorId = rows[0].id;
-
-    return monitorId;
 }
 
 

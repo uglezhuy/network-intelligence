@@ -65,13 +65,12 @@ async function tgPrintResultScan(
             .filter((item: any) => item.status === "open")
             .map((item: any) => item.port)
             .join(", ")
-        : "Нет открытых портов"; ``
+        : "Нет открытых портов";
 
     const message = `
     Сайт: ${result.target}
 
     ============= DNS =============
-    ID монитора: ${result.monitorId}//
     IPv4: ${ipv4}
     IPv6: ${ipv6}
     MX: ${mx}

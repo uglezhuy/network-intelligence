@@ -6,17 +6,17 @@ async function tgPrintResultMonitor(tgEvents: any, telegramUserId: number, targe
 
 
     const message = `
-            Изменения на сайте:${target}";
+            Изменения на сайте: ${target}
             ==============monitorId================
-            parameter:", ${tgEvents.monitorId};
+            ${tgEvents.monitorId}
             ==============parameter================
-            ${tgEvents.parameter};
+            ${tgEvents.parameter}
             ==============oldValue================
-            ${tgEvents.oldValue};
+            ${tgEvents.oldValue}
             ==============newValue================
-            ${tgEvents.newValue};
+            ${tgEvents.newValue}
             ==============parameterValue================
-            ${tgEvents.parameterValue};
+            ${tgEvents.parameterValue}
             `;
 
     try {

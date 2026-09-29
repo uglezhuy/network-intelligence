@@ -57,7 +57,8 @@ async function processMessage(message: TelegramMessage) {
             false,
             false,
             false,
-            telegramUserId
+            telegramUserId,
+            "telegram"
         );
 
     }
@@ -72,7 +73,8 @@ async function processMessage(message: TelegramMessage) {
             false,
             false,
             false,
-            telegramUserId
+            telegramUserId,
+            "telegram"
         );
     }
 

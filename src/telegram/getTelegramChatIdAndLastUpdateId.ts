@@ -95,8 +95,6 @@ async function
         const telegram_user_id =
             update.message.from?.id ?? null;
 
-        const text =
-            update.message.text ?? null;
 
 
         const [userRows]: any = await db.execute(

@@ -27,6 +27,7 @@ async function monitor(
     sendMonitorNotificationsMAX: boolean,
     sendEventNotificationsMAX: boolean,
     telegramUserId?: number,
+    platform: string = "web"
 
 ) {
 
@@ -43,7 +44,8 @@ async function monitor(
 
             sendMonitorNotificationsMAX,
             sendEventNotificationsMAX,
-            telegramUserId
+            telegramUserId,
+            platform
 
 
         );
@@ -58,6 +60,8 @@ async function monitor(
             false,
             false,
             false,
+            undefined,
+            platform
         );
     }
 
@@ -68,6 +72,8 @@ async function monitor(
         target,
         min,
         mode,
+
+        platform,
 
         sendMonitorNotificationsBot,
         sendEventNotificationsBot,
@@ -85,6 +91,8 @@ async function runMonitor(
     target: string,
     min: number,
     mode: string,
+
+    platform: string, // tg max web 
 
     send_monitor_notificationsTG: boolean,
     send_event_notificationsTG: boolean,
@@ -122,9 +130,15 @@ async function runMonitor(
             );
 
             // /////////////////////for MAX////////////////////////
-            if (send_monitor_notificationsMAX && telegramUserId) {
-                const tgEvents = await monitor_events(monitorId);
+            if (send_monitor_notificationsMAX && telegramUserId && platform === "max") {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                await MaxPrintResultScan(
+                    result,
+                    telegramUserId
+                );
+            }
 
+            if (send_event_notificationsMAX && telegramUserId && platform === "max") {
+                const tgEvents = await monitor_events(monitorId);
                 if (telegramUserId && tgEvents.length > 0) {
                     await MaxPrintResultMonitor(
                         tgEvents[0],
@@ -134,19 +148,19 @@ async function runMonitor(
                 }
             }
 
-            if (send_event_notificationsMAX && telegramUserId) {
-                await MaxPrintResultScan(
-                    result,
-                    telegramUserId
-                );
-            }
             ///////////////////////////////////////////////////
             // переделать то что свреху и снизу вроде работает но поидеи рабоать не долдно полюбому что то сверху и снизу от этого комента 
 
             //////////////////////////////////////// for Telegram ///////////////////////////////////////////////////
 
-
             if (send_monitor_notificationsTG && telegramUserId) {
+                await tgPrintResultScan(
+                    result,
+                    telegramUserId
+                );
+            }
+
+            if (send_event_notificationsTG && telegramUserId) {
                 const tgEvents = await monitor_events(monitorId);
                 console.log("tgEvents ready");
                 if (telegramUserId && tgEvents.length > 0) {
@@ -159,14 +173,6 @@ async function runMonitor(
                 }
             }
 
-            if (send_event_notificationsTG && telegramUserId) {
-
-                await tgPrintResultScan(
-                    result,
-                    telegramUserId
-                );
-            }
-
             //////////////////////////////////
 
 
@@ -176,10 +182,10 @@ async function runMonitor(
 
         const flag = await checkStateMonitorById(monitorId);
 
-        if (flag === "stopped") {
+        if (flag !== "active") {
             StateMonitorById = false;
 
-            console.log("Monitor stopped");
+            console.log("Monitor stopped or deleted");
 
             break;
         }
@@ -198,6 +204,8 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.interval_minutes,
             monitor.type,
 
+            monitor.platform,
+
             monitor.send_monitor_notificationsTG,
             monitor.send_event_notificationsTG,
 
@@ -211,6 +219,8 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.target,
             monitor.interval_minutes,
             monitor.type,
+
+            monitor.platform,
 
             monitor.send_monitor_notificationsTG,
             monitor.send_event_notificationsTG,

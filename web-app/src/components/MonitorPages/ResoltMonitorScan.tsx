@@ -10,6 +10,11 @@ function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
   console.log("Вывод монитора с ID:", monitorId);
 
   useEffect(() => {
+    if (monitorId === null) {
+      setResultMonitor([]);
+      return;
+    }
+
     async function getMonitorResult() {
       try {
         const resoltMonitor = await fetch(

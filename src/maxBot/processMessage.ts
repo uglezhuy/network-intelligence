@@ -58,7 +58,8 @@ async function processMessage(message: TelegramMessage) {
             false,
             false,
             false,
-            telegramUserId
+            telegramUserId,
+            "max"
         );
 
     }
@@ -73,7 +74,8 @@ async function processMessage(message: TelegramMessage) {
             false,
             false,
             false,
-            telegramUserId
+            telegramUserId,
+            "max"
         );
 
     }
