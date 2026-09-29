@@ -6,6 +6,8 @@ import { stopMonitorID } from "../stopMonitor"
 import { startMonitorID } from "../startMonitorID"
 import { deleteMonitorID } from "../deleteMonitor"
 import { MonitorFullResultByID } from "../MonitorFullResultByID";
+import { EaventsFullResultByID } from "../EaventsFullResultByID";
+
 import { monitor } from "../monitor"
 
 
@@ -16,7 +18,7 @@ async function handleApiRequest(
 
 
 
-    const TEST_TELEGRAM_USER_ID = 503362430; //временный тг айди  для тестов
+    const TEST_USER_ID = 503362430; //временный тг айди  для тестов
 
 
 
@@ -105,18 +107,24 @@ async function handleApiRequest(
     ) {
         console.log("ROUTE: /api/scan/");
 
-        const target =
-            req.url.split("/api/scan/")[1];
+        const params =
+            req.url.split("/api/scan/")[1].split("/");
+
+        const target = params[0];
+        const TEST_USER_ID = params[1];
+        const TEST_PLATFORM = params[2];
 
         console.log("Target:", target);
+        console.log("User ID:", TEST_USER_ID);
+        console.log("Platform:", TEST_PLATFORM);
 
-        if (!target) {
+        if (!target || !TEST_USER_ID || !TEST_PLATFORM) {
             res.writeHead(400, {
                 "Content-Type": "application/json"
             });
 
             res.end(JSON.stringify({
-                error: "Некорректный URL"
+                error: "Необходимо передать target, userId и platform"
             }));
 
             return;
@@ -129,13 +137,22 @@ async function handleApiRequest(
                 await analyzers(target);
 
             console.log("Сканирование завершено");
-            await saveResultinScan(scanResult, TEST_TELEGRAM_USER_ID);
+
+            await saveResultinScan(
+                scanResult,
+                Number(TEST_USER_ID),
+                TEST_PLATFORM
+
+            );
+
             console.log("Результат сохранен в базе данных");
+
             res.writeHead(200, {
                 "Content-Type": "application/json"
             });
 
             res.end(JSON.stringify(scanResult));
+
         } catch (error) {
             console.error("Ошибка API:", error);
 
@@ -150,7 +167,6 @@ async function handleApiRequest(
 
         return;
     }
-
 
 
     // /api/monitorsResolts/ //////////////////////////////////////////////////////////////////////////////
@@ -207,6 +223,70 @@ async function handleApiRequest(
 
 
 
+    // /api/eaventsResolts/ //////////////////////////////////////////////////////////////////////////////
+
+
+    if (req.method === "GET" && req.url?.startsWith("/api/eaventsResolts/")) {
+        console.log("ROUTE: /api/eaventsResolts/");
+
+        const target = req.url.split("/api/eaventsResolts/")[1];
+
+        console.log("Target:", target);
+
+        if (!target) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный id монитораСобытий"
+            }));
+
+            return;
+        }
+        try {
+            console.log("Запускаем вывод всех СобытийМониторов по id:", target);
+
+            const FullEaventsResultByID = await EaventsFullResultByID(target);
+
+
+
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify(FullEaventsResultByID));
+
+
+
+        }
+        catch (error) {
+            console.error("Ошибка API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+        return;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     //////////////////////addMonitor
     if (req.url === "/api/addMonitor" && req.method === "POST") {
         console.log("ROUTE: /api/addMonitor");
@@ -225,16 +305,16 @@ async function handleApiRequest(
                 const min = data.interval_minutes;
 
                 const sendMonitorNotificationsBot =
-                    data.send_monitor_notificationsBot;
+                    data.send_monitor_notificationsTG ?? false;
 
                 const sendEventNotificationsBot =
-                    data.send_event_notificationsBot;
+                    data.send_event_notificationsTG ?? false;
 
                 const sendMonitorNotificationsMAX =
-                    data.send_monitor_notificationsMAX;
+                    data.send_monitor_notificationsMAX ?? false;
 
                 const sendEventNotificationsMAX =
-                    data.send_event_notificationsMAX;
+                    data.send_event_notificationsMAX ?? false;
 
                 console.log("URL:", target);
                 console.log("MIN:", min);
@@ -275,7 +355,8 @@ async function handleApiRequest(
                     sendEventNotificationsBot,
                     sendMonitorNotificationsMAX,
                     sendEventNotificationsMAX,
-                    TEST_TELEGRAM_USER_ID
+                    TEST_USER_ID,
+                    "web"
                 );
 
                 res.writeHead(200, {
@@ -304,6 +385,12 @@ async function handleApiRequest(
 
         return;
     }
+
+
+
+
+
+
 
 
 
@@ -338,7 +425,7 @@ async function handleApiRequest(
                 await analyzers(target);
 
             console.log("Сканирование завершено");
-            await saveResultinScan(scanResult, TEST_TELEGRAM_USER_ID);
+            await saveResultinScan(scanResult, TEST_USER_ID);
             console.log("Результат сохранен в базе данных");
             res.writeHead(200, {
                 "Content-Type": "application/json"
