@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../api";
 
 type ResoltMonitorScanProps = {
   page: string;
@@ -18,7 +19,7 @@ function ResoltEventsScan({ monitorId }: ResoltMonitorScanProps) {
     async function getMonitorResult() {
       try {
         const resoltMonitor = await fetch(
-          `http://localhost:3000/api/eaventsResolts/${monitorId}`,
+          `${API_BASE}/api/eaventsResolts/${monitorId}`,
         );
 
         const data = await resoltMonitor.json();

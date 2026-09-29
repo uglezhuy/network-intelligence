@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "./api";
 
 declare global {
     interface Window {
@@ -26,7 +27,7 @@ function App() {
         }
 
         fetch(
-            `https://analog-vegas-infections-bonus.trycloudflare.com/api/monitors/${user.id}`
+            `${API_BASE}/api/monitorsUser/${user.id}`
         )
             .then(response => {
                 console.log("Ответ API:", response);

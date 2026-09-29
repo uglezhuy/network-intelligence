@@ -1,6 +1,7 @@
 import ResoltMonitorScan from "./ResoltMonitorScan";
 
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../api";
 
 type MonitorsPageProps = {
   page: string;
@@ -46,7 +47,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
   async function ShowMonitorsALL() {
     const response = await fetch(
-      `http://localhost:3000/api/monitorsUser/${TEST_USER_ID}`, // pfхарженный айди для тестов
+      `${API_BASE}/api/monitorsUser/${TEST_USER_ID}`, // временный тестовый ID
     );
     const data = await response.json();
     setResultMyMonitors(data);
@@ -64,7 +65,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
       "MaxSendEventNotifications",
       MaxSendEventNotifications,
     );
-    fetch("http://localhost:3000/api/addMonitor", {
+    fetch(`${API_BASE}/api/addMonitor`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +88,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   async function stopMonitorID(monitorId: number) {
     console.log("Оставнока  монитора:", URL);
 
-    await fetch(`http://localhost:3000/api/stopMonitor/${monitorId}`);
+    await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`);
 
     console.log("Остановка монитора завершена:", monitorId);
     ShowMonitorsALL();
@@ -95,7 +96,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   async function StartMonitorID(monitorId: number) {
     console.log("Запуск  монитора:", URL);
 
-    await fetch(`http://localhost:3000/api/startMonitor/${monitorId}`);
+    await fetch(`${API_BASE}/api/startMonitor/${monitorId}`);
 
     console.log("Запуск монитора завершен:", monitorId);
     ShowMonitorsALL();
@@ -103,7 +104,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   async function deleteMonitorID(monitorId: number) {
     console.log("Удаление  монитора:", URL);
 
-    await fetch(`http://localhost:3000/api/deleteMonitor/${monitorId}`);
+    await fetch(`${API_BASE}/api/deleteMonitor/${monitorId}`);
 
     console.log("Удаление монитора завершено:", monitorId);
     ShowMonitorsALL();

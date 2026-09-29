@@ -1,6 +1,7 @@
 import ResoltMonitorScan from "./ResoltEventsScan";
 
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../api";
 
 type MonitorsPageProps = {
   page: string;
@@ -32,7 +33,7 @@ function EaventsPage({ page }: MonitorsPageProps) {
 
   async function ShowMonitorsALL() {
     const response = await fetch(
-      `http://localhost:3000/api/monitorsUser/${TEST_USER_ID}`, // pfхарженный айди для тестов
+      `${API_BASE}/api/monitorsUser/${TEST_USER_ID}`, // временный тестовый ID
     );
     const data = await response.json();
     setResultMyMonitors(data);

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../api";
 
 type ResoltMonitorScanProps = {
   page: string;
   monitorId: number | null;
 };
 
-function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
+function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
   const [resultMonitor, setResultMonitor] = useState<any[]>([]);
   console.log("Вывод монитора с ID:", monitorId);
 
@@ -18,7 +19,7 @@ function ResoltMonitorScan({ page, monitorId }: ResoltMonitorScanProps) {
     async function getMonitorResult() {
       try {
         const resoltMonitor = await fetch(
-          `http://localhost:3000/api/monitorsResolts/${monitorId}`,
+          `${API_BASE}/api/monitorsResolts/${monitorId}`,
         );
 
         const data = await resoltMonitor.json();

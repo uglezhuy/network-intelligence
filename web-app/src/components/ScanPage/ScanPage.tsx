@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ResoltScan from "./ResoltScan";
+import { API_BASE } from "../../api";
 
 type ScanPageProps = {
   page: string;
@@ -15,7 +16,7 @@ function ScanPage({ page }: ScanPageProps) {
     console.log("Сканирование URL:", URL);
 
     const response = await fetch(
-      `http://localhost:3000/api/scan/${URL}/${TEST_USER_ID}/${TEST_PLATFORM}`,
+      `${API_BASE}/api/scan/${URL}/${TEST_USER_ID}/${TEST_PLATFORM}`,
     );
 
     const data = await response.json();

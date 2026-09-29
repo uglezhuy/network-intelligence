@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../api";
 
 import {
   LineChart,
@@ -21,7 +22,7 @@ export function MonitorChart() {
   const [data, setData] = useState<MonitorResult[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/monitorHistory/180?days=1")
+    fetch(`${API_BASE}/api/monitorHistory/194?days=1`)
       .then((response) => response.json())
       .then((result) => {
         console.log("Данные графика:", result);
