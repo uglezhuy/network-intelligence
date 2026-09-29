@@ -27,7 +27,7 @@ async function monitor_events(monitorId: number) {
             name: "responseTime",
             oldValue: previousResult.http.responseTime,
             newValue: lastResult.http.responseTime,
-            threshold: 20
+            threshold: 100
         },
         {
             name: "dnsInfo ipv4",
