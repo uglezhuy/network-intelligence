@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../api";
+import { MonitorChart } from "../graphics/MonitorChart";
 
 type ResoltMonitorScanProps = {
   page: string;
@@ -38,11 +39,10 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
   return (
     <>
       <div>Результат сканирования:</div>
-
+      <div> График задержки</div>
+      <MonitorChart monitorId={monitorId} /> // тестовая графика
       <div>МОНИТОРИНГ:</div>
-
       <div>Выбран монитор с ID: {monitorId}</div>
-
       {resultMonitor.map((result) => (
         <div key={result.id}>
           <hr />

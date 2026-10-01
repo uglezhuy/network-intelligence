@@ -18,21 +18,22 @@ type MonitorResult = {
   responseTime: number;
 };
 
-export function MonitorChart() {
+export function MonitorChart(monitorId: any) {
   const [data, setData] = useState<MonitorResult[]>([]);
+  const nummonitorId = Number(monitorId.monitorId);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/monitorHistory/194?days=1`)
+    if (!nummonitorId || Number.isNaN(nummonitorId)) return;
+
+    fetch(`${API_BASE}/api/monitorHistory/${nummonitorId}?days=1`)
       .then((response) => response.json())
       .then((result) => {
-        console.log("Данные графика:", result);
-
         setData(result);
       })
       .catch((error) => {
         console.error("Ошибка загрузки истории:", error);
       });
-  }, []);
+  }, [nummonitorId]);
 
   const chartData = data.map((item) => ({
     time: new Date(item.time).toLocaleTimeString("ru-RU", {
