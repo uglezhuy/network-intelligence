@@ -9,6 +9,8 @@ type ResoltMonitorScanProps = {
 
 function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
   const [resultMonitor, setResultMonitor] = useState<any[]>([]);
+  const [lengthMonitor, setLengthMonitor] = useState("");
+
   console.log("Вывод монитора с ID:", monitorId);
 
   useEffect(() => {
@@ -39,8 +41,20 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
   return (
     <>
       <div>Результат сканирования:</div>
+      <div>Выбран монитор с ID: {monitorId}</div>
+      <div>Количество результатов: {resultMonitor.length}</div>
+      <div> Переод времен сканирования (произвольная метка пока в днях) {}</div>
       <div> График задержки</div>
-      <MonitorChart monitorId={monitorId} /> // тестовая графика
+      <MonitorChart monitorId={monitorId} lengthMonitor={lengthMonitor} />
+      <div> Введите длительность сканирования</div>
+      <input
+        type="text"
+        value={lengthMonitor}
+        onChange={(event) => setLengthMonitor(event.target.value)}
+      />
+      <button onClick={() => setLengthMonitor(lengthMonitor)}>
+        Примернить длительность
+      </button>{" "}
       <div>МОНИТОРИНГ:</div>
       <div>Выбран монитор с ID: {monitorId}</div>
       {resultMonitor.map((result) => (

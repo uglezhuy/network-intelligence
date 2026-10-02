@@ -18,14 +18,21 @@ type MonitorResult = {
   responseTime: number;
 };
 
-export function MonitorChart(monitorId: any) {
+export function MonitorChart({
+  monitorId,
+  lengthMonitor,
+}: {
+  monitorId: any;
+  lengthMonitor: string;
+}) {
   const [data, setData] = useState<MonitorResult[]>([]);
-  const nummonitorId = Number(monitorId.monitorId);
-
+  const nummonitorId = Number(monitorId);
   useEffect(() => {
     if (!nummonitorId || Number.isNaN(nummonitorId)) return;
 
-    fetch(`${API_BASE}/api/monitorHistory/${nummonitorId}?days=1`)
+    fetch(
+      `${API_BASE}/api/monitorHistory/${nummonitorId}?days=${lengthMonitor}`,
+    )
       .then((response) => response.json())
       .then((result) => {
         setData(result);
