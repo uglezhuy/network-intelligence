@@ -65,13 +65,13 @@ async function handleApiRequest(
 
         const [monitorId, query] = afterBase.split("?");
         const params = new URLSearchParams(query ?? "");
-        const days = params.get("days");
+        const period = params.get("period");
 
         console.log("Monitor ID:", monitorId);
-        console.log("Days:", days);
+        console.log("period:", period);
 
         try {
-            const history = await MonitorHistoryByID(Number(monitorId), days);
+            const history = await MonitorHistoryByID(Number(monitorId), period);
 
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(history));
