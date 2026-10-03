@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { API_BASE } from "../../api";
 import { MonitorChart } from "../graphics/MonitorChart";
 import { StatusChart } from "../graphics/StatusChart";
-import Average from "./sec/Average";
+import {
+  Average,
+  Max,
+  Min,
+  Availability,
+  CheckCount,
+} from "./sec/AverageMaxMin";
 
 type ResoltMonitorScanProps = {
   page: string;
@@ -49,8 +55,12 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
       <MonitorChart monitorId={monitorId} period={period} type="responseTime" />
       <MonitorChart monitorId={monitorId} period={period} type="bodySizeKB" />
       <StatusChart monitorId={monitorId} period={period} />
-      <div> Среденее зачачение</div>
+
       <Average monitorId={monitorId} period={period} />
+      <Min monitorId={monitorId} period={period} />
+      <Max monitorId={monitorId} period={period} />
+      <Availability monitorId={monitorId} period={period} />
+      <CheckCount monitorId={monitorId} period={period} />
 
       <div> Введите длительность сканирования</div>
       <button onClick={() => setPeriod("1h")}>1 час</button>

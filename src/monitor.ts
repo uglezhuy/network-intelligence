@@ -1,3 +1,4 @@
+
 import { analyzers } from "./analyzers.js";
 import { saveResultinMonitors } from "./database/results.js";
 import { saveInMonitor_results } from "./database/results.js";
@@ -130,15 +131,22 @@ async function runMonitor(
             );
 
             // /////////////////////for MAX////////////////////////
-            if (send_monitor_notificationsMAX && telegramUserId && platform === "max") {//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (send_monitor_notificationsMAX && telegramUserId && platform === "max") {
                 await MaxPrintResultScan(
                     result,
                     telegramUserId
                 );
             }
 
+            ///////////////////////////////////////////////////
+            // События проверяются всегда.
+            // Уведомления ниже только определяют,
+            // нужно ли отправлять найденное событие.
+
+            const tgEvents = await monitor_events(monitorId);
+
+            // /////////////////////for MAX////////////////////////
             if (send_event_notificationsMAX && telegramUserId && platform === "max") {
-                const tgEvents = await monitor_events(monitorId);
                 if (telegramUserId && tgEvents.length > 0) {
                     await MaxPrintResultMonitor(
                         tgEvents[0],
@@ -161,8 +169,8 @@ async function runMonitor(
             }
 
             if (send_event_notificationsTG && telegramUserId) {
-                const tgEvents = await monitor_events(monitorId);
                 console.log("tgEvents ready");
+
                 if (telegramUserId && tgEvents.length > 0) {
                     await tgPrintResultMonitor(
                         tgEvents[0],
