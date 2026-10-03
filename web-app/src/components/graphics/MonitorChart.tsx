@@ -5,7 +5,6 @@ import {
   LineChart,
   Line,
   XAxis,
-  YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
@@ -16,23 +15,23 @@ type MonitorResult = {
   time: string;
   status: number;
   responseTime: number;
+  bodySizeKB: number;
 };
-
 export function MonitorChart({
   monitorId,
-  lengthMonitor,
+  period,
+  type,
 }: {
   monitorId: any;
-  lengthMonitor: string;
+  period: string;
+  type: "responseTime" | "bodySizeKB";
 }) {
   const [data, setData] = useState<MonitorResult[]>([]);
   const nummonitorId = Number(monitorId);
   useEffect(() => {
     if (!nummonitorId || Number.isNaN(nummonitorId)) return;
 
-    fetch(
-      `${API_BASE}/api/monitorHistory/${nummonitorId}?days=${lengthMonitor}`,
-    )
+    fetch(`${API_BASE}/api/monitorHistory/${nummonitorId}?period=${period}`)
       .then((response) => response.json())
       .then((result) => {
         setData(result);
@@ -40,37 +39,52 @@ export function MonitorChart({
       .catch((error) => {
         console.error("Ошибка загрузки истории:", error);
       });
-  }, [nummonitorId]);
+  }, [nummonitorId, period]);
 
   const chartData = data.map((item) => ({
-    time: new Date(item.time).toLocaleTimeString("ru-RU", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-
-    responseTime: item.responseTime,
+    time: new Date(item.time).getTime(),
+    [type]: item[type],
   }));
 
   return (
-    <div style={{ width: "100%", height: 300 }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
+    <>
+      <div>{type}</div>
+      <div style={{ width: "100%", height: 300 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="time" />
+            <XAxis
+              dataKey="time"
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              tickCount={8}
+              tickFormatter={(value) =>
+                new Date(value).toLocaleString("ru-RU", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              }
+            />
 
-          <YAxis />
+            <Tooltip
+              labelFormatter={(value) =>
+                new Date(Number(value)).toLocaleString("ru-RU", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              }
+            />
 
-          <Tooltip />
-
-          <Line
-            type="monotone"
-            dataKey="responseTime"
-            stroke="#3b82f6"
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+            <Line type="monotone" dataKey={type} stroke="#3b82f6" dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 }

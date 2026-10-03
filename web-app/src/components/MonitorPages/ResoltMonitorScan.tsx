@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../api";
 import { MonitorChart } from "../graphics/MonitorChart";
+import { StatusChart } from "../graphics/StatusChart";
+import Average from "./sec/Average";
 
 type ResoltMonitorScanProps = {
   page: string;
@@ -9,8 +11,7 @@ type ResoltMonitorScanProps = {
 
 function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
   const [resultMonitor, setResultMonitor] = useState<any[]>([]);
-  const [lengthMonitor, setLengthMonitor] = useState("");
-
+  const [period, setPeriod] = useState("1h");
   console.log("Вывод монитора с ID:", monitorId);
 
   useEffect(() => {
@@ -45,16 +46,23 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
       <div>Количество результатов: {resultMonitor.length}</div>
       <div> Переод времен сканирования (произвольная метка пока в днях) {}</div>
       <div> График задержки</div>
-      <MonitorChart monitorId={monitorId} lengthMonitor={lengthMonitor} />
+      <MonitorChart monitorId={monitorId} period={period} type="responseTime" />
+      <MonitorChart monitorId={monitorId} period={period} type="bodySizeKB" />
+      <StatusChart monitorId={monitorId} period={period} />
+      <div> Среденее зачачение</div>
+      <Average monitorId={monitorId} period={period} />
+
       <div> Введите длительность сканирования</div>
-      <input
-        type="text"
-        value={lengthMonitor}
-        onChange={(event) => setLengthMonitor(event.target.value)}
-      />
-      <button onClick={() => setLengthMonitor(lengthMonitor)}>
-        Примернить длительность
-      </button>{" "}
+      <button onClick={() => setPeriod("1h")}>1 час</button>
+
+      <button onClick={() => setPeriod("6h")}>6 часов</button>
+
+      <button onClick={() => setPeriod("24h")}>1 день</button>
+
+      <button onClick={() => setPeriod("7d")}>7 дней</button>
+
+      <button onClick={() => setPeriod("30d")}>30 дней</button>
+
       <div>МОНИТОРИНГ:</div>
       <div>Выбран монитор с ID: {monitorId}</div>
       {resultMonitor.map((result) => (
