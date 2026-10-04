@@ -6,12 +6,14 @@ type ScanPageProps = {
   page: string;
 };
 
-const TEST_USER_ID = 503362430; //временный тг айди  для тестов  247742272
-const TEST_PLATFORM = "telegram"; // telegram  web  max
+const TEST_USER_ID = 503362430;
+const TEST_PLATFORM = "telegram";
 
 function ScanPage({ page }: ScanPageProps) {
   const [URL, setURL] = useState("");
-  const [resultScan, setResultScan] = useState("идет скан");
+  const [resultScan, setResultScan] = useState<any>(null);
+  const [subdomains, setSubdomains] = useState<string[]>([]);
+
   async function scan() {
     console.log("Сканирование URL:", URL);
 
@@ -23,7 +25,8 @@ function ScanPage({ page }: ScanPageProps) {
 
     console.log("Результат сканирования:", data);
 
-    setResultScan(JSON.stringify(data, null, 2));
+    setResultScan(data.scan);
+    setSubdomains(data.subdomains);
   }
 
   return (
@@ -45,6 +48,14 @@ function ScanPage({ page }: ScanPageProps) {
       <div>Результат сканирования:</div>
 
       <ResoltScan resultScan={resultScan} />
+
+      <div>
+        <h2>Поддомены:</h2>
+
+        {subdomains.map(function (subdomain) {
+          return <div key={subdomain}>{subdomain}</div>;
+        })}
+      </div>
     </aside>
   );
 }
