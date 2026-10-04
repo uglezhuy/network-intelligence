@@ -32,6 +32,36 @@ async function saveResultinScan(
 }
 
 
+
+
+async function saveResultinScanAPICrt(
+    result: string[],
+    target: string,
+    UserId?: number,
+    platform?: string
+) {
+    const db = await connection;
+
+    await db.execute(
+        `
+        INSERT INTO scans
+        (target, data, telegram_user_id, platform)
+        VALUES (?, ?, ?, ?)
+        `,
+        [
+            target,
+            JSON.stringify(result),
+            UserId ?? null,
+            platform ?? null
+        ]
+    );
+}
+
+
+
+
+
+
 async function saveResultinMonitors(
     target: string,
     min: number,
@@ -98,13 +128,21 @@ async function saveResultinMonitors(
 
 
 // первый и послед результаты монитора
-async function saveInMonitor_results(result: any, monitorId: number) {
+async function saveInMonitor_results(
+    result: any,
+    monitorId: number
+) {
     const db = await connection;
-    //  первый результат монитора
+
     await db.execute(
-        "INSERT INTO monitor_results (monitor_id, data) VALUES (?, ?)",
+        `
+        INSERT INTO monitor_results
+        (monitor_id, result_type, data)
+        VALUES (?, ?, ?)
+        `,
         [
             monitorId,
+            "monitor",
             JSON.stringify(result)
         ]
     );
@@ -112,7 +150,25 @@ async function saveInMonitor_results(result: any, monitorId: number) {
     return monitorId;
 }
 
+async function saveInMonitor_resultsAPICrt(
+    result: any,
+    monitorId: number
+) {
+    const db = await connection;
 
+    await db.execute(
+        `
+        INSERT INTO monitor_results
+        (monitor_id, result_type, data)
+        VALUES (?, ?, ?)
+        `,
+        [
+            monitorId,
+            "subdomain",
+            JSON.stringify(result)
+        ]
+    );
+}
 
 
 async function checkStateMonitorById(monitorId: number) {
@@ -127,9 +183,16 @@ async function checkStateMonitorById(monitorId: number) {
 }
 
 
+
+
+
+
+
 export { saveResultinScan };
 
 export { saveResultinMonitors };
 export { saveInMonitor_results }
 
 export { checkStateMonitorById }
+export { saveInMonitor_resultsAPICrt }
+export { saveResultinScanAPICrt }

@@ -1,7 +1,12 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { showMonitorsByUser } from "../showMonitorsByUser";
+
 import { analyzers } from "../analyzers";
+import { analyzersAPICrt } from "../analyzers";
+
 import { saveResultinScan } from "../database/results";
+import { saveResultinScanAPICrt } from "../database/results";
+
 import { stopMonitorID } from "../stopMonitor"
 import { startMonitorID } from "../startMonitorID"
 import { deleteMonitorID } from "../deleteMonitor"
@@ -191,13 +196,47 @@ async function handleApiRequest(
 
             );
 
+
+            /////////////////////////////////
+            // для раьоыт апи чтоб без https и http  и без слешей в конце
+            const url = target.startsWith("http")
+                ? target
+                : `https://${target}`;
+
+            const hostname = new URL(url).hostname;
+
+
+
+            let scanResultAPICrt: any = null;
+            try {
+                scanResultAPICrt =
+                    await analyzersAPICrt(hostname);
+
+                //////////////////////
+
+                console.log("Сканирование crt.sh завершено");
+
+                await saveResultinScanAPICrt(
+                    scanResultAPICrt,
+                    target,
+                    Number(TEST_USER_ID),
+                    TEST_PLATFORM
+                );
+            } catch (error) {
+                console.error("Ошибка crt.sh:", error);
+            }
+
+
             console.log("Результат сохранен в базе данных");
 
             res.writeHead(200, {
                 "Content-Type": "application/json"
             });
 
-            res.end(JSON.stringify(scanResult));
+            res.end(JSON.stringify({
+                scan: scanResult,
+                subdomains: scanResultAPICrt
+            }));
 
         } catch (error) {
             console.error("Ошибка API:", error);

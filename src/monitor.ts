@@ -1,17 +1,20 @@
 
 import { analyzers } from "./analyzers.js";
+import { analyzersAPICrt } from "./analyzers.js";
+
 import { saveResultinMonitors } from "./database/results.js";
 import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
+import { saveInMonitor_resultsAPICrt } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
-
 
 import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
 import { MaxPrintResultScan } from "./maxBot/MaxPrintResultScan.js";
 
 import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
 import { tgPrintResultScan } from "./telegram/tgPrintResultScan.js";
+
 
 
 function wait(ms: number): Promise<void> {
@@ -203,6 +206,21 @@ async function runMonitor(
     }
 }
 
+
+async function runSubdomainScan(target: string, monitorId: number) {
+    const parts = target.split(".");
+
+    const domain = parts.slice(-2).join(".");
+
+    console.log("Запускаем проверку поддоменов:", domain);
+
+    const resultCrtSh = await analyzersAPICrt(domain);
+
+    console.log("Результат проверки поддоменов:", resultCrtSh);
+
+    await saveInMonitor_resultsAPICrt(resultCrtSh, monitorId);
+}
+
 async function startActiveMonitors(activeMonitors: any) {
 
     for (const monitor of activeMonitors) {
@@ -239,7 +257,8 @@ async function startActiveMonitors(activeMonitors: any) {
 
             monitor.telegram_user_id ?? undefined
         );
-
+        await runSubdomainScan(monitor.target, monitor.id);
+        // важно доделать правльноую архитектру линит примерно 5 за минутут если будет 5 мониторов то лимит В С Е :(
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }

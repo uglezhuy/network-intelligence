@@ -42,6 +42,57 @@ async function analyzers(target: string) {
   return result;
 }
 
+// https://crt.sh/?q=%25.${target}&output=json   строня api лимиит примерно 5 запросов в минуту 
+async function analyzersAPICrt(target: string) {
+  const response = await fetch(
+    `https://crt.sh/?q=%25.${target}&output=json`
+  );
+
+  console.log("crt.sh status:", response.status);
+  console.log(
+    "crt.sh content-type:",
+    response.headers.get("content-type")
+  );
+
+  const text = await response.text();
+
+  console.log(
+    "crt.sh response:",
+    text.slice(0, 500)
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `crt.sh error: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const certificates = JSON.parse(text);
+
+  const subdomains = new Set<string>();
+
+  for (const certificate of certificates) {
+    const names = certificate.name_value?.split("\n") || [];
+
+    for (const name of names) {
+      const hostname = name
+        .trim()
+        .toLowerCase()
+        .replace(/^\*\./, "");
+
+      if (
+        hostname &&
+        hostname.endsWith(`.${target}`) &&
+        hostname !== target
+      ) {
+        subdomains.add(hostname);
+      }
+    }
+  }
+
+  return [...subdomains].sort();
+}
 
 
-export { analyzers }
+
+export { analyzers, analyzersAPICrt };
