@@ -65,6 +65,7 @@ async function saveResultinScanAPICrt(
 async function saveResultinMonitors(
     target: string,
     min: number,
+    minCrtSh: number,
     mode: string,
     sendMonitorNotificationsTG: boolean,
     sendEventNotificationsTG: boolean,
@@ -80,6 +81,7 @@ async function saveResultinMonitors(
             `INSERT INTO monitors (
                 target,
                 interval_minutes,
+                subdomain_scan_interval_hours,
                 status,
                 telegram_user_id,
                 type,
@@ -87,11 +89,14 @@ async function saveResultinMonitors(
                 send_monitor_notificationsTG,
                 send_event_notificationsTG,
                 send_monitor_notificationsMAX,
-                send_event_notificationsMAX
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                send_event_notificationsMAX,
+                subdomain_scan_enabled
+
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 target,
                 min,
+                minCrtSh,
                 "active",
                 telegramUserId,
                 mode,
@@ -100,7 +105,7 @@ async function saveResultinMonitors(
                 sendEventNotificationsTG,
                 sendMonitorNotificationsMAX,
                 sendEventNotificationsMAX
-            ]
+                , true]
         );
 
         return result.insertId;
@@ -109,16 +114,20 @@ async function saveResultinMonitors(
             `INSERT INTO monitors (
                 target,
                 interval_minutes,
+                subdomain_scan_interval_hours,
                 status,
                 type,
-                platform
-            ) VALUES (?, ?, ?, ?, ?)`,
+                platform,
+                subdomain_scan_enabled
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [
                 target,
                 min,
+                minCrtSh,
                 "active",
                 mode,
                 platform ?? null
+                , true
             ]
         );
 

@@ -240,6 +240,7 @@ async function processMessage(
             await monitor(
                 target,
                 interval,
+                60,         // subdomain_scan_interval_hours
                 "events",
                 false,
                 true,
@@ -328,6 +329,7 @@ async function processMessage(
             await monitor(
                 target,
                 interval,
+                60,         // subdomain_scan_interval_hours
                 "monitors",
                 true,
                 false,

@@ -12,6 +12,7 @@ const TEST_USER_ID = 503362430; //временный тг айди  для те�
 function MonitorsPage({ page }: MonitorsPageProps) {
   const [URL, setURL] = useState("");
   const [min, setMin] = useState(0.1);
+  const [minCrtSh, setMinCrtSh] = useState(60); //временный тг айди  для тестов
 
   ///TG///
   const [TgSendMonitorNotifications, TgSetSendMonitorNotifications] =
@@ -64,6 +65,10 @@ function MonitorsPage({ page }: MonitorsPageProps) {
       MaxSendMonitorNotifications,
       "MaxSendEventNotifications",
       MaxSendEventNotifications,
+      "min",
+      min,
+      "minCrtSh",
+      minCrtSh,
     );
     fetch(`${API_BASE}/api/addMonitor`, {
       method: "POST",
@@ -73,6 +78,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
       body: JSON.stringify({
         target: URL,
         interval_minutes: min,
+        minCrtSh: minCrtSh,
 
         send_monitor_notificationsTG: TgSendMonitorNotifications,
         send_event_notificationsTG: TgSendEventNotifications,
@@ -132,6 +138,15 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           type="number"
           value={min}
           onChange={(event) => setMin(Number(event.target.value))}
+        />
+        <div>
+          Введите интервал для api crt.sh (поиск поддомнов по сертификатам
+          огрничения api 5 запросов в минуту){" "}
+        </div>
+        <input
+          type="number"
+          value={minCrtSh}
+          onChange={(event) => setMinCrtSh(Number(event.target.value))}
         />
         /////////////////////////////TG///////////////////////////
         <div>

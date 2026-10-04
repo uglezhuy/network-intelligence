@@ -24,6 +24,7 @@ function wait(ms: number): Promise<void> {
 async function monitor(
     target: string,
     min: number,
+    minCrtSh: number,
     mode: string,
     sendMonitorNotificationsBot: boolean,
     sendEventNotificationsBot: boolean,
@@ -42,6 +43,7 @@ async function monitor(
         monitorId = await saveResultinMonitors(
             target,
             min,
+            minCrtSh,
             mode,
             sendMonitorNotificationsBot,
             sendEventNotificationsBot,
@@ -59,6 +61,7 @@ async function monitor(
         monitorId = await saveResultinMonitors(
             target,
             min,
+            minCrtSh,
             mode,
             false,
             false,
@@ -75,6 +78,7 @@ async function monitor(
         monitorId,
         target,
         min,
+
         mode,
 
         platform,
@@ -87,6 +91,7 @@ async function monitor(
 
         telegramUserId
     );
+    runSubdomainScan(target, monitorId, minCrtSh);
 
 }
 
@@ -94,6 +99,7 @@ async function runMonitor(
     monitorId: number,
     target: string,
     min: number,
+
     mode: string,
 
     platform: string, // tg max web 
@@ -207,18 +213,54 @@ async function runMonitor(
 }
 
 
-async function runSubdomainScan(target: string, monitorId: number) {
-    const parts = target.split(".");
+async function runSubdomainScan(target: string, monitorId: number, interval: number) {
 
-    const domain = parts.slice(-2).join(".");
+    let StateMonitorById = true;
+    let i = 0;
 
-    console.log("Запускаем проверку поддоменов:", domain);
+    while (StateMonitorById) {
+        i++;
+        console.log(
+            "============================ ТЕСТ поддоменов " +
+            i +
+            "============================"
+        );
 
-    const resultCrtSh = await analyzersAPICrt(domain);
+        console.log(
+            "Monitor ID:",
+            monitorId
+        );
+        try {
+            const parts = target.split(".");
+            const domain = parts.slice(-2).join(".");
 
-    console.log("Результат проверки поддоменов:", resultCrtSh);
+            console.log("Запускаем проверку поддоменов:", domain);
 
-    await saveInMonitor_resultsAPICrt(resultCrtSh, monitorId);
+            const resultCrtSh = await analyzersAPICrt(domain);
+
+            console.log(
+                "Найдено поддоменов:",
+                resultCrtSh.length
+            );
+
+            await saveInMonitor_resultsAPICrt(
+                resultCrtSh,
+                monitorId
+            );
+
+            console.log("Результат поддоменов сохранён");
+        } catch (error) {
+            console.error(
+                "Ошибка проверки поддоменов:",
+                error
+            );
+        }
+
+
+
+        await wait(interval * 60 * 1000);
+    }
+
 }
 
 async function startActiveMonitors(activeMonitors: any) {
@@ -245,6 +287,7 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.id,
             monitor.target,
             monitor.interval_minutes,
+
             monitor.type,
 
             monitor.platform,
@@ -257,7 +300,14 @@ async function startActiveMonitors(activeMonitors: any) {
 
             monitor.telegram_user_id ?? undefined
         );
-        await runSubdomainScan(monitor.target, monitor.id);
+        console.log("структура monitor.subdomain_scan_enabled :", monitor.subdomain_scan_enabled);
+        if (monitor.subdomain_scan_enabled === 1) {
+            console.log("Запускаем проверку поддоменов для монитора:", monitor.id, monitor.target, monitor.subdomain_scan_interval_hours);
+            runSubdomainScan(monitor.target, monitor.id, monitor.subdomain_scan_interval_hours);
+        }
+        else {
+            console.log("Проверка поддоменов отключена для монитора:", monitor.id, monitor.target);
+        }
         // важно доделать правльноую архитектру линит примерно 5 за минутут если будет 5 мониторов то лимит В С Е :(
         await new Promise(resolve => setTimeout(resolve, 1000));
     }

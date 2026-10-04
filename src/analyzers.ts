@@ -66,6 +66,9 @@ async function analyzersAPICrt(target: string) {
       `crt.sh error: ${response.status} ${response.statusText}`
     );
   }
+  if (response.status === 429) {
+    throw new Error("!!!!!!!!!!!!!!!!!!!!!!!!!!crt.sh лимит превышен!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  }
 
   const certificates = JSON.parse(text);
 

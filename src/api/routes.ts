@@ -395,6 +395,7 @@ async function handleApiRequest(
 
                 const target = data.target;
                 const min = data.interval_minutes;
+                const minCrtSh = data.minCrtSh;
 
                 const sendMonitorNotificationsBot =
                     data.send_monitor_notificationsTG ?? false;
@@ -410,6 +411,7 @@ async function handleApiRequest(
 
                 console.log("URL:", target);
                 console.log("MIN:", min);
+                console.log("MINCRTSH:", minCrtSh);
 
                 console.log(
                     "TG:",
@@ -442,6 +444,7 @@ async function handleApiRequest(
                 await monitor(
                     target,
                     Number(min),
+                    minCrtSh,
                     "monitors",
                     sendMonitorNotificationsBot,
                     sendEventNotificationsBot,

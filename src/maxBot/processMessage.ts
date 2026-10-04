@@ -156,6 +156,7 @@ async function processMessage(message: TelegramMessage) {
             await monitor(
                 target,
                 interval,
+                60,         // subdomain_scan_interval_hours
                 "events",
                 false,
                 false,
@@ -223,6 +224,7 @@ async function processMessage(message: TelegramMessage) {
             await monitor(
                 target,
                 interval,
+                60,         // subdomain_scan_interval_hours
                 "monitors",
                 false,
                 false,
