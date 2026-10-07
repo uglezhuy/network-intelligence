@@ -47,15 +47,7 @@ function ScanPage({ page }: ScanPageProps) {
 
       <div>Результат сканирования:</div>
 
-      <ResoltScan resultScan={resultScan} />
-
-      <div>
-        <h2>Поддомены:</h2>
-
-        {subdomains.map(function (subdomain) {
-          return <div key={subdomain}>{subdomain}</div>;
-        })}
-      </div>
+      <ResoltScan resultScan={resultScan} subdomains={subdomains} />
     </aside>
   );
 }

@@ -1,14 +1,22 @@
 type ResoltScanProps = {
   resultScan: any;
+  subdomains: any;
 };
 
-function ResoltScan({ resultScan }: ResoltScanProps) {
+function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
   if (!resultScan) {
     return <div>Сканирование еще не выполнялось</div>;
   }
 
   return (
     <>
+      <div>
+        <h2>Поддомены:</h2>
+
+        {subdomains.map(function (subdomain: string) {
+          return <div key={subdomain}>{subdomain}</div>;
+        })}
+      </div>
       <hr />
       <div>
         <h2>Основная информация</h2>
