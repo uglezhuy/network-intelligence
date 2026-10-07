@@ -12,7 +12,7 @@ const TEST_USER_ID = 503362430; //временный тг айди  для те�
 function MonitorsPage({ page }: MonitorsPageProps) {
   const [URL, setURL] = useState("");
   const [min, setMin] = useState(0.1);
-  const [minCrtSh, setMinCrtSh] = useState(60); //временный тг айди  для тестов
+  const [minCrtSh, setMinCrtSh] = useState(60);
 
   ///TG///
   const [TgSendMonitorNotifications, TgSetSendMonitorNotifications] =
