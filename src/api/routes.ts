@@ -6,6 +6,8 @@ import { analyzersAPICrt } from "../analyzers";
 
 import { saveResultinScan } from "../database/results";
 import { saveResultinScanAPICrt } from "../database/results";
+import { getScanCountByUser } from "../database/results";
+
 
 import { stopMonitorID } from "../stopMonitor"
 import { startMonitorID } from "../startMonitorID"
@@ -142,6 +144,74 @@ async function handleApiRequest(
 
         return;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // /api/scanCount/ //////////////////////////////////////////////////////////////////////////////
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/scanCount/")
+    ) {
+        console.log("ROUTE: /api/scanCount/");
+
+        const telegramUserId = Number(
+            req.url.split("/api/scanCount/")[1]
+        );
+
+        if (!Number.isInteger(telegramUserId)) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Некорректный Telegram User ID" }));
+            return;
+        }
+
+        try {
+            const count = await getScanCountByUser(telegramUserId);
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ scanCount: count }));
+        } catch (error) {
+            console.error("Ошибка API:", error);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Ошибка сервера" }));
+        }
+        return;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // /api/scan/ //////////////////////////////////////////////////////////////////////////////
     console.log("Проверяем scan route");

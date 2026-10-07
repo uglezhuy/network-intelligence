@@ -192,11 +192,21 @@ async function checkStateMonitorById(monitorId: number) {
 }
 
 
+async function getScanCountByUser(telegramUserId: number): Promise<number> {
+    const db = await connection;
+    const [rows]: any = await db.execute(
+        "SELECT COUNT(*) as count FROM scans WHERE telegram_user_id = ?",
+        [telegramUserId]
+    );
+    return rows[0].count;
+}
 
 
 
 
 
+
+export { getScanCountByUser }
 export { saveResultinScan };
 
 export { saveResultinMonitors };
