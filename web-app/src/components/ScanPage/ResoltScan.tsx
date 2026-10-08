@@ -13,7 +13,7 @@ function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
       <div>
         <h2>Поддомены:</h2>
 
-        {subdomains.map(function (subdomain: string) {
+        {(subdomains ?? []).map(function (subdomain: string) {
           return <div key={subdomain}>{subdomain}</div>;
         })}
       </div>
