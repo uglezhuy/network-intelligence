@@ -1,9 +1,21 @@
 import { connection } from "./database/connection.js";
+import { RowDataPacket } from "mysql2";
 
-async function EaventsFullResultByID(monitorId: any) {
+type MonitorEvent = RowDataPacket & {
+    id: number;
+    monitor_id: number;
+    parameter: string;
+    old_value: string;
+    new_value: string;
+    created_at: Date;
+};
+
+async function EaventsFullResultByID(
+    monitorId: number
+): Promise<MonitorEvent[]> {
     const db = await connection;
 
-    const [rows] = await db.execute(
+    const [rows] = await db.execute<MonitorEvent[]>(
         `SELECT
             *
         FROM monitor_events
@@ -13,7 +25,7 @@ async function EaventsFullResultByID(monitorId: any) {
     );
 
     console.log(
-        `Все сканы монитора ${monitorId}:`,
+        `Все события монитора ${monitorId}:`,
         rows
     );
 

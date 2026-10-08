@@ -4,6 +4,8 @@ import { showMonitorsByUser } from "../showMonitorsByUser";
 import { analyzers } from "../analyzers";
 import { analyzersAPICrt } from "../analyzers";
 
+import { getDashboardByUser } from "../getDashboardByUser";
+
 import { saveResultinScan } from "../database/results";
 import { saveResultinScanAPICrt } from "../database/results";
 import { getScanCountByUser } from "../database/results";
@@ -409,8 +411,7 @@ async function handleApiRequest(
         try {
             console.log("Запускаем вывод всех СобытийМониторов по id:", target);
 
-            const FullEaventsResultByID = await EaventsFullResultByID(target);
-
+            const FullEaventsResultByID = await EaventsFullResultByID(Number(target));
 
 
 
@@ -619,7 +620,56 @@ async function handleApiRequest(
 
 
 
+    // /api/dashboard/ //////////////////////////////////////////////////////////////
 
+    if (
+        req.method === "GET" &&
+        req.url?.startsWith("/api/dashboard/")
+    ) {
+        console.log("ROUTE: /api/dashboard/");
+
+        const userId = Number(
+            req.url.split("/api/dashboard/")[1]
+        );
+
+        console.log("Dashboard User ID:", userId);
+
+        if (!Number.isInteger(userId)) {
+            res.writeHead(400, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Некорректный User ID"
+            }));
+
+            return;
+        }
+
+        try {
+            const dashboard =
+                await getDashboardByUser(userId);
+
+            res.writeHead(200, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify(dashboard));
+
+        } catch (error) {
+            console.error("Ошибка Dashboard API:", error);
+
+            res.writeHead(500, {
+                "Content-Type": "application/json"
+            });
+
+            res.end(JSON.stringify({
+                error: "Ошибка сервера"
+            }));
+        }
+
+        return;
+    }
 
 
 
