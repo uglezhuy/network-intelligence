@@ -45,6 +45,7 @@ function EaventsPage({ page }: MonitorsPageProps) {
 
   return (
     <>
+      <h1>{page}</h1>
       <div>Результаты Событии мониторинга:</div>
       {resultMyMonitors.map((monitor) => (
         <div key={monitor.id}>

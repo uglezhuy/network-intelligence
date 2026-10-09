@@ -14,6 +14,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   const [min, setMin] = useState(0.1);
   const [minCrtSh, setMinCrtSh] = useState(60);
 
+  const [includeSubdomains, setIncludeSubdomains] = useState<boolean>(false);
+
   ///TG///
   const [TgSendMonitorNotifications, TgSetSendMonitorNotifications] =
     useState(false);
@@ -69,6 +71,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
       min,
       "minCrtSh",
       minCrtSh,
+      "includeSubdomains",
+      includeSubdomains,
     );
     fetch(`${API_BASE}/api/addMonitor`, {
       method: "POST",
@@ -85,6 +89,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
         send_monitor_notificationsMAX: MaxSendMonitorNotifications,
         send_event_notificationsMAX: MaxSendEventNotifications,
+
+        includeSubdomains: includeSubdomains,
       }),
     });
     console.log("Добавление монитора завершено:", URL, min);
@@ -122,6 +128,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
   return (
     <>
+      <h1>{page}</h1>
       <div>
         Активные моинторы на id ${TEST_USER_ID} захаржено {}
       </div>
@@ -139,16 +146,31 @@ function MonitorsPage({ page }: MonitorsPageProps) {
           value={min}
           onChange={(event) => setMin(Number(event.target.value))}
         />
-        <div>
-          Введите интервал для api crt.sh (поиск поддомнов по сертификатам
-          огрничения api 5 запросов в минуту){" "}
-        </div>
-        <input
-          type="number"
-          value={minCrtSh}
-          onChange={(event) => setMinCrtSh(Number(event.target.value))}
-        />
-        /////////////////////////////TG///////////////////////////
+        <label>
+          <input
+            type="checkbox"
+            id="myCheck"
+            checked={includeSubdomains}
+            onChange={(e) => setIncludeSubdomains(e.target.checked)}
+          />
+          Включить поиск поддоменов (скрость запроса значительно увеличивается и
+          работа не гарнтироввана// https://crt.sh/ стрый api новый новый
+          https://crt.sh/?q=%25.URL.com&output=json.) )
+        </label>
+        {includeSubdomains && (
+          <div>
+            <div>
+              Введите интервал для api crt.sh (поиск поддомнов по сертификатам
+              огрничения api 5 запросов в минуту){" "}
+            </div>
+            <input
+              type="number"
+              value={minCrtSh}
+              onChange={(event) => setMinCrtSh(Number(event.target.value))}
+            />
+          </div>
+        )}
+        <hr />
         <div>
           <div>Уведомления в Telegram</div>
 
@@ -178,7 +200,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
           <div>Получать уведомление, если обнаружено изменение</div>
         </div>
-        ////////////////////////MAX//////////////////////////////////////
+        <hr />
         <div>
           <div>Уведомления в MAX</div>
 
@@ -208,31 +230,128 @@ function MonitorsPage({ page }: MonitorsPageProps) {
 
           <div>Получать уведомление, если обнаружено изменение</div>
         </div>
-        //////////////////////////////////////////////////////////////
         <button onClick={() => insertMonitorURL(min)}>Мониторить</button>{" "}
       </div>
+      <hr />
+      <h2>Мои мониторы</h2>
 
-      <div>Результаты мониторинга:</div>
       {resultMyMonitors.map((monitor) => (
         <div key={monitor.id}>
-          <div>
+          <hr />
+
+          {/* Основная информация */}
+          <h3>
             #{monitor.id} — {monitor.target}
+          </h3>
+
+          <div>
+            Статус:{" "}
+            {monitor.status === "active" ? "🟢 Активен" : "🔴 Остановлен"}
           </div>
-          <div>Интервал: {monitor.interval_minutes} мин</div>
-          <div>Статус: {monitor.status}</div>
-          <div> Статусы уведомлений</div>
-          <div>Telegram монитор: {monitor.send_monitor_notificationsTG}</div>
-          <div>Telegram изменения: {monitor.send_event_notificationsTG}</div>
 
-          <div>MAX монитор: {monitor.send_monitor_notificationsMAX}</div>
-          <div>MAX изменения: {monitor.send_event_notificationsMAX}</div>
+          <div>Интервал проверки: {monitor.interval_minutes} мин</div>
 
-          <button onClick={() => setSelectedMonitorId(monitor.id)}>
-            Отобразить данные
-          </button>
-          <button onClick={() => StartMonitorID(monitor.id)}>Запустить</button>
-          <button onClick={() => stopMonitorID(monitor.id)}>Остановить</button>
-          <button onClick={() => deleteMonitorID(monitor.id)}>Удалить</button>
+          {/* Основная статистика за всё время  api/monitorHistory*/}
+
+          <summary>Статистика мониторинга</summary>
+
+          <div>
+            Всего проверок: ***{/* количество проверок api/monitorHistory */}
+          </div>
+
+          <div>Обычных сканирований: 24****</div>
+
+          <div>Поисков поддоменов: 8****</div>
+
+          <div>
+            Доступность: ***{/* процент доступности  api/monitorHistory*/}%
+          </div>
+
+          <div>
+            Среднее время ответа: ***{/* среднее время  api/monitorHistory*/} мс
+          </div>
+
+          <div>
+            Последняя проверка:{" "}
+            {/* дата последней проверки  api/monitorHistory*/}
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Последняя проверка</th>
+                <th>HTTP</th>
+                <th>Поддомены</th>
+                <th>Задержка</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>09.10.2026, 13:40 ***</td>
+                <td>200***</td>
+                <td>17***</td>
+                <td>231*** мс</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <summary>Настройки уведомлений</summary>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Платформа</th>
+                <th>Результаты проверок</th>
+                <th>События</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Telegram</td>
+                <td>
+                  {monitor.send_monitor_notificationsTG
+                    ? "Включены"
+                    : "Выключены"}
+                </td>
+                <td>
+                  {monitor.send_event_notificationsTG
+                    ? "Включены"
+                    : "Выключены"}
+                </td>
+              </tr>
+
+              <tr>
+                <td>MAX</td>
+                <td>
+                  {monitor.send_monitor_notificationsMAX
+                    ? "Включены"
+                    : "Выключены"}
+                </td>
+                <td>
+                  {monitor.send_event_notificationsMAX
+                    ? "Включены"
+                    : "Выключены"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            <button onClick={() => setSelectedMonitorId(monitor.id)}>
+              Отобразить данные
+            </button>{" "}
+            {monitor.status === "active" ? (
+              <button onClick={() => stopMonitorID(monitor.id)}>
+                Остановить
+              </button>
+            ) : (
+              <button onClick={() => StartMonitorID(monitor.id)}>
+                Запустить
+              </button>
+            )}{" "}
+            <button onClick={() => deleteMonitorID(monitor.id)}>Удалить</button>
+          </p>
         </div>
       ))}
 

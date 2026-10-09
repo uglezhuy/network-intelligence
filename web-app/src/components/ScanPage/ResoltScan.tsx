@@ -5,18 +5,12 @@ type ResoltScanProps = {
 
 function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
   if (!resultScan) {
-    return <div>Сканирование еще не выполнялось</div>;
+    return <div>Сканирование еще не выполнялось ожидайте</div>;
   }
 
   return (
     <>
-      <div>
-        <h2>Поддомены:</h2>
-
-        {(subdomains ?? []).map(function (subdomain: string) {
-          return <div key={subdomain}>{subdomain}</div>;
-        })}
-      </div>
+      <div></div>
       <hr />
       <div>
         <h2>Основная информация</h2>
@@ -135,8 +129,27 @@ function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
       </div>
 
       <hr />
+      <h2>Поддомены:</h2>
 
-      <div> все данные сканирования:{JSON.stringify(resultScan, null, 2)}</div>
+      <div>
+        <p>Количество поддоменов: {subdomains?.length}</p>
+        <p>{(subdomains ?? []).join(", ")}</p>
+      </div>
+
+      <hr />
+      <details>
+        <summary>Открыть все данные в JSON</summary>
+
+        <pre>{JSON.stringify(resultScan, null, 2)}</pre>
+      </details>
+
+      <button
+        onClick={function () {
+          navigator.clipboard.writeText(JSON.stringify(resultScan, null, 2));
+        }}
+      >
+        Скопировать JSON
+      </button>
     </>
   );
 }

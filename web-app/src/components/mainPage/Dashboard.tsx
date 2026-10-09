@@ -121,7 +121,7 @@ function Dashboard({ page }: DashboardProps) {
 
   return (
     <aside>
-      <div>{page}</div>
+      <h1>{page}</h1>
 
       <div>
         <StatCard

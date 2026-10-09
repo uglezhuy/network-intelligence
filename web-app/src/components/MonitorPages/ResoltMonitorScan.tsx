@@ -47,48 +47,89 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
 
   return (
     <>
-      <div>Результат сканирования:</div>
-      <div>Выбран монитор с ID: {monitorId}</div>
-      <div>Количество результатов: {resultMonitor.length}</div>
-      <div> Переод времен сканирования (произвольная метка пока в днях) {}</div>
-      <div> График задержки</div>
-      <MonitorChart monitorId={monitorId} period={period} type="responseTime" />
-      <MonitorChart monitorId={monitorId} period={period} type="bodySizeKB" />
-      <StatusChart monitorId={monitorId} period={period} />
+      {monitorId !== null ? (
+        <>
+          <div>Результат сканирования:</div>
+          <div>Выбран монитор с ID: {monitorId}</div>
+          <div>Количество результатов: {resultMonitor.length}</div>
 
-      <Average monitorId={monitorId} period={period} />
-      <Min monitorId={monitorId} period={period} />
-      <Max monitorId={monitorId} period={period} />
-      <Availability monitorId={monitorId} period={period} />
-      <CheckCount monitorId={monitorId} period={period} />
+          <div>График задержки</div>
 
-      <div> Введите длительность сканирования</div>
-      <button onClick={() => setPeriod("1h")}>1 час</button>
+          <MonitorChart
+            monitorId={monitorId}
+            period={period}
+            type="responseTime"
+          />
 
-      <button onClick={() => setPeriod("6h")}>6 часов</button>
+          <MonitorChart
+            monitorId={monitorId}
+            period={period}
+            type="bodySizeKB"
+          />
 
-      <button onClick={() => setPeriod("24h")}>1 день</button>
+          <StatusChart monitorId={monitorId} period={period} />
 
-      <button onClick={() => setPeriod("7d")}>7 дней</button>
+          <Average monitorId={monitorId} period={period} />
+          <Min monitorId={monitorId} period={period} />
+          <Max monitorId={monitorId} period={period} />
+          <Availability monitorId={monitorId} period={period} />
+          <CheckCount monitorId={monitorId} period={period} />
 
-      <button onClick={() => setPeriod("30d")}>30 дней</button>
+          <div>Период мониторинга:</div>
 
-      <div>МОНИТОРИНГ:</div>
-      <div>Выбран монитор с ID: {monitorId}</div>
-      {resultMonitor.map((result) => (
-        <div key={result.id}>
-          <hr />
-          <hr />
-          <hr />
+          <button onClick={() => setPeriod("1h")}>1 час</button>
+          <button onClick={() => setPeriod("6h")}>6 часов</button>
+          <button onClick={() => setPeriod("24h")}>1 день</button>
+          <button onClick={() => setPeriod("7d")}>7 дней</button>
+          <button onClick={() => setPeriod("30d")}>30 дней</button>
 
-          <div>ID результата: {result.id}</div>
-          <div>Дата: {result.created_at}</div>
-          <div>{JSON.stringify(result.data, null, 2)}</div>
-          <hr />
-          <hr />
-          <hr />
-        </div>
-      ))}
+          <div>Мониторинг:</div>
+          <div>Выбран монитор с ID: {monitorId}</div>
+
+          {resultMonitor.map((result: any) => (
+            <div key={result.id}>
+              <hr />
+
+              <div>Дата: {result.created_at}</div>
+              <div>
+                HTTP-статус: {result.data?.http?.status ?? "Нет данных"}
+              </div>
+              <div>
+                Время ответа: {result.data?.http?.responseTime ?? "Нет данных"}{" "}
+                мс
+              </div>
+              <div>
+                Размер ответа: {result.data?.http?.bodySizeKB ?? "Нет данных"}{" "}
+                КБ
+              </div>
+
+              <button
+                onClick={() => {
+                  // пу пу пу пу хз ка лучше реализовать
+                  console.log(
+                    "пу пу пу пу хз ка лучше реализовать",
+                    result.data,
+                  );
+                }}
+              >
+                Подробнее
+              </button>
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    JSON.stringify(result.data, null, 2),
+                  );
+                }}
+              >
+                Скопировать JSON
+              </button>
+            </div>
+          ))}
+        </>
+      ) : (
+        <div>Выберите монитор, чтобы посмотреть подробный анализ.</div>
+      )}
     </>
   );
 }

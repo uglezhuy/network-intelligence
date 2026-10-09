@@ -13,6 +13,7 @@ function ScanPage({ page }: ScanPageProps) {
   const [URL, setURL] = useState("");
   const [resultScan, setResultScan] = useState<any>(null);
   const [subdomains, setSubdomains] = useState<string[]>([]);
+  const [includeSubdomains, setIncludeSubdomains] = useState<boolean>(false);
 
   async function scan() {
     console.log("Сканирование URL:", URL);
@@ -26,13 +27,18 @@ function ScanPage({ page }: ScanPageProps) {
     console.log("Результат сканирования:", data);
 
     setResultScan(data.scan);
-    setSubdomains(data.subdomains);
+    if (includeSubdomains == true) {
+      console.log("скан поддмоенов");
+      setSubdomains(data.subdomains);
+    } else {
+      console.log("! НЕскан поддмоенов НЕ ");
+    }
   }
-
+  console.log("Результат чекбокса", includeSubdomains);
   return (
     <aside>
       <div>
-        {page}
+        <h1>{page}</h1>
 
         <div>Введите URL для сканирования</div>
 
@@ -41,6 +47,17 @@ function ScanPage({ page }: ScanPageProps) {
           value={URL}
           onChange={(event) => setURL(event.target.value)}
         />
+        <label>
+          <input
+            type="checkbox"
+            id="myCheck"
+            checked={includeSubdomains}
+            onChange={(e) => setIncludeSubdomains(e.target.checked)}
+          />
+          Включить поиск поддоменов (скрость запроса значительно увеличивается и
+          работа не гарнтироввана// https://crt.sh/ стрый api новый новый
+          https://crt.sh/?q=%25.URL.com&output=json.) )
+        </label>
       </div>
 
       <button onClick={scan}>Сканировать</button>
