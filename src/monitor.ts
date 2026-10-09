@@ -31,8 +31,14 @@ async function monitor(
 
     sendMonitorNotificationsMAX: boolean,
     sendEventNotificationsMAX: boolean,
+
+    includeSubdomains: boolean,
+
+    platform: string = "web",
+
     telegramUserId?: number,
-    platform: string = "web"
+
+
 
 ) {
 
@@ -50,8 +56,10 @@ async function monitor(
 
             sendMonitorNotificationsMAX,
             sendEventNotificationsMAX,
+            includeSubdomains,
             telegramUserId,
-            platform
+            platform,
+
 
 
         );
@@ -67,6 +75,7 @@ async function monitor(
             false,
             false,
             false,
+            true,
             undefined,
             platform
         );

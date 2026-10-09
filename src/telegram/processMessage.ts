@@ -246,8 +246,9 @@ async function processMessage(
                 true,
                 false,
                 false,
+                true,
+                "telegram",
                 telegramUserId,
-                "telegram"
             );
 
 
@@ -335,8 +336,9 @@ async function processMessage(
                 false,
                 false,
                 false,
+                true,
+                "telegram",
                 telegramUserId,
-                "telegram"
             );
 
 

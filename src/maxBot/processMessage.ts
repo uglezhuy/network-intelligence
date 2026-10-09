@@ -162,8 +162,9 @@ async function processMessage(message: TelegramMessage) {
                 false,
                 false,
                 true,
+                true,
+                "max",
                 telegramUserId,
-                "max"
             );
 
             console.log("команда /events выполнена");
@@ -230,8 +231,9 @@ async function processMessage(message: TelegramMessage) {
                 false,
                 true,
                 false,
+                true,
+                "max",
                 telegramUserId,
-                "max"
             );
 
             console.log("команда /monitor выполнена");

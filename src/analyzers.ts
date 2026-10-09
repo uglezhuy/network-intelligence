@@ -42,54 +42,87 @@ async function analyzers(target: string) {
   return result;
 }
 
-// https://crt.sh/?q=%25.${target}&output=json   строня api лимиит примерно 5 запросов в минуту 
-async function analyzersAPICrt(target: string) {
-  const response = await fetch(
-    `https://crt.sh/?q=%25.${target}&output=json`
-  );
-
-  console.log("crt.sh status:", response.status);
-  console.log(
-    "crt.sh content-type:",
-    response.headers.get("content-type")
-  );
-
-  const text = await response.text();
-
-  console.log(
-    "crt.sh response:",
-    text.slice(0, 500)
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `crt.sh error: ${response.status} ${response.statusText}`
-    );
-  }
-  if (response.status === 429) {
-    throw new Error("!!!!!!!!!!!!!!!!!!!!!!!!!!crt.sh лимит превышен!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  }
-
-  const certificates = JSON.parse(text);
+// https://api.ctlogs.dev  строня api лимиит примерно 5 запросов в минуту 
+//РАнее был https://crt.sh/?q=%25.${target}&output=json.
+// Поиск поддоменов через Certificate Transparency API (ctlogs.dev)
+async function analyzersAPICrt(target: string): Promise<string[]> {
+  const domain = target
+    .trim()
+    .toLowerCase()
+    .replace(/\.$/, "");
 
   const subdomains = new Set<string>();
 
-  for (const certificate of certificates) {
-    const names = certificate.name_value?.split("\n") || [];
+  let cursor = "";
 
-    for (const name of names) {
-      const hostname = name
-        .trim()
+  // Без API-ключа доступны первые 10 страниц по 100 записей.
+  for (let page = 0; page < 10; page++) {
+    const url = new URL(
+      `/v1/subdomains/${encodeURIComponent(domain)}`,
+      "https://api.ctlogs.dev"
+    );
+
+    if (cursor) {
+      url.searchParams.set("after", cursor);
+    }
+
+    const response = await fetch(url);
+
+    if (response.status === 429) {
+      throw new Error(
+        "ctlogs.dev: превышен лимит запросов (429)"
+      );
+    }
+
+    if (response.status === 503) {
+      throw new Error(
+        "ctlogs.dev: сервис временно перегружен (503)"
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        `ctlogs.dev error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json() as {
+      rows: Array<{ match?: string }>;
+      has_next: boolean;
+      next_cursor: string;
+      duration_ms?: number;
+    };
+
+    console.log(
+      `ctlogs.dev: страница ${page + 1}, ` +
+      `записей ${data.rows.length}, ` +
+      `время ${data.duration_ms ?? "неизвестно"} мс`
+    );
+
+    for (const row of data.rows) {
+      const hostname = row.match
+        ?.trim()
         .toLowerCase()
-        .replace(/^\*\./, "");
+        .replace(/^\*\./, "")
+        .replace(/\.$/, "");
 
       if (
         hostname &&
-        hostname.endsWith(`.${target}`) &&
-        hostname !== target
+        hostname.endsWith(`.${domain}`) &&
+        hostname !== domain
       ) {
         subdomains.add(hostname);
       }
+    }
+
+    if (!data.has_next) {
+      break;
+    }
+
+    cursor = data.next_cursor;
+
+    if (!cursor) {
+      break;
     }
   }
 

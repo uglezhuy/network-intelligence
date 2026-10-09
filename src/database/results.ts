@@ -71,8 +71,10 @@ async function saveResultinMonitors(
     sendEventNotificationsTG: boolean,
     sendMonitorNotificationsMAX: boolean,
     sendEventNotificationsMAX: boolean,
+    includeSubdomains: boolean,
     telegramUserId?: number,
-    platform?: string
+    platform?: string,
+
 ) {
     const db = await connection;
 
@@ -105,7 +107,7 @@ async function saveResultinMonitors(
                 sendEventNotificationsTG,
                 sendMonitorNotificationsMAX,
                 sendEventNotificationsMAX
-                , true]
+                , includeSubdomains]
         );
 
         return result.insertId;

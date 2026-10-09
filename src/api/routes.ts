@@ -480,6 +480,14 @@ async function handleApiRequest(
                 const sendEventNotificationsMAX =
                     data.send_event_notificationsMAX ?? false;
 
+                const includeSubdomains =
+                    data.includeSubdomains ?? false;
+
+
+
+
+
+
                 console.log("URL:", target);
                 console.log("MIN:", min);
                 console.log("MINCRTSH:", minCrtSh);
@@ -521,8 +529,11 @@ async function handleApiRequest(
                     sendEventNotificationsBot,
                     sendMonitorNotificationsMAX,
                     sendEventNotificationsMAX,
+                    includeSubdomains,
+                    "web",
                     TEST_USER_ID,
-                    "web"
+
+
                 );
 
                 res.writeHead(200, {
