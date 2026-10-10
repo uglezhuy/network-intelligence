@@ -10,12 +10,18 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/startAPIMonitorsBots.js",
+    "start:nest": "node dist/nest/main.js",
     "cli": "node dist/index.js",
     "dev": "npm run build && npm run start"
   },
   "dependencies": {
+    "@nestjs/common": "^12.1.2",
+    "@nestjs/core": "^12.1.2",
+    "@nestjs/platform-express": "^12.1.2",
     "dotenv": "^17.4.2",
-    "mysql2": "^3.24.2"
+    "mysql2": "^3.24.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",
