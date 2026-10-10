@@ -5,38 +5,80 @@ import { IP_Analyzer } from "./analyzers/ip.js";
 import { TLS_Analyzer } from "./analyzers/tls.js";
 
 
-async function analyzers(target: string) {
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
 
-  const url = target.startsWith("http") ? target : `https://${target}`;
+  return String(error);
+}
+
+function getAnalyzerResult<T>(
+  name: string,
+  result: PromiseSettledResult<T>
+): T | { error: string } {
+  if (result.status === "fulfilled") {
+    return result.value;
+  }
+
+  const message = getErrorMessage(result.reason);
+
+  console.error(`Ошибка анализатора ${name}:`, message);
+
+  return {
+    error: message,
+  };
+}
+
+async function analyzers(target: string) {
+  const url = target.startsWith("http")
+    ? target
+    : `https://${target}`;
+
   const hostname = new URL(url).hostname;
 
-  //console.log("==============DNS info================");
-  const dnsInfo = await getDNS(hostname);
+  // DNS
+  let dnsInfo: Awaited<ReturnType<typeof getDNS>> | { error: string };
 
-  //console.log("==============HTTP info================");
-  const HTTPInfo = await HTTP_Analyzer(url);
+  try {
+    dnsInfo = await getDNS(hostname);
+  } catch (error) {
+    const message = getErrorMessage(error);
 
-  //console.log("==============IP info(api.ipapi.is)================");
+    console.error("Ошибка анализатора DNS:", message);
+
+    dnsInfo = { error: message };
+  }
+
+  //
   let ip = "";
-  if (dnsInfo.ipv4.status === "fulfilled") { ip = dnsInfo.ipv4.value[0]; }
-  const IPInfo = await IP_Analyzer(ip);
 
-  //console.log("==============TLS info================");
-  const TLSInfo = await TLS_Analyzer(hostname);
+  if ("ipv4" in dnsInfo && dnsInfo.ipv4.status === "fulfilled") {
+    ip = dnsInfo.ipv4.value[0];
+  }
 
 
-  //console.log("==============PORT info================");
-  const PORTInfo = await PORT_Analyzer(hostname);
+  const [
+    httpResult,
+    ipResult,
+    tlsResult,
+    portsResult,
+  ] = await Promise.allSettled([
+    HTTP_Analyzer(url),
+    IP_Analyzer(ip),
+    TLS_Analyzer(hostname),
+    PORT_Analyzer(hostname),
+  ]);
 
 
   const result = {
     target: target,
     hostname: hostname,
     dns: dnsInfo,
-    http: HTTPInfo,
-    ip: IPInfo,
-    tls: TLSInfo,
-    ports: PORTInfo,
+    http: getAnalyzerResult("HTTP", httpResult),
+    ip: getAnalyzerResult("IP", ipResult),
+    tls: getAnalyzerResult("TLS", tlsResult),
+    ports: getAnalyzerResult("PORT", portsResult),
   };
 
   return result;
