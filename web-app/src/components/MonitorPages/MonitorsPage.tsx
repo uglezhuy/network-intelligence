@@ -84,6 +84,9 @@ function MonitorsPage({ page }: MonitorsPageProps) {
         interval_minutes: min,
         minCrtSh: minCrtSh,
 
+        // TEST_USER_ID: TEST_USER_ID,   при переходе на nest раскомментировать
+
+        //  platform: 'web',            так же при переходе на nest раскомментировать
         send_monitor_notificationsTG: TgSendMonitorNotifications,
         send_event_notificationsTG: TgSendEventNotifications,
 
@@ -101,6 +104,11 @@ function MonitorsPage({ page }: MonitorsPageProps) {
     console.log("Оставнока  монитора:", URL);
 
     await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`);
+
+    // после полного перехода на nuts удалить сверху и раскомментировать
+    // await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`, {
+    //     method: "PATCH",
+    //   });
 
     console.log("Остановка монитора завершена:", monitorId);
     ShowMonitorsALL();

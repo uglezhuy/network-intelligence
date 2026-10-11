@@ -8,7 +8,6 @@ import { getDashboardByUser } from "../getDashboardByUser";
 
 import { saveResultinScan } from "../database/results";
 import { saveResultinScanAPICrt } from "../database/results";
-import { getScanCountByUser } from "../database/results";
 
 
 import { stopMonitorID } from "../stopMonitor"
@@ -25,12 +24,7 @@ async function handleApiRequest(
     res: ServerResponse
 ) {
 
-
-
     const TEST_USER_ID = 503362430; //временный тг айди  для тестов
-
-
-
 
     console.log("REQUEST:", req.method, req.url);
 
@@ -56,7 +50,7 @@ async function handleApiRequest(
 
 
 
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
     // /api/monitorHistory/ //////////////////////////////////////////////////////////////////////////////
     if (
         req.method === "GET" &&
@@ -97,6 +91,20 @@ async function handleApiRequest(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+    // Новая реализация: src/nest/monitor/monitor.controller.ts
+    // Логика сканирования: src/nest/monitor/monitor.service.ts
 
     // /api/monitors//////////////////////////////////////////////////////////////////////////////
     if (
@@ -147,82 +155,16 @@ async function handleApiRequest(
         return;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // /api/scanCount/ //////////////////////////////////////////////////////////////////////////////
-    if (
-        req.method === "GET" &&
-        req.url?.startsWith("/api/scanCount/")
-    ) {
-        console.log("ROUTE: /api/scanCount/");
-
-        const telegramUserId = Number(
-            req.url.split("/api/scanCount/")[1]
-        );
-
-        if (!Number.isInteger(telegramUserId)) {
-            res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: "Некорректный Telegram User ID" }));
-            return;
-        }
-
-        try {
-            const count = await getScanCountByUser(telegramUserId);
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ scanCount: count }));
-        } catch (error) {
-            console.error("Ошибка API:", error);
-            res.writeHead(500, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: "Ошибка сервера" }));
-        }
-        return;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+    // Новая реализация: src/nest/scan/scan.controller.ts
+    // Логика сканирования: src/nest/scan/scan.service.ts
+    // сохраняется в том чиссле и analyzersAPICrt
 
     // /api/scan/ //////////////////////////////////////////////////////////////////////////////
     console.log("Проверяем scan route");
     console.log("Method:", req.method);
     console.log("URL:", req.url);
-    console.log(
-        "startsWith /api/scan/:",
-        req.url?.startsWith("/api/scan/")
-    );
+
 
     if (
         req.method === "GET" &&
@@ -325,7 +267,7 @@ async function handleApiRequest(
         return;
     }
 
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
     // /api/monitorsResolts/ //////////////////////////////////////////////////////////////////////////////
 
 
@@ -381,14 +323,6 @@ async function handleApiRequest(
 
 
     // /api/eaventsResolts/ //////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-    //http://localhost:3000/api/monitorHistory/176?days=1
-
 
     if (req.method === "GET" && req.url?.startsWith("/api/eaventsResolts/")) {
         console.log("ROUTE: /api/eaventsResolts/");
@@ -449,6 +383,7 @@ async function handleApiRequest(
 
 
 
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
 
     //////////////////////addMonitor
     if (req.url === "/api/addMonitor" && req.method === "POST") {
@@ -570,7 +505,7 @@ async function handleApiRequest(
 
 
 
-
+    // скоре всего удалить маршрут//////////////////
     ///////////////////////eavents
     if (
         req.method === "GET" &&
@@ -630,6 +565,7 @@ async function handleApiRequest(
 
 
 
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
 
     // /api/dashboard/ //////////////////////////////////////////////////////////////
 
@@ -695,8 +631,9 @@ async function handleApiRequest(
 
 
 
-
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
+    // Новая реализация: src/nest/monitor/monitor.controller.ts
+    // Логика сканирования: src/nest/monitor/monitor.service.ts
 
     //остановка //////////////////////////////////////////////////////////////////////////////
     if (
@@ -747,7 +684,7 @@ async function handleApiRequest(
     ///////////////////////////////////////////////////////////////////////////////
 
 
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
     //запуск //////////////////////////////////////////////////////////////////////////////
     if (
         req.method === "GET" &&
@@ -803,7 +740,7 @@ async function handleApiRequest(
     ///////////////////////////////////////////////////////////////////////////////
 
 
-
+    // Статус: ПЕРЕНЕСЁН В NESTJS 🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢
     //удаление //////////////////////////////////////////////////////////////////////////////
     if (
         req.method === "GET" &&
