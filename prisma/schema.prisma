@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model max_bot_state {
+  id             Int    @id @default(autoincrement())
+  last_update_id BigInt @default(0)
+}
+
+model monitor_events {
+  id         Int       @id @default(autoincrement())
+  monitor_id Int
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  parameter  String    @db.VarChar(50)
+  old_value  String    @db.VarChar(255)
+  new_value  String    @db.VarChar(255)
+}
+
+model monitor_results {
+  id          Int       @id @default(autoincrement())
+  monitor_id  Int
+  result_type String    @default("monitor") @db.VarChar(20)
+  data        Json
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  monitors    monitors  @relation(fields: [monitor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "monitor_results_ibfk_1")
+
+  @@index([monitor_id], map: "monitor_id")
+}
+
+model monitors {
+  id                            Int               @id @default(autoincrement())
+  target                        String            @db.VarChar(255)
+  interval_minutes              Decimal           @db.Decimal(5, 2)
+  status                        monitors_status   @default(active)
+  created_at                    DateTime?         @default(now()) @db.Timestamp(0)
+  telegram_user_id              BigInt?
+  platform                      String?           @db.VarChar(20)
+  type                          String?           @db.VarChar(20)
+  send_monitor_notificationsTG  Boolean           @default(false)
+  send_event_notificationsTG    Boolean           @default(false)
+  send_monitor_notificationsMAX Boolean           @default(false)
+  send_event_notificationsMAX   Boolean           @default(false)
+  subdomain_scan_enabled        Boolean           @default(false)
+  subdomain_scan_interval_hours Int               @default(24)
+  last_subdomain_scan_at        DateTime?         @db.DateTime(0)
+  monitor_results               monitor_results[]
+}
+
+model scans {
+  id               Int       @id @default(autoincrement())
+  target           String    @db.VarChar(255)
+  data             Json
+  created_at       DateTime? @default(now()) @db.Timestamp(0)
+  telegram_user_id BigInt?
+  platform         String?   @db.VarChar(20)
+}
+
+model telegram_bot_state {
+  id             Int    @id @default(autoincrement())
+  last_update_id BigInt @default(0)
+}
+
+model telegram_max_web_users {
+  id               Int       @id @default(autoincrement())
+  telegram_user_id BigInt?
+  telegram_chat_id BigInt    @unique(map: "telegram_chat_id")
+  username         String?   @db.VarChar(255)
+  created_at       DateTime? @default(now()) @db.Timestamp(0)
+  platform         String    @default("telegram") @db.VarChar(20)
+}
+
+enum monitors_status {
+  active
+  stopped
+}
