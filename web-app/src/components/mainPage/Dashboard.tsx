@@ -1,5 +1,6 @@
 import StatCard from "./src/StatCard";
 import LastEventsMonitors from "./src/LastEventsMonitors";
+import MonitorStatusTable from "./src/MonitorStatusTable";
 import { API_BASE } from "../../api";
 import { useEffect, useState } from "react";
 
@@ -25,8 +26,11 @@ function Dashboard({ page }: DashboardProps) {
   const [MyMonitors, setMyMonitors] = useState<MyMonitors[]>([]);
   const [scanCount, setScanCount] = useState<number>(0);
   const [eventCount, setEventCount] = useState<number>(0);
+  const [AvaveraveResponseTime, setAvaveraveResponseTime] = useState(0);
   const [events, setEvents] = useState<any[]>([]);
   const [availability, setAvailability] = useState<number | null>(null);
+
+  const [smollInfoMonitors, setSmollInfoMonitors] = useState<any[]>([]);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -47,6 +51,8 @@ function Dashboard({ page }: DashboardProps) {
         setEvents(data.events);
         setScanCount(data.scanCount);
         setEventCount(data.eventCount);
+        setAvaveraveResponseTime(data.averageResponseTime);
+        setSmollInfoMonitors(data.smollInfoMonitors);
       } catch (error) {
         console.error("loadDashboard:", error);
       }
@@ -122,12 +128,19 @@ function Dashboard({ page }: DashboardProps) {
   return (
     <aside>
       <h1>{page}</h1>
+      <div>Состояние ресурсов и последние изменения</div>
 
       <div>
         <StatCard
           title="Мониторы"
           value={totalMonitors}
           description={`${activeMonitors} активных, ${inactiveMonitors} неактивных`}
+        />
+
+        <StatCard
+          title="Доступность мониторов"
+          value={availability !== null ? `${availability.toFixed(1)}%` : "—"}
+          description="за 24 часа"
         />
 
         <StatCard
@@ -143,14 +156,15 @@ function Dashboard({ page }: DashboardProps) {
         />
 
         <StatCard
-          title="Доступность"
-          value={availability !== null ? `${availability.toFixed(1)}%` : "—"}
-          description="за 24 часа"
+          title="Среднее время ответа"
+          value={AvaveraveResponseTime}
+          description="за последнии 24 часа"
         />
-
-        <LastEventsMonitors monitorsUser={MyMonitors} events={events} />
       </div>
+      <div>Краткая сводка по отслеживаемым ресурсам </div>
+      <MonitorStatusTable smollInfoMonitors={smollInfoMonitors} />
 
+      <LastEventsMonitors monitorsUser={MyMonitors} events={events} />
       <div></div>
     </aside>
   );
