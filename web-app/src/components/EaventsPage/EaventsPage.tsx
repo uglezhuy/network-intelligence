@@ -1,4 +1,5 @@
 import ResoltMonitorScan from "./ResoltEventsScan";
+import StatCard from "../mainPage/src/StatCard";
 
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../api";
@@ -46,7 +47,14 @@ function EaventsPage({ page }: MonitorsPageProps) {
   return (
     <>
       <h1>{page}</h1>
+
       <div>Результаты Событии мониторинга:</div>
+      <StatCard
+        title={"Всего событий"}
+        value={11}
+        description={"За всё время "}
+      />
+
       {resultMyMonitors.map((monitor) => (
         <div key={monitor.id}>
           <div>
