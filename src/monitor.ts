@@ -310,7 +310,7 @@ async function startActiveMonitors(activeMonitors: any) {
             monitor.telegram_user_id ?? undefined
         );
         console.log("структура monitor.subdomain_scan_enabled :", monitor.subdomain_scan_enabled);
-        if (monitor.subdomain_scan_enabled === 1) {
+        if (monitor.subdomain_scan_enabled === true) {
             console.log("Запускаем проверку поддоменов для монитора:", monitor.id, monitor.target, monitor.subdomain_scan_interval_hours);
             runSubdomainScan(monitor.target, monitor.id, monitor.subdomain_scan_interval_hours);
         }
@@ -326,3 +326,4 @@ async function startActiveMonitors(activeMonitors: any) {
 export { monitor };
 export { startActiveMonitors };
 export { runMonitor };
+export { runSubdomainScan };

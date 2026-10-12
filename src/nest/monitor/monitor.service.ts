@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 
 
-import { runMonitor } from '../../monitor.js';
+import { runMonitor, runSubdomainScan } from '../../monitor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 
@@ -191,6 +191,7 @@ export class MonitorService {
                     : Number(monitor.telegram_user_id),
             );
 
+
             // ответ клиенту
             return {
                 message: 'Монитор запущен',
@@ -307,6 +308,13 @@ export class MonitorService {
                     : Number(monitor.telegram_user_id),
             );
 
+            runSubdomainScan(
+                monitor.target,
+                monitor.id,
+                Number(monitor.subdomain_scan_interval_hours),
+            );
+
+
             return {
                 message: 'Монитор добавлен',
                 monitorId: monitor.id,
@@ -384,6 +392,27 @@ export class MonitorService {
                 fullDattaOnlyForTesting: data,
             };
         });
+    }
+
+
+    // получение всех активных мониторов. используется для запуска мониторинга при запуске апи
+    async getActiveMonitors() {
+        try {
+            return await this.prisma.monitors.findMany({
+                where: {
+                    status: 'active',
+                },
+            });
+        } catch (error) {
+            console.error(
+                'Ошибка получения активных мониторов:',
+                error,
+            );
+
+            throw new InternalServerErrorException(
+                'Ошибка сервера при получении активных мониторов',
+            );
+        }
     }
 
 
