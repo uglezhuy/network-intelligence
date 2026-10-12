@@ -29,7 +29,7 @@ function ResoltMonitorScan({ monitorId }: ResoltMonitorScanProps) {
     async function getMonitorResult() {
       try {
         const resoltMonitor = await fetch(
-          `${API_BASE}/api/monitorsResolts/${monitorId}`,
+          `${API_BASE}/api/monitorResult/${monitorId}`,
         );
 
         const data = await resoltMonitor.json();

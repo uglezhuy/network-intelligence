@@ -84,9 +84,8 @@ function MonitorsPage({ page }: MonitorsPageProps) {
         interval_minutes: min,
         minCrtSh: minCrtSh,
 
-        // TEST_USER_ID: TEST_USER_ID,   при переходе на nest раскомментировать
-
-        //  platform: 'web',            так же при переходе на nest раскомментировать
+        telegram_user_id: TEST_USER_ID, // переименовать стрку в бд
+        platform: "web",
         send_monitor_notificationsTG: TgSendMonitorNotifications,
         send_event_notificationsTG: TgSendEventNotifications,
 
@@ -103,12 +102,11 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   async function stopMonitorID(monitorId: number) {
     console.log("Оставнока  монитора:", URL);
 
-    await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`);
+    //await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`);  LEGACY code
 
-    // после полного перехода на nuts удалить сверху и раскомментировать
-    // await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`, {
-    //     method: "PATCH",
-    //   });
+    await fetch(`${API_BASE}/api/stopMonitor/${monitorId}`, {
+      method: "PATCH",
+    });
 
     console.log("Остановка монитора завершена:", monitorId);
     ShowMonitorsALL();
@@ -116,15 +114,22 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   async function StartMonitorID(monitorId: number) {
     console.log("Запуск  монитора:", URL);
 
-    await fetch(`${API_BASE}/api/startMonitor/${monitorId}`);
+    // await fetch(`${API_BASE}/api/startMonitor/${monitorId}`);  LEGACY code
 
+    await fetch(`${API_BASE}/api/startMonitor/${monitorId}`, {
+      method: "PATCH",
+    });
     console.log("Запуск монитора завершен:", monitorId);
     ShowMonitorsALL();
   }
   async function deleteMonitorID(monitorId: number) {
     console.log("Удаление  монитора:", URL);
 
-    await fetch(`${API_BASE}/api/deleteMonitor/${monitorId}`);
+    // await fetch(`${API_BASE}/api/deleteMonitor/${monitorId}`);  LEGACY code
+
+    await fetch(`${API_BASE}/api/deleteMonitor/${monitorId}`, {
+      method: "DELETE",
+    });
 
     console.log("Удаление монитора завершено:", monitorId);
     ShowMonitorsALL();

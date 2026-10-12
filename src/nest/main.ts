@@ -7,10 +7,13 @@ async function bootstrap() {
 
     app.setGlobalPrefix('api');
 
+    app.enableCors({
+        origin: 'http://localhost:5173',
+    });
+
     await app.listen(3001);
 
-    console.log('NestJS practice API: http://localhost:3001/api/health');
-    console.log('NestJS practice API: http://localhost:3001/api/scan');
+    console.log('NestJS API: http://localhost:3001/api/health');
 }
 
 bootstrap();
