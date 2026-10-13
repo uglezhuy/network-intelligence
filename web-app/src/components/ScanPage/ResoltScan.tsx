@@ -1,9 +1,12 @@
+import { IpMap } from "./src/IpMap";
+import SubdomainsTable from "./src/SubdomenTadle";
 type ResoltScanProps = {
   resultScan: any;
   subdomains: any;
+  details: any;
 };
 
-function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
+function ResoltScan({ resultScan, subdomains, details }: ResoltScanProps) {
   if (!resultScan) {
     return <div>Сканирование еще не выполнялось ожидайте</div>;
   }
@@ -27,7 +30,22 @@ function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
       </div>
 
       <hr />
+      <h2>Расположение</h2>
+      <div>
+        <div>Страна: {resultScan.ip.country}</div>
+        <div>/* Код страны:resultScan.id.country_code*/</div>
+        <div>Регион:{resultScan.ip.state}</div>
+        <div>Город:{resultScan.ip.city}</div>
+        <div>Широта:{resultScan.ip.latitude}</div>
+        <div>Долгота:{resultScan.ip.longitude}</div>
+        <IpMap
+          latitude={resultScan.ip.latitude}
+          longitude={resultScan.ip.longitude}
+          country={resultScan.ip.country}
+        />
+      </div>
 
+      <hr />
       <h2>HTTP</h2>
       <div>
         <div>Тип контента: {resultScan.http?.contentType}</div>
@@ -133,6 +151,7 @@ function ResoltScan({ resultScan, subdomains }: ResoltScanProps) {
 
       <div>
         <p>Количество поддоменов: {subdomains?.length}</p>
+        <SubdomainsTable subdomains={subdomains} details={details} />
         <p>{(subdomains ?? []).join(", ")}</p>
       </div>
 

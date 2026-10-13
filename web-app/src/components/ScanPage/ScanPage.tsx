@@ -12,7 +12,10 @@ const TEST_PLATFORM = "telegram";
 function ScanPage({ page }: ScanPageProps) {
   const [URL, setURL] = useState("");
   const [resultScan, setResultScan] = useState<any>(null);
+
   const [subdomains, setSubdomains] = useState<string[]>([]);
+  const [details, setDetails] = useState<any[]>([]);
+
   const [includeSubdomains, setIncludeSubdomains] = useState<boolean>(false);
 
   async function scan() {
@@ -27,11 +30,16 @@ function ScanPage({ page }: ScanPageProps) {
     console.log("Результат сканирования:", data);
 
     setResultScan(data.scan);
-    if (includeSubdomains == true) {
-      console.log("скан поддмоенов");
-      setSubdomains(data.subdomains);
+    if (includeSubdomains === true) {
+      console.log("Сканирование поддоменов");
+
+      setSubdomains(data.subdomains.discovered);
+      setDetails(data.subdomains.details);
     } else {
-      console.log("! НЕскан поддмоенов НЕ ");
+      console.log("Сканирование поддоменов отключено");
+
+      setSubdomains([]);
+      setDetails([]);
     }
   }
   console.log("Результат чекбокса", includeSubdomains);
@@ -59,12 +67,13 @@ function ScanPage({ page }: ScanPageProps) {
           https://crt.sh/?q=%25.URL.com&output=json.) )
         </label>
       </div>
-
       <button onClick={scan}>Сканировать</button>
-
       <div>Результат сканирования:</div>
-
-      <ResoltScan resultScan={resultScan} subdomains={subdomains} />
+      <ResoltScan
+        resultScan={resultScan}
+        subdomains={subdomains}
+        details={details}
+      />{" "}
     </aside>
   );
 }
