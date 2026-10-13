@@ -1,11 +1,4 @@
-import { useState } from "react";
-import { API_BASE } from "../../api";
-
-type SettingPageProps = {
-  page: string;
-};
-
-function SettingPage({ page }: SettingPageProps) {
+function SettingPage() {
   return (
     <>
       <h1>Настройки</h1>
