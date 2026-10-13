@@ -249,7 +249,7 @@ async function runSubdomainScan(target: string, monitorId: number, interval: num
 
             console.log(
                 "Найдено поддоменов:",
-                resultCrtSh.length
+                resultCrtSh.discovered.length
             );
 
             await saveInMonitor_resultsAPICrt(

@@ -54,7 +54,7 @@ export class ScanService {
             },
         });
 
-        let subdomains: string[] | null = null;
+        let subdomains: Awaited<ReturnType<typeof analyzersAPICrt>> | null = null;
         let subdomainsError: string | null = null;
         console.log('Сохраняем поддомены');
         try {
@@ -72,7 +72,7 @@ export class ScanService {
             await this.prisma.scans.create({
                 data: {
                     target: url.hostname,
-                    data: subdomains,
+                    data: JSON.parse(JSON.stringify(subdomains)),
                     telegram_user_id: userId != null ? BigInt(userId) : null,
                     platform: platform ?? null,
                 },

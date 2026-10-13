@@ -87,7 +87,7 @@ async function analyzers(target: string) {
 // https://api.ctlogs.dev  строня api лимиит примерно 5 запросов в минуту 
 //РАнее был https://crt.sh/?q=%25.${target}&output=json.
 // Поиск поддоменов через Certificate Transparency API (ctlogs.dev)
-async function analyzersAPICrt(target: string): Promise<string[]> {
+async function analyzersAPICrt(target: string) {
   const domain = target
     .trim()
     .toLowerCase()
@@ -168,7 +168,44 @@ async function analyzersAPICrt(target: string): Promise<string[]> {
     }
   }
 
-  return [...subdomains].sort();
+  // данные для такблици подлмернов 
+  const subdomainsInfo = [];
+
+  for (const hostname of subdomains) {
+    let dns;
+    let http;
+
+    // DNS для  IP 4 and 6
+    try {
+      dns = await getDNS(hostname);
+    } catch (error) {
+      dns = {
+        error: getErrorMessage(error),
+      };
+    }
+
+    // HTTP для получения статуса
+    try {
+      http = await HTTP_Analyzer(`https://${hostname}`);
+    } catch (error) {
+      http = {
+        error: getErrorMessage(error),
+      };
+    }
+
+    subdomainsInfo.push({
+      hostname,
+      dns,
+      http,
+    });
+  }
+
+
+  return {
+    discovered: [...subdomains].sort(),
+    details: subdomainsInfo,
+  };
+
 }
 
 
