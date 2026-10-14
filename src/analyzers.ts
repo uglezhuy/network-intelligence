@@ -174,6 +174,7 @@ async function analyzersAPICrt(target: string) {
   for (const hostname of subdomains) {
     let dns;
     let http;
+    let TLS;
 
     // DNS для  IP 4 and 6
     try {
@@ -192,11 +193,20 @@ async function analyzersAPICrt(target: string) {
         error: getErrorMessage(error),
       };
     }
-
+    // TLS_Analyzer
+    try {
+      TLS = await TLS_Analyzer(hostname);
+    } catch (error) {
+      TLS = {
+        error: getErrorMessage(error),
+      };
+    }
+    console.log("============================ ТЕСТ поддомена " + hostname + " зеврешон ============================");
     subdomainsInfo.push({
       hostname,
       dns,
       http,
+      TLS,
     });
   }
 
