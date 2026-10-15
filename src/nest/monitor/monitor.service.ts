@@ -2,14 +2,10 @@ import {
     BadRequestException,
     Injectable,
     InternalServerErrorException,
-    NotImplementedException,
 } from '@nestjs/common';
-
 
 import { runMonitor, runSubdomainScan } from '../../monitor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-
-
 
 type MonitorDto = {
     target: string;
@@ -27,6 +23,7 @@ type MonitorDto = {
 
     includeSubdomains: boolean;
 };
+
 @Injectable()
 export class MonitorService {
     constructor(
@@ -37,10 +34,11 @@ export class MonitorService {
     async getMonitorsByUser(userId: string) {
         const telegramUserId = Number(userId);
 
-        if (!Number.isSafeInteger(telegramUserId)) {
-            throw new BadRequestException(
-                'Некорректный User ID',
-            );
+        if (
+            !Number.isSafeInteger(telegramUserId) ||
+            telegramUserId <= 0
+        ) {
+            throw new BadRequestException('Некорректный User ID');
         }
 
         try {
@@ -57,10 +55,7 @@ export class MonitorService {
                     monitor.telegram_user_id?.toString() ?? null,
             }));
         } catch (error) {
-            console.error(
-                'Ошибка получения мониторов:',
-                error,
-            );
+            console.error('Ошибка получения мониторов:', error);
 
             throw new InternalServerErrorException(
                 'Ошибка сервера при получении мониторов',
@@ -68,7 +63,7 @@ export class MonitorService {
         }
     }
 
-    // Остановка монитора
+    // Остановка одного активного монитора
     async stopMonitor(monitorId: string) {
         const id = Number(monitorId);
 
@@ -105,13 +100,79 @@ export class MonitorService {
                 throw error;
             }
 
+            console.error('Ошибка остановки монитора:', error);
+
+            throw new InternalServerErrorException(
+                'Ошибка сервера при остановке монитора',
+            );
+        }
+    }
+
+    // Остановка всех активных мониторов пользователя
+    async stopMyMonitors(userId: string) {
+        const telegramUserId = Number(userId);
+
+        if (
+            !Number.isSafeInteger(telegramUserId) ||
+            telegramUserId <= 0
+        ) {
+            throw new BadRequestException('Некорректный User ID');
+        }
+
+        try {
+            const result =
+                await this.prisma.monitors.updateMany({
+                    where: {
+                        telegram_user_id: BigInt(telegramUserId),
+                        status: 'active',
+                    },
+                    data: {
+                        status: 'stopped',
+                    },
+                });
+
+            return {
+                message: 'Активные мониторы пользователя остановлены',
+                stoppedCount: result.count,
+            };
+        } catch (error) {
             console.error(
-                'Ошибка остановки монитора:',
+                'Ошибка остановки мониторов пользователя:',
                 error,
             );
 
             throw new InternalServerErrorException(
-                'Ошибка сервера при остановке монитора',
+                'Ошибка сервера при остановке мониторов пользователя',
+            );
+        }
+    }
+
+    // Остановка всех активных мониторов в системе.
+    // Использовать только в административном сценарии.
+    async stopAllMonitors() {
+        try {
+            const result =
+                await this.prisma.monitors.updateMany({
+                    where: {
+                        status: 'active',
+                    },
+                    data: {
+                        status: 'stopped',
+                    },
+                });
+
+            return {
+                message: 'Все активные мониторы остановлены',
+                stoppedCount: result.count,
+            };
+        } catch (error) {
+            console.error(
+                'Ошибка остановки всех мониторов:',
+                error,
+            );
+
+            throw new InternalServerErrorException(
+                'Ошибка сервера при остановке всех мониторов',
             );
         }
     }
@@ -127,21 +188,22 @@ export class MonitorService {
         }
 
         try {
-
-            const result = await this.prisma.monitors.updateMany({
-                where: {
-                    id,
-                    status: 'stopped',
-                },
-                data: {
-                    status: 'active',
-                },
-            });
+            const result =
+                await this.prisma.monitors.updateMany({
+                    where: {
+                        id,
+                        status: 'stopped',
+                    },
+                    data: {
+                        status: 'active',
+                    },
+                });
 
             if (result.count === 0) {
-                const monitor = await this.prisma.monitors.findUnique({
-                    where: { id },
-                });
+                const monitor =
+                    await this.prisma.monitors.findUnique({
+                        where: { id },
+                    });
 
                 if (!monitor) {
                     throw new BadRequestException(
@@ -154,9 +216,10 @@ export class MonitorService {
                 );
             }
 
-            const monitor = await this.prisma.monitors.findUnique({
-                where: { id },
-            });
+            const monitor =
+                await this.prisma.monitors.findUnique({
+                    where: { id },
+                });
 
             if (!monitor) {
                 throw new BadRequestException(
@@ -172,27 +235,21 @@ export class MonitorService {
                 monitor.type,
             );
 
-            // 3. Запускаем цикл проверок
             runMonitor(
                 monitor.id,
                 monitor.target,
                 Number(monitor.interval_minutes),
                 monitor.type ?? '',
                 monitor.platform ?? '',
-
                 monitor.send_monitor_notificationsTG,
                 monitor.send_event_notificationsTG,
-
                 monitor.send_monitor_notificationsMAX,
                 monitor.send_event_notificationsMAX,
-
                 monitor.telegram_user_id === null
                     ? undefined
                     : Number(monitor.telegram_user_id),
             );
 
-
-            // ответ клиенту
             return {
                 message: 'Монитор запущен',
                 monitorId: id,
@@ -202,10 +259,7 @@ export class MonitorService {
                 throw error;
             }
 
-            console.error(
-                'Ошибка запуска монитора:',
-                error,
-            );
+            console.error('Ошибка запуска монитора:', error);
 
             throw new InternalServerErrorException(
                 'Ошибка сервера при запуске монитора',
@@ -224,9 +278,10 @@ export class MonitorService {
         }
 
         try {
-            const monitor = await this.prisma.monitors.findUnique({
-                where: { id },
-            });
+            const monitor =
+                await this.prisma.monitors.findUnique({
+                    where: { id },
+                });
 
             if (!monitor) {
                 throw new BadRequestException(
@@ -255,44 +310,34 @@ export class MonitorService {
         }
     }
 
-
-
-
-
-    // добавлене монитра 
     // Добавление монитора
-
     async addMonitor(data: MonitorDto) {
         try {
-            const monitor = await this.prisma.monitors.create({
-                data: {
-                    target: data.target,
-                    interval_minutes: data.interval_minutes,
-                    subdomain_scan_interval_hours: data.minCrtSh,
+            const monitor =
+                await this.prisma.monitors.create({
+                    data: {
+                        target: data.target,
+                        interval_minutes: data.interval_minutes,
+                        subdomain_scan_interval_hours: data.minCrtSh,
+                        status: 'active',
+                        type: 'monitors',
+                        platform: data.platform,
+                        telegram_user_id: BigInt(
+                            data.telegram_user_id,
+                        ),
+                        send_monitor_notificationsTG:
+                            data.send_monitor_notificationsTG,
+                        send_event_notificationsTG:
+                            data.send_event_notificationsTG,
+                        send_monitor_notificationsMAX:
+                            data.send_monitor_notificationsMAX,
+                        send_event_notificationsMAX:
+                            data.send_event_notificationsMAX,
+                        subdomain_scan_enabled:
+                            data.includeSubdomains,
+                    },
+                });
 
-                    status: 'active',
-                    type: 'monitors',
-                    platform: data.platform,
-                    telegram_user_id: BigInt(data.telegram_user_id),
-
-                    send_monitor_notificationsTG:
-                        data.send_monitor_notificationsTG,
-
-                    send_event_notificationsTG:
-                        data.send_event_notificationsTG,
-
-                    send_monitor_notificationsMAX:
-                        data.send_monitor_notificationsMAX,
-
-                    send_event_notificationsMAX:
-                        data.send_event_notificationsMAX,
-
-                    subdomain_scan_enabled:
-                        data.includeSubdomains,
-                },
-            });
-
-            // Запускаем мониторинг после создания записи
             runMonitor(
                 monitor.id,
                 monitor.target,
@@ -314,7 +359,6 @@ export class MonitorService {
                 Number(monitor.subdomain_scan_interval_hours),
             );
 
-
             return {
                 message: 'Монитор добавлен',
                 monitorId: monitor.id,
@@ -328,17 +372,9 @@ export class MonitorService {
         }
     }
 
-
-
-
-
-
-
-
-
-    // вывод результтатов монироринга по id 
+    // Получение результатов мониторинга по ID
     async getMonitorResult(monitorId: number) {
-        const monitorResult = await this.prisma.monitor_results.findMany({
+        return await this.prisma.monitor_results.findMany({
             where: {
                 monitor_id: monitorId,
             },
@@ -346,13 +382,13 @@ export class MonitorService {
                 created_at: 'desc',
             },
         });
-
-        return monitorResult;
     }
 
-
-    // отображения истри сканов идя грифков 
-    async getMonitorHistory(monitorId: number, period?: string) {
+    // Получение истории мониторинга
+    async getMonitorHistory(
+        monitorId: number,
+        period?: string,
+    ) {
         const hoursByPeriod: Record<string, number> = {
             '1h': 1,
             '6h': 6,
@@ -361,21 +397,27 @@ export class MonitorService {
             '30d': 24 * 30,
         };
 
-        const hours = period ? hoursByPeriod[period] : undefined;
+        const hours = period
+            ? hoursByPeriod[period]
+            : undefined;
 
-        const monitorHistory = await this.prisma.monitor_results.findMany({
-            where: {
-                monitor_id: monitorId,
-                ...(hours !== undefined && {
-                    created_at: {
-                        gte: new Date(Date.now() - hours * 60 * 60 * 1000),
-                    },
-                }),
-            },
-            orderBy: {
-                created_at: 'asc',
-            },
-        });
+        const monitorHistory =
+            await this.prisma.monitor_results.findMany({
+                where: {
+                    monitor_id: monitorId,
+                    ...(hours !== undefined && {
+                        created_at: {
+                            gte: new Date(
+                                Date.now() -
+                                hours * 60 * 60 * 1000,
+                            ),
+                        },
+                    }),
+                },
+                orderBy: {
+                    created_at: 'asc',
+                },
+            });
 
         return monitorHistory.map((row) => {
             const data =
@@ -387,15 +429,17 @@ export class MonitorService {
                 id: row.id,
                 time: row.created_at,
                 status: data?.http?.status ?? null,
-                responseTime: data?.http?.responseTime ?? null,
-                bodySizeKB: data?.http?.bodySizeKB ?? null,
+                responseTime:
+                    data?.http?.responseTime ?? null,
+                bodySizeKB:
+                    data?.http?.bodySizeKB ?? null,
                 fullDattaOnlyForTesting: data,
             };
         });
     }
 
-
-    // получение всех активных мониторов. используется для запуска мониторинга при запуске апи
+    // Получение всех активных мониторов.
+    // Используется при запуске API.
     async getActiveMonitors() {
         try {
             return await this.prisma.monitors.findMany({
@@ -414,18 +458,4 @@ export class MonitorService {
             );
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

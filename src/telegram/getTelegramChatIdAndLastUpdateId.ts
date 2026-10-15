@@ -1,11 +1,13 @@
 import "dotenv/config";
 import { connection } from "../database/connection.js";
 import { processMessage } from "./processMessage.js";
+import type { MonitorService } from "../nest/monitor/monitor.service.js";
 
 
 
-async function
-    getTelegramChatIdAndLastUpdateId() {
+async function getTelegramChatIdAndLastUpdateId(
+    monitorService: MonitorService
+) {
     const db = await connection;
 
     const [stateRows]: any = await db.execute(
@@ -124,7 +126,7 @@ async function
         }
 
         //////////////////////////////////////////////////////////////////////////
-        await processMessage(update.message);
+        await processMessage(update.message, monitorService);
     }
 
 

@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
+import { MonitorService } from './monitor/monitor.service.js';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -10,6 +11,9 @@ async function bootstrap() {
     app.enableCors({
         origin: 'http://localhost:5173',
     });
+
+    // Получаем экземпляр MonitorService из NestJS
+    const monitorService = app.get(MonitorService);
 
     await app.listen(3001);
 

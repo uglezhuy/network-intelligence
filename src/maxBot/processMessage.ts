@@ -1,7 +1,7 @@
 import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
 import { monitor } from "../monitor.js";
-import { stopMonitorAll, stopMonitorID, stopMyMonitor } from "../stopMonitor.js";
+import type { MonitorService } from "../nest/monitor/monitor.service.js";
 import { MaxPrintResultScan } from "./MaxPrintResultScan.js";
 import { showMonitorsByTelegramUserId } from "./selectMonitorsByTelegramUserId.js";
 import { MaxPrintAllMyMonitors } from "./tgPrintResultMonitor.js";
@@ -18,7 +18,10 @@ type TelegramMessage = {
     text?: string;
 };
 
-async function processMessage(message: TelegramMessage) {
+async function processMessage(
+    message: TelegramMessage,
+    monitorService: MonitorService
+) {
 
     // =========================================================
     // Получаем основные данные сообщения
@@ -268,8 +271,8 @@ async function processMessage(message: TelegramMessage) {
 
             try {
 
-                await stopMyMonitor(
-                    telegramUserId
+                await monitorService.stopMyMonitors(
+                    String(telegramUserId)
                 );
 
                 console.log(
@@ -298,8 +301,7 @@ async function processMessage(message: TelegramMessage) {
 
             try {
 
-                await stopMonitorAll();
-
+                await monitorService.stopAllMonitors();
                 console.log(
                     "Все мониторы остановлены"
                 );
@@ -343,8 +345,8 @@ async function processMessage(message: TelegramMessage) {
 
         try {
 
-            await stopMonitorID(
-                monitorId
+            await monitorService.stopMonitor(
+                String(monitorId)
             );
 
             console.log(

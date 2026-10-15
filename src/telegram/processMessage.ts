@@ -4,11 +4,7 @@ import { analyzers } from "../analyzers.js";
 import { saveResultinScan } from "../database/results.js";
 import { monitor } from "../monitor.js";
 
-import {
-    stopMonitorAll,
-    stopMonitorID,
-    stopMyMonitor
-} from "../stopMonitor.js";
+import type { MonitorService } from "../nest/monitor/monitor.service.js";
 
 import {
     tgPrintResultMonitor,
@@ -38,7 +34,8 @@ type TelegramMessage = {
 
 
 async function processMessage(
-    message: TelegramMessage
+    message: TelegramMessage,
+    monitorService: MonitorService
 ) {
 
     // =========================================================
@@ -379,8 +376,8 @@ async function processMessage(
 
             try {
 
-                await stopMyMonitor(
-                    telegramUserId
+                await monitorService.stopMyMonitors(
+                    String(telegramUserId)
                 );
 
 
@@ -416,8 +413,7 @@ async function processMessage(
 
             try {
 
-                await stopMonitorAll();
-
+                await monitorService.stopAllMonitors();
 
                 console.log(
                     "Все мониторы остановлены"
@@ -473,8 +469,8 @@ async function processMessage(
 
         try {
 
-            await stopMonitorID(
-                monitorId
+            await monitorService.stopMonitor(
+                String(monitorId)
             );
 
 

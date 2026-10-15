@@ -1,8 +1,8 @@
 import { getTelegramChatIdAndLastUpdateId } from "./getTelegramChatIdAndLastUpdateId.js";
 import { setMaxCommands } from "./setMaxCommands.js";
+import type { MonitorService } from "../nest/monitor/monitor.service.js";
 
-async function startBotMax() {
-
+async function startBotMax(monitorService: MonitorService) {
     console.log("MAX bot started");
 
     // Регистрируем команды MAX-бота один раз при запуске
@@ -12,8 +12,7 @@ async function startBotMax() {
 
         try {
 
-            await getTelegramChatIdAndLastUpdateId();
-
+            await getTelegramChatIdAndLastUpdateId(monitorService);
         } catch (error) {
 
             console.error("Бот мах лег:", error);

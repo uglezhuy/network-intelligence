@@ -1,12 +1,16 @@
 import "dotenv/config";
 import { connection } from "../database/connection.js";
 import { processMessage } from "./processMessage.js";
+import type { MonitorService } from "../nest/monitor/monitor.service.js";
+
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 let marker: number | null = null;
 
-async function getTelegramChatIdAndLastUpdateId() {
+async function getTelegramChatIdAndLastUpdateId(
+    monitorService: MonitorService
+) {
 
     const db = await connection;
 
@@ -128,7 +132,7 @@ async function getTelegramChatIdAndLastUpdateId() {
 
         };
 
-        await processMessage(messageForProcess);
+        await processMessage(messageForProcess, monitorService);
     }
 
 
