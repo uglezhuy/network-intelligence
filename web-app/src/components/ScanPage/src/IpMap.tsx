@@ -2,12 +2,41 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 type IpMapProps = {
-  latitude: number;
-  longitude: number;
+  latitude: number | null | undefined;
+  longitude: number | null | undefined;
   country: string;
 };
 
 export default function IpMap({ latitude, longitude, country }: IpMapProps) {
+  const hasValidCoordinates =
+    typeof latitude === "number" &&
+    typeof longitude === "number" &&
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    latitude >= -90 &&
+    latitude <= 90 &&
+    longitude >= -180 &&
+    longitude <= 180;
+
+  if (!hasValidCoordinates) {
+    return (
+      <div
+        style={{
+          height: "350px",
+          width: "100%",
+          borderRadius: "12px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f3f4f6",
+          color: "#6b7280",
+        }}
+      >
+        Географические координаты для отображения на карте не найдены.
+      </div>
+    );
+  }
+
   return (
     <MapContainer
       center={[latitude, longitude]}
