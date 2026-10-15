@@ -3,7 +3,7 @@ import { HTTP_Analyzer } from "./analyzers/http.js";
 import { PORT_Analyzer } from "./analyzers/ports.js";
 import { IP_Analyzer } from "./analyzers/ip.js";
 import { TLS_Analyzer } from "./analyzers/tls.js";
-
+import net from "node:net";
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
@@ -53,7 +53,11 @@ async function analyzers(target: string) {
   //
   let ip = "";
 
-  if ("ipv4" in dnsInfo && dnsInfo.ipv4.status === "fulfilled") {
+  if (net.isIP(hostname) === 4) {
+    // Пользователь передал IPv4 напрямую.
+    ip = hostname;
+  } else if ("ipv4" in dnsInfo && dnsInfo.ipv4.status === "fulfilled") {
+    // Пользователь передал домен, и DNS вернул IPv4.
     ip = dnsInfo.ipv4.value[0];
   }
 
