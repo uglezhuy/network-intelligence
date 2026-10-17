@@ -9,8 +9,9 @@ import { saveInMonitor_resultsAPICrt } from "./database/results.js";
 
 import { monitor_events } from "./monitor_events.js";
 
-import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
-import { MaxPrintResultScan } from "./maxBot/MaxPrintResultScan.js";
+
+// import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
+// import { MaxPrintResultScan } from "./maxBot/MaxPrintResultScan.js";
 
 import { tgPrintResultMonitor } from "./telegram/tgPrintResultMonitor.js";
 import { tgPrintResultScan } from "./telegram/tgPrintResultScan.js";
@@ -149,12 +150,13 @@ async function runMonitor(
             );
 
             // /////////////////////for MAX////////////////////////
-            if (send_monitor_notificationsMAX && telegramUserId && platform === "max") {
-                await MaxPrintResultScan(
-                    result,
-                    telegramUserId
-                );
-            }
+            // Отключено: maxBot удалён
+            // if (send_monitor_notificationsMAX && telegramUserId && platform === "max") {
+            //     await MaxPrintResultScan(
+            //         result,
+            //         telegramUserId
+            //     );
+            // }
 
             ///////////////////////////////////////////////////
             // События проверяются всегда.
@@ -164,15 +166,16 @@ async function runMonitor(
             const tgEvents = await monitor_events(monitorId);
 
             // /////////////////////for MAX////////////////////////
-            if (send_event_notificationsMAX && telegramUserId && platform === "max") {
-                if (telegramUserId && tgEvents.length > 0) {
-                    await MaxPrintResultMonitor(
-                        tgEvents[0],
-                        telegramUserId,
-                        target
-                    );
-                }
-            }
+            // Отключено: maxBot удалён
+            // if (send_event_notificationsMAX && telegramUserId && platform === "max") {
+            //     if (telegramUserId && tgEvents.length > 0) {
+            //         await MaxPrintResultMonitor(
+            //             tgEvents[0],
+            //             telegramUserId,
+            //             target
+            //         );
+            //     }
+            // }
 
             ///////////////////////////////////////////////////
             // переделать то что свреху и снизу вроде работает но поидеи рабоать не долдно полюбому что то сверху и снизу от этого комента 

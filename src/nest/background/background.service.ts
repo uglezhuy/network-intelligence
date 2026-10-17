@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { MonitorService } from '../monitor/monitor.service.js';
 import { startActiveMonitors } from '../../monitor.js';
+import { startBotTg } from '../../telegram/bot.js';
 
 @Injectable()
 export class BackgroundService implements OnModuleInit {
@@ -15,6 +16,8 @@ export class BackgroundService implements OnModuleInit {
             await this.monitorService.getActiveMonitors();
 
         startActiveMonitors(activeMonitors);
+
+        void startBotTg(this.monitorService);
 
         console.log('Background services started');
     }

@@ -12,7 +12,7 @@ async function bootstrap() {
         origin: 'http://localhost:5173',
     });
 
-    // Получаем экземпляр MonitorService из NestJS
+    //экземпляр MonitorService из NestJS
     const monitorService = app.get(MonitorService);
 
     await app.listen(3001);

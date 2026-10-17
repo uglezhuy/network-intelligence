@@ -60,12 +60,8 @@ export class ScanService {
         try {
 
 
-            // await saveResultinScanAPICrt(                     legacy code before nest
-            //     subdomains,
-            //     url.hostname,
-            //     userId,
-            //     platform,
-            // );
+
+
 
             subdomains = await analyzersAPICrt(url.hostname);
 
