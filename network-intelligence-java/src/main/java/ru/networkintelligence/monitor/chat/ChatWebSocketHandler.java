@@ -1,55 +1,42 @@
 package ru.networkintelligence.monitor.chat;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+@Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
+    private final ChatService chatService;
+
+    public ChatWebSocketHandler(ChatService chatService) {
+        this.chatService = chatService;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        sessions.add(session);
-
-        System.out.println(
-                "Пользователь подключился: " + session.getId());
+        chatService.addSession(session);
     }
 
     @Override
     protected void handleTextMessage(
             WebSocketSession session,
-            TextMessage message) throws IOException {
+            TextMessage message) {
 
         String text = message.getPayload();
 
         System.out.println("Получено сообщение: " + text);
 
-        broadcast(text);
+        chatService.sendMessage(text);
     }
 
     @Override
     public void afterConnectionClosed(
             WebSocketSession session,
             CloseStatus status) {
-        sessions.remove(session);
 
-        System.out.println(
-                "Пользователь отключился: " + session.getId());
-    }
-
-    private void broadcast(String text) throws IOException {
-        TextMessage message = new TextMessage(text);
-
-        for (WebSocketSession session : sessions) {
-            if (session.isOpen()) {
-                session.sendMessage(message);
-            }
-        }
+        chatService.removeSession(session);
     }
 }
