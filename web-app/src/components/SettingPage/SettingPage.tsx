@@ -1,7 +1,11 @@
-function SettingPage() {
+type MonitorsPageProps = {
+  page: string;
+};
+
+function SettingPage({ page }: MonitorsPageProps) {
   return (
     <>
-      <h1>Настройки</h1>
+      <h1>{page}</h1>
       <h2>Подключённые платформы</h2>
       <div>
         <h3>Telegram</h3>

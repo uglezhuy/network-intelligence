@@ -17,6 +17,8 @@ function Sidebar({ setPage }: SidebarProps) {
         <button onClick={() => setPage("События")}>События</button>
 
         <button onClick={() => setPage("Настройки")}>Настройки</button>
+
+        <button onClick={() => setPage("Чат комюнити")}>Чат комюнити</button>
       </nav>
     </aside>
   );
