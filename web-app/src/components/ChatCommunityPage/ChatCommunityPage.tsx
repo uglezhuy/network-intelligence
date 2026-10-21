@@ -35,7 +35,6 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
                 type: "typing",
                 body: "True"
             }));
-
             isTypingRef.current = true;
         }
 
