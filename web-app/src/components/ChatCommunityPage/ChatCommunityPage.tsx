@@ -17,6 +17,49 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
 
   let socket;
 
+    const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isTypingRef = useRef(false);
+
+
+    function handleMessageChange(value: string) {
+        setMessage(value);
+
+        const socket = socketRef.current;
+
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
+        if (!isTypingRef.current) {
+            socket.send(JSON.stringify({
+                type: "typing",
+                body: "True"
+            }));
+
+            isTypingRef.current = true;
+        }
+
+        if (typingTimerRef.current !== null) { //индентификатор таймера существует
+            clearTimeout(typingTimerRef.current);// отменяем предыдущий таймер так как тут значение между рендерами seRef
+        }
+
+        typingTimerRef.current = setTimeout(() => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: "typing",
+                    body: "False"
+                }));
+            }
+
+            isTypingRef.current = false;
+            typingTimerRef.current = null;
+        }, 2000);
+    }
+
+
+
+
+
   function connect() {
     socket = new WebSocket("ws://localhost:8080/ws/chat");
     socketRef.current = socket;
@@ -44,12 +87,20 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
 
   function sentName() {
     if (socketRef.current) {
-      socketRef.current.send(username);
+
+        socketRef.current.send(JSON.stringify({
+            type: "login",
+            body: username
+        }));
+
     }
   }
   function sentMesege() {
     if (socketRef.current) {
-      socketRef.current.send(message);
+        socketRef.current.send(JSON.stringify({
+            type: "message",
+            body: message
+        }));
     }
   }
 
@@ -63,8 +114,11 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
       <button onClick={sentName}>Отправить никнейм</button>
       <div> Состояние подключения: {connected ? "Online" : "Offline"}</div>
       <GetMessegePage getMessege={getMessege} />
-      <input type="text" onChange={(e) => setMessage(e.target.value)} />
-      <button onClick={sentMesege}>Отправить сообщение</button>
+        <input
+            type="text"
+            value={message}
+            onChange={(e) => handleMessageChange(e.target.value)}
+        />      <button onClick={sentMesege}>Отправить сообщение</button>
     </>
   );
 }

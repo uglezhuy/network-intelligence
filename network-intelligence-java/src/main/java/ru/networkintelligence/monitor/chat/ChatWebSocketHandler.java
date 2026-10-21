@@ -5,16 +5,23 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private final ChatService chatService;
 
+
+    private final ChatService chatService;
+    private final ObjectMapper objectMapper;
     public ChatWebSocketHandler(
-            ChatService chatService) {
+            ChatService chatService, ObjectMapper objectMapper) {
 
         this.chatService = chatService;
+        this.objectMapper = objectMapper;
 
     }
 
@@ -24,58 +31,73 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    // protected void handleTextMessage(
-    // WebSocketSession session,
-    // TextMessage message) {
 
-    // String text = message.getPayload();
-
-    // System.out.println("Получено сообщение: " + text);
-
-    // chatService.sendMessage(text);
-    // }
-    // protected void handleTextMessage(
-    // WebSocketSession session,
-    // TextMessage message) {
-    ////////////////////////////////////////////////////////
-    // try {
-    // ChatMessage chatMessage = objectMapper.readValue(
-    // message.getPayload(),
-    // ChatMessage.class);
-
-    // System.out.println("Тип сообщения: " + chatMessage.getType());
-    // System.out.println("Имя пользователя: " + chatMessage.getUsername());
-
-    // } catch (com.fasterxml.jackson.core.JsonProcessingException exception) {
-    // System.err.println("Не удалось прочитать JSON: " + exception.getMessage());
-    // }
-    // }
     protected void handleTextMessage(
             WebSocketSession session,
             TextMessage message) {
 
         String text = message.getPayload();
 
-        // сохранено ли имя пользователя в сессии
-        String username = (String) session.getAttributes().get("username");
+        JsonNode json;
 
-        if (username == null || username.isBlank()) {
-            if (text.isBlank()) {
-                return;
-            }
-            username = text.trim(); // улалиение лишенго пробелов
-            session.getAttributes().put("username", username);
-            chatService.sendMessage("Ситема ", "Пользователь " + username + " подключился.");
-            System.out.println("ИМя пользователя: " + username);
-
-            String onlineUsers = chatService.getOnlineUsers();
-            chatService.sendMessage("cистема", onlineUsers);
+        try {
+            json = objectMapper.readTree(text);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            System.out.println("Некорректный JSON: " + e.getMessage());
             return;
-        } else {
-            System.out.println(username + ": " + text);
-            chatService.sendMessage(username, text);
         }
 
+        String type = json.path("type").asText();
+        String body = json.path("body").asText();
+
+
+        //          сохранено ли имя пользователя в сессии
+        String username = (String) session.getAttributes().get("username");
+        if ("login".equals(type)) {
+            if (body.isBlank()) {
+                return;
+            }
+
+            username = body.trim();
+            session.getAttributes().put("username", username);
+
+            chatService.sendMessage(
+                    "Система",
+                    "Пользователь " + username + " подключился."
+            );
+
+            System.out.println("Имя пользователя: " + username);
+
+            String onlineUsers = chatService.getOnlineUsers();
+            chatService.sendMessage("Система", onlineUsers);
+            return;
+        }
+
+        if (username == null || username.isBlank()) {
+            System.out.println("Сначала необходимо войти в чат");
+            return;
+        }
+
+        if ("message".equals(type)) {
+            System.out.println(username + ": " + body);
+
+            chatService.sendMessage(username, body);
+        }
+        if ("typing".equals(type)) {
+            boolean isTyping = Boolean.parseBoolean(body);
+
+            if (isTyping) {
+                System.out.println(username + " печатает...");
+
+                chatService.sendMessage("Печатает", username);
+            } else {
+                System.out.println(username + " перестал печатать.");
+                chatService.sendMessage("Перестал печатать", username);
+
+
+            }
+
+        }
     }
 
     @Override
