@@ -13,6 +13,17 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
 
   const [getMessege, setGetMessege] = useState<string[]>([]);
 
+    const [getMessegeTyping, setGetMessegeTyping]= useState<string[]>([]);
+
+    const [getSizeSessions, setGetSizeSessions]= useState<string[]>([]);
+    const [getAutorizationsUsers, setGetAutorizationsUsers]= useState<string[]>([]);
+
+
+
+
+
+
+
   const socketRef = useRef<WebSocket | null>(null);
 
   let socket;
@@ -79,8 +90,26 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
 
     socket.onmessage = (event) => {
       console.log("Получено сообщение:", event.data);
+        const fullMesege = JSON.parse(event.data);
 
-      setGetMessege((getMessege) => [...getMessege, event.data]);
+        if (fullMesege.type === "message") {
+            setGetMessege((getMessege) => [...getMessege, fullMesege.body]);
+        }
+        if (fullMesege.type=="typing") {
+            setGetMessegeTyping((getMessegeTyping) => [...getMessegeTyping, event.data]);
+        }
+        if (fullMesege.type === "sessionConnected") {
+            setGetSizeSessions(fullMesege.body);
+        }
+        if (fullMesege.type === "onlineUsers") {
+            if (Array.isArray(fullMesege.body)) {
+                setGetAutorizationsUsers(fullMesege.body);
+            }
+        }
+
+
+
+
     };
   }
 
@@ -112,7 +141,11 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
       <input type="text" onChange={(e) => setUsername(e.target.value)} />
       <button onClick={sentName}>Отправить никнейм</button>
       <div> Состояние подключения: {connected ? "Online" : "Offline"}</div>
-      <GetMessegePage getMessege={getMessege} />
+      <GetMessegePage getMessege={getMessege}
+                      getMessegeTyping={getMessegeTyping}
+                      getSizeSessions={getSizeSessions}
+                      getAutorizationsUsers={getAutorizationsUsers}
+      />
         <input
             type="text"
             value={message}

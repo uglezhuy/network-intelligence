@@ -7,6 +7,9 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -68,8 +71,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             System.out.println("Имя пользователя: " + username);
 
-            String onlineUsers = chatService.getOnlineUsers();
-            chatService.sendMessage("Система", onlineUsers);
+            chatService.sendOnlineUsers();
             return;
         }
 
@@ -89,14 +91,33 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             if (isTyping) {
                 System.out.println(username + " печатает...");
 
-                chatService.sendMessage("Печатает", username);
+                try {
+                    String typingJson = objectMapper.writeValueAsString(
+                            Map.of(
+                                    "type", "typing",
+                                    "body", "True"
+                            )
+                    );
+                    chatService.sendMessage2(new TextMessage(typingJson));
+
+                } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                    System.err.println(e.getMessage());
+                }
             } else {
                 System.out.println(username + " перестал печатать.");
-                chatService.sendMessage("Перестал печатать", username);
 
-
+                try {
+                    String typingJson = objectMapper.writeValueAsString(
+                            Map.of(
+                                    "type", "typing",
+                                    "body", "False"
+                            )
+                    );
+                    chatService.sendMessage2(new TextMessage(typingJson));
+                } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                    System.err.println(e.getMessage());
+                }
             }
-
         }
     }
 
@@ -106,8 +127,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             CloseStatus status) {
 
         chatService.removeSession(session);
-        String onlineUsers = chatService.getOnlineUsers();
-        chatService.sendMessage("cистема", onlineUsers);
+        chatService.sendOnlineUsers();
 
     }
 
