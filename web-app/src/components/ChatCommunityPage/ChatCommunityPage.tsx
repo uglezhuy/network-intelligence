@@ -7,6 +7,7 @@ type ChatCommunityPageProps = {
 
 function ChatCommunityPage({ page }: ChatCommunityPageProps) {
   const [username, setUsername] = useState("");
+
   const [message, setMessage] = useState("");
 
   const [connected, setConnected] = useState(false);
@@ -92,12 +93,20 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
       console.log("Получено сообщение:", event.data);
         const fullMesege = JSON.parse(event.data);
 
-        if (fullMesege.type === "message") {
-            setGetMessege((getMessege) => [...getMessege, fullMesege.body]);
+        if (fullMesege.type === "typing") {
+            const { username, isTyping } = fullMesege.body;
+
+            setGetMessegeTyping((users) => {
+                if (isTyping) {
+                    return users.includes(username)
+                        ? users
+                        : [...users, username];
+                }
+
+                return users.filter((user) => user !== username);
+            });
         }
-        if (fullMesege.type=="typing") {
-            setGetMessegeTyping((getMessegeTyping) => [...getMessegeTyping, event.data]);
-        }
+
         if (fullMesege.type === "sessionConnected") {
             setGetSizeSessions(fullMesege.body);
         }
@@ -105,6 +114,9 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
             if (Array.isArray(fullMesege.body)) {
                 setGetAutorizationsUsers(fullMesege.body);
             }
+        }
+        if (fullMesege.type === "message"){
+            setGetMessege((getMessege) => [...getMessege, fullMesege.body]);
         }
 
 
@@ -141,7 +153,10 @@ function ChatCommunityPage({ page }: ChatCommunityPageProps) {
       <input type="text" onChange={(e) => setUsername(e.target.value)} />
       <button onClick={sentName}>Отправить никнейм</button>
       <div> Состояние подключения: {connected ? "Online" : "Offline"}</div>
-      <GetMessegePage getMessege={getMessege}
+      <GetMessegePage
+                         username={username}
+                        getMessege={getMessege}
+
                       getMessegeTyping={getMessegeTyping}
                       getSizeSessions={getSizeSessions}
                       getAutorizationsUsers={getAutorizationsUsers}

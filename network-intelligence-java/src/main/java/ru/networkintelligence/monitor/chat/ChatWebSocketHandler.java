@@ -95,7 +95,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     String typingJson = objectMapper.writeValueAsString(
                             Map.of(
                                     "type", "typing",
-                                    "body", "True"
+                                    "body", Map.of(
+                                            "username", username,
+                                            "isTyping", isTyping
+                                    )
                             )
                     );
                     chatService.sendMessage2(new TextMessage(typingJson));
@@ -103,6 +106,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
                     System.err.println(e.getMessage());
                 }
+
             } else {
                 System.out.println(username + " перестал печатать.");
 
@@ -110,14 +114,20 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     String typingJson = objectMapper.writeValueAsString(
                             Map.of(
                                     "type", "typing",
-                                    "body", "False"
+                                    "body", Map.of(
+                                            "username", username,
+                                            "isTyping", false
+                                    )
                             )
                     );
+
                     chatService.sendMessage2(new TextMessage(typingJson));
+
                 } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
                     System.err.println(e.getMessage());
                 }
             }
+
         }
     }
 

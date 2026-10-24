@@ -1,11 +1,12 @@
 type GetMessegePageProps = {
+    username: string;
   getMessege: string[];
   getMessegeTyping: string[];
     getSizeSessions: string[];
     getAutorizationsUsers:string[];
 };
 
-function GetMessegePage({ getMessege, getMessegeTyping, getSizeSessions, getAutorizationsUsers }: GetMessegePageProps) {
+function GetMessegePage({username, getMessege, getMessegeTyping, getSizeSessions, getAutorizationsUsers }: GetMessegePageProps) {
   return (
     <>
 
@@ -50,10 +51,24 @@ function GetMessegePage({ getMessege, getMessegeTyping, getSizeSessions, getAuto
 
 
 
-      <div>Сообщения:</div>
-      {getMessege.map((message, index) => (
-        <div key={index}>{message}</div>
-      ))}
+        <div>Сообщения:</div>
+
+        {getMessege.map((message, index) => {
+            const isMine = message.startsWith(`[${username}]:`);
+
+            return (
+                <div
+                    key={index}
+                    style={{
+                        backgroundColor: isMine ? "#EDE9FE" : "#DBEAFE",
+                        width: "fit-content",
+                        marginLeft: isMine ? "auto" : "0"
+                    }}
+                >
+                    {message}
+                </div>
+            );
+        })}
         <hr/>
         <hr/>
         <hr/>
