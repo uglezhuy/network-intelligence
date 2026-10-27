@@ -27,7 +27,4 @@ public class MonitorResult {
     public String getData() {
         return data;
     }
-
-
-
 }
