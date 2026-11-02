@@ -28,7 +28,7 @@ public class MonitorController {
     }
 
     @GetMapping("/results/2resolt/{monitorId}")
-    public List<MonitorResult> getLastTwoResults(
+    public MonitorService.ComparisonResult getLastTwoResults(
             @PathVariable Long monitorId) {
         return monitorService.getLastTwoResults(monitorId);
     }
