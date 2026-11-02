@@ -20,10 +20,7 @@ public class ParameterChange {
         this.threshold = threshold;
     }
 
-    /**
-     * Фабрика для числовых изменений.
-     * Пример: ParameterChange.numeric("responseTime", 2000, 2137, 100.0)
-     */
+
     public  static ParameterChange numeric(String name, int oldVal, int newVal, double threshold) {
         int diff = newVal - oldVal;
         return new ParameterChange(
