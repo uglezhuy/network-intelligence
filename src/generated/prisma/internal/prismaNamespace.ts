@@ -403,7 +403,8 @@ export const ModelName = {
   monitors: 'monitors',
   scans: 'scans',
   telegram_bot_state: 'telegram_bot_state',
-  telegram_max_web_users: 'telegram_max_web_users'
+  telegram_max_web_users: 'telegram_max_web_users',
+  monitor_parameters: 'monitor_parameters'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "max_bot_state" | "monitor_events" | "monitor_results" | "monitors" | "scans" | "telegram_bot_state" | "telegram_max_web_users"
+    modelProps: "max_bot_state" | "monitor_events" | "monitor_results" | "monitors" | "scans" | "telegram_bot_state" | "telegram_max_web_users" | "monitor_parameters"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -885,6 +886,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    monitor_parameters: {
+      payload: Prisma.$monitor_parametersPayload<ExtArgs>
+      fields: Prisma.monitor_parametersFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.monitor_parametersFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.monitor_parametersFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        findFirst: {
+          args: Prisma.monitor_parametersFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.monitor_parametersFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        findMany: {
+          args: Prisma.monitor_parametersFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>[]
+        }
+        create: {
+          args: Prisma.monitor_parametersCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        createMany: {
+          args: Prisma.monitor_parametersCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.monitor_parametersDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        update: {
+          args: Prisma.monitor_parametersUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        deleteMany: {
+          args: Prisma.monitor_parametersDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.monitor_parametersUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.monitor_parametersUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$monitor_parametersPayload>
+        }
+        aggregate: {
+          args: Prisma.Monitor_parametersAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMonitor_parameters>
+        }
+        groupBy: {
+          args: Prisma.monitor_parametersGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Monitor_parametersGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.monitor_parametersCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Monitor_parametersCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -970,7 +1037,8 @@ export const MonitorsScalarFieldEnum = {
   send_event_notificationsMAX: 'send_event_notificationsMAX',
   subdomain_scan_enabled: 'subdomain_scan_enabled',
   subdomain_scan_interval_hours: 'subdomain_scan_interval_hours',
-  last_subdomain_scan_at: 'last_subdomain_scan_at'
+  last_subdomain_scan_at: 'last_subdomain_scan_at',
+  event_monitoring_enabled: 'event_monitoring_enabled'
 } as const
 
 export type MonitorsScalarFieldEnum = (typeof MonitorsScalarFieldEnum)[keyof typeof MonitorsScalarFieldEnum]
@@ -1006,6 +1074,18 @@ export const Telegram_max_web_usersScalarFieldEnum = {
 } as const
 
 export type Telegram_max_web_usersScalarFieldEnum = (typeof Telegram_max_web_usersScalarFieldEnum)[keyof typeof Telegram_max_web_usersScalarFieldEnum]
+
+
+export const Monitor_parametersScalarFieldEnum = {
+  id: 'id',
+  monitor_id: 'monitor_id',
+  parameter: 'parameter',
+  enabled: 'enabled',
+  threshold: 'threshold',
+  min_diff_to_report: 'min_diff_to_report'
+} as const
+
+export type Monitor_parametersScalarFieldEnum = (typeof Monitor_parametersScalarFieldEnum)[keyof typeof Monitor_parametersScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1087,6 +1167,13 @@ export const telegram_max_web_usersOrderByRelevanceFieldEnum = {
 } as const
 
 export type telegram_max_web_usersOrderByRelevanceFieldEnum = (typeof telegram_max_web_usersOrderByRelevanceFieldEnum)[keyof typeof telegram_max_web_usersOrderByRelevanceFieldEnum]
+
+
+export const monitor_parametersOrderByRelevanceFieldEnum = {
+  parameter: 'parameter'
+} as const
+
+export type monitor_parametersOrderByRelevanceFieldEnum = (typeof monitor_parametersOrderByRelevanceFieldEnum)[keyof typeof monitor_parametersOrderByRelevanceFieldEnum]
 
 
 
@@ -1322,6 +1409,7 @@ export type GlobalOmitConfig = {
   scans?: Prisma.scansOmit
   telegram_bot_state?: Prisma.telegram_bot_stateOmit
   telegram_max_web_users?: Prisma.telegram_max_web_usersOmit
+  monitor_parameters?: Prisma.monitor_parametersOmit
 }
 
 /* Types for Logging */

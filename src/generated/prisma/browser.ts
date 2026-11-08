@@ -52,3 +52,8 @@ export type telegram_bot_state = Prisma.telegram_bot_stateModel
  * 
  */
 export type telegram_max_web_users = Prisma.telegram_max_web_usersModel
+/**
+ * Model monitor_parameters
+ * 
+ */
+export type monitor_parameters = Prisma.monitor_parametersModel

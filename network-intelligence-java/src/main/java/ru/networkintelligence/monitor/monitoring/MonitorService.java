@@ -10,6 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.networkintelligence.monitor.monitoring.getDataLast2Monitors.MonitorRepository;
 import ru.networkintelligence.monitor.monitoring.getDataLast2Monitors.MonitorResult;
 
+import ru.networkintelligence.monitor.monitoring.getDataParameterMonitorsDyID.MonitorParameter;
+import ru.networkintelligence.monitor.monitoring.getDataParameterMonitorsDyID.MonitorParameterRepository;
+
 @Service
 public class MonitorService {
     public record ComparisonResult(List<MonitorResult> results, List<ParameterChange> changes) {}
@@ -18,10 +21,17 @@ public class MonitorService {
     private final MonitorRepository monitorRepository;
     private  final MonitorComparator monitorComparator;
 
-    public MonitorService(MonitorRepository monitorRepository, MonitorComparator monitorComparator) {
+    private final MonitorParameterRepository monitorParameterRepository;
+
+
+
+
+
+    public MonitorService(MonitorRepository monitorRepository, MonitorComparator monitorComparator,        MonitorParameterRepository monitorParameterRepository) {
 
         this.monitorRepository = monitorRepository;
         this.monitorComparator = monitorComparator;
+        this.monitorParameterRepository = monitorParameterRepository;
     }
 
     public long countResults() {
@@ -83,9 +93,13 @@ public class MonitorService {
 
 
 
-        List<ParameterChange> changes =
-                monitorComparator.difference(prevRoot, lastRoot);
 
+
+        List<MonitorParameter> parameters =
+                monitorParameterRepository.findByMonitorId(monitorId);
+
+        List<ParameterChange> changes =
+                monitorComparator.difference(prevRoot, lastRoot, parameters);
 
 
         return new ComparisonResult(results, changes);

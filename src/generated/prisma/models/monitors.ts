@@ -56,6 +56,7 @@ export type MonitorsMinAggregateOutputType = {
   subdomain_scan_enabled: boolean | null
   subdomain_scan_interval_hours: number | null
   last_subdomain_scan_at: Date | null
+  event_monitoring_enabled: boolean | null
 }
 
 export type MonitorsMaxAggregateOutputType = {
@@ -74,6 +75,7 @@ export type MonitorsMaxAggregateOutputType = {
   subdomain_scan_enabled: boolean | null
   subdomain_scan_interval_hours: number | null
   last_subdomain_scan_at: Date | null
+  event_monitoring_enabled: boolean | null
 }
 
 export type MonitorsCountAggregateOutputType = {
@@ -92,6 +94,7 @@ export type MonitorsCountAggregateOutputType = {
   subdomain_scan_enabled: number
   subdomain_scan_interval_hours: number
   last_subdomain_scan_at: number
+  event_monitoring_enabled: number
   _all: number
 }
 
@@ -126,6 +129,7 @@ export type MonitorsMinAggregateInputType = {
   subdomain_scan_enabled?: true
   subdomain_scan_interval_hours?: true
   last_subdomain_scan_at?: true
+  event_monitoring_enabled?: true
 }
 
 export type MonitorsMaxAggregateInputType = {
@@ -144,6 +148,7 @@ export type MonitorsMaxAggregateInputType = {
   subdomain_scan_enabled?: true
   subdomain_scan_interval_hours?: true
   last_subdomain_scan_at?: true
+  event_monitoring_enabled?: true
 }
 
 export type MonitorsCountAggregateInputType = {
@@ -162,6 +167,7 @@ export type MonitorsCountAggregateInputType = {
   subdomain_scan_enabled?: true
   subdomain_scan_interval_hours?: true
   last_subdomain_scan_at?: true
+  event_monitoring_enabled?: true
   _all?: true
 }
 
@@ -267,6 +273,7 @@ export type MonitorsGroupByOutputType = {
   subdomain_scan_enabled: boolean
   subdomain_scan_interval_hours: number
   last_subdomain_scan_at: Date | null
+  event_monitoring_enabled: boolean
   _count: MonitorsCountAggregateOutputType | null
   _avg: MonitorsAvgAggregateOutputType | null
   _sum: MonitorsSumAggregateOutputType | null
@@ -308,7 +315,9 @@ export type monitorsWhereInput = {
   subdomain_scan_enabled?: Prisma.BoolFilter<"monitors"> | boolean
   subdomain_scan_interval_hours?: Prisma.IntFilter<"monitors"> | number
   last_subdomain_scan_at?: Prisma.DateTimeNullableFilter<"monitors"> | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFilter<"monitors"> | boolean
   monitor_results?: Prisma.Monitor_resultsListRelationFilter
+  parameters?: Prisma.Monitor_parametersListRelationFilter
 }
 
 export type monitorsOrderByWithRelationInput = {
@@ -327,7 +336,9 @@ export type monitorsOrderByWithRelationInput = {
   subdomain_scan_enabled?: Prisma.SortOrder
   subdomain_scan_interval_hours?: Prisma.SortOrder
   last_subdomain_scan_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  event_monitoring_enabled?: Prisma.SortOrder
   monitor_results?: Prisma.monitor_resultsOrderByRelationAggregateInput
+  parameters?: Prisma.monitor_parametersOrderByRelationAggregateInput
   _relevance?: Prisma.monitorsOrderByRelevanceInput
 }
 
@@ -350,7 +361,9 @@ export type monitorsWhereUniqueInput = Prisma.AtLeast<{
   subdomain_scan_enabled?: Prisma.BoolFilter<"monitors"> | boolean
   subdomain_scan_interval_hours?: Prisma.IntFilter<"monitors"> | number
   last_subdomain_scan_at?: Prisma.DateTimeNullableFilter<"monitors"> | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFilter<"monitors"> | boolean
   monitor_results?: Prisma.Monitor_resultsListRelationFilter
+  parameters?: Prisma.Monitor_parametersListRelationFilter
 }, "id">
 
 export type monitorsOrderByWithAggregationInput = {
@@ -369,6 +382,7 @@ export type monitorsOrderByWithAggregationInput = {
   subdomain_scan_enabled?: Prisma.SortOrder
   subdomain_scan_interval_hours?: Prisma.SortOrder
   last_subdomain_scan_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  event_monitoring_enabled?: Prisma.SortOrder
   _count?: Prisma.monitorsCountOrderByAggregateInput
   _avg?: Prisma.monitorsAvgOrderByAggregateInput
   _max?: Prisma.monitorsMaxOrderByAggregateInput
@@ -395,6 +409,7 @@ export type monitorsScalarWhereWithAggregatesInput = {
   subdomain_scan_enabled?: Prisma.BoolWithAggregatesFilter<"monitors"> | boolean
   subdomain_scan_interval_hours?: Prisma.IntWithAggregatesFilter<"monitors"> | number
   last_subdomain_scan_at?: Prisma.DateTimeNullableWithAggregatesFilter<"monitors"> | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolWithAggregatesFilter<"monitors"> | boolean
 }
 
 export type monitorsCreateInput = {
@@ -412,7 +427,9 @@ export type monitorsCreateInput = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: number
   last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
   monitor_results?: Prisma.monitor_resultsCreateNestedManyWithoutMonitorsInput
+  parameters?: Prisma.monitor_parametersCreateNestedManyWithoutMonitorsInput
 }
 
 export type monitorsUncheckedCreateInput = {
@@ -431,7 +448,9 @@ export type monitorsUncheckedCreateInput = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: number
   last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
   monitor_results?: Prisma.monitor_resultsUncheckedCreateNestedManyWithoutMonitorsInput
+  parameters?: Prisma.monitor_parametersUncheckedCreateNestedManyWithoutMonitorsInput
 }
 
 export type monitorsUpdateInput = {
@@ -449,7 +468,9 @@ export type monitorsUpdateInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monitor_results?: Prisma.monitor_resultsUpdateManyWithoutMonitorsNestedInput
+  parameters?: Prisma.monitor_parametersUpdateManyWithoutMonitorsNestedInput
 }
 
 export type monitorsUncheckedUpdateInput = {
@@ -468,7 +489,9 @@ export type monitorsUncheckedUpdateInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   monitor_results?: Prisma.monitor_resultsUncheckedUpdateManyWithoutMonitorsNestedInput
+  parameters?: Prisma.monitor_parametersUncheckedUpdateManyWithoutMonitorsNestedInput
 }
 
 export type monitorsCreateManyInput = {
@@ -487,6 +510,7 @@ export type monitorsCreateManyInput = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: number
   last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
 }
 
 export type monitorsUpdateManyMutationInput = {
@@ -504,6 +528,7 @@ export type monitorsUpdateManyMutationInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type monitorsUncheckedUpdateManyInput = {
@@ -522,6 +547,7 @@ export type monitorsUncheckedUpdateManyInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type MonitorsScalarRelationFilter = {
@@ -551,6 +577,7 @@ export type monitorsCountOrderByAggregateInput = {
   subdomain_scan_enabled?: Prisma.SortOrder
   subdomain_scan_interval_hours?: Prisma.SortOrder
   last_subdomain_scan_at?: Prisma.SortOrder
+  event_monitoring_enabled?: Prisma.SortOrder
 }
 
 export type monitorsAvgOrderByAggregateInput = {
@@ -576,6 +603,7 @@ export type monitorsMaxOrderByAggregateInput = {
   subdomain_scan_enabled?: Prisma.SortOrder
   subdomain_scan_interval_hours?: Prisma.SortOrder
   last_subdomain_scan_at?: Prisma.SortOrder
+  event_monitoring_enabled?: Prisma.SortOrder
 }
 
 export type monitorsMinOrderByAggregateInput = {
@@ -594,6 +622,7 @@ export type monitorsMinOrderByAggregateInput = {
   subdomain_scan_enabled?: Prisma.SortOrder
   subdomain_scan_interval_hours?: Prisma.SortOrder
   last_subdomain_scan_at?: Prisma.SortOrder
+  event_monitoring_enabled?: Prisma.SortOrder
 }
 
 export type monitorsSumOrderByAggregateInput = {
@@ -645,6 +674,20 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type monitorsCreateNestedOneWithoutParametersInput = {
+  create?: Prisma.XOR<Prisma.monitorsCreateWithoutParametersInput, Prisma.monitorsUncheckedCreateWithoutParametersInput>
+  connectOrCreate?: Prisma.monitorsCreateOrConnectWithoutParametersInput
+  connect?: Prisma.monitorsWhereUniqueInput
+}
+
+export type monitorsUpdateOneRequiredWithoutParametersNestedInput = {
+  create?: Prisma.XOR<Prisma.monitorsCreateWithoutParametersInput, Prisma.monitorsUncheckedCreateWithoutParametersInput>
+  connectOrCreate?: Prisma.monitorsCreateOrConnectWithoutParametersInput
+  upsert?: Prisma.monitorsUpsertWithoutParametersInput
+  connect?: Prisma.monitorsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.monitorsUpdateToOneWithWhereWithoutParametersInput, Prisma.monitorsUpdateWithoutParametersInput>, Prisma.monitorsUncheckedUpdateWithoutParametersInput>
+}
+
 export type monitorsCreateWithoutMonitor_resultsInput = {
   target: string
   interval_minutes: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -660,6 +703,8 @@ export type monitorsCreateWithoutMonitor_resultsInput = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: number
   last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
+  parameters?: Prisma.monitor_parametersCreateNestedManyWithoutMonitorsInput
 }
 
 export type monitorsUncheckedCreateWithoutMonitor_resultsInput = {
@@ -678,6 +723,8 @@ export type monitorsUncheckedCreateWithoutMonitor_resultsInput = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: number
   last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
+  parameters?: Prisma.monitor_parametersUncheckedCreateNestedManyWithoutMonitorsInput
 }
 
 export type monitorsCreateOrConnectWithoutMonitor_resultsInput = {
@@ -711,6 +758,8 @@ export type monitorsUpdateWithoutMonitor_resultsInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parameters?: Prisma.monitor_parametersUpdateManyWithoutMonitorsNestedInput
 }
 
 export type monitorsUncheckedUpdateWithoutMonitor_resultsInput = {
@@ -729,6 +778,102 @@ export type monitorsUncheckedUpdateWithoutMonitor_resultsInput = {
   subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
   last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parameters?: Prisma.monitor_parametersUncheckedUpdateManyWithoutMonitorsNestedInput
+}
+
+export type monitorsCreateWithoutParametersInput = {
+  target: string
+  interval_minutes: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.monitors_status
+  created_at?: Date | string | null
+  telegram_user_id?: bigint | number | null
+  platform?: string | null
+  type?: string | null
+  send_monitor_notificationsTG?: boolean
+  send_event_notificationsTG?: boolean
+  send_monitor_notificationsMAX?: boolean
+  send_event_notificationsMAX?: boolean
+  subdomain_scan_enabled?: boolean
+  subdomain_scan_interval_hours?: number
+  last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
+  monitor_results?: Prisma.monitor_resultsCreateNestedManyWithoutMonitorsInput
+}
+
+export type monitorsUncheckedCreateWithoutParametersInput = {
+  id?: number
+  target: string
+  interval_minutes: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.monitors_status
+  created_at?: Date | string | null
+  telegram_user_id?: bigint | number | null
+  platform?: string | null
+  type?: string | null
+  send_monitor_notificationsTG?: boolean
+  send_event_notificationsTG?: boolean
+  send_monitor_notificationsMAX?: boolean
+  send_event_notificationsMAX?: boolean
+  subdomain_scan_enabled?: boolean
+  subdomain_scan_interval_hours?: number
+  last_subdomain_scan_at?: Date | string | null
+  event_monitoring_enabled?: boolean
+  monitor_results?: Prisma.monitor_resultsUncheckedCreateNestedManyWithoutMonitorsInput
+}
+
+export type monitorsCreateOrConnectWithoutParametersInput = {
+  where: Prisma.monitorsWhereUniqueInput
+  create: Prisma.XOR<Prisma.monitorsCreateWithoutParametersInput, Prisma.monitorsUncheckedCreateWithoutParametersInput>
+}
+
+export type monitorsUpsertWithoutParametersInput = {
+  update: Prisma.XOR<Prisma.monitorsUpdateWithoutParametersInput, Prisma.monitorsUncheckedUpdateWithoutParametersInput>
+  create: Prisma.XOR<Prisma.monitorsCreateWithoutParametersInput, Prisma.monitorsUncheckedCreateWithoutParametersInput>
+  where?: Prisma.monitorsWhereInput
+}
+
+export type monitorsUpdateToOneWithWhereWithoutParametersInput = {
+  where?: Prisma.monitorsWhereInput
+  data: Prisma.XOR<Prisma.monitorsUpdateWithoutParametersInput, Prisma.monitorsUncheckedUpdateWithoutParametersInput>
+}
+
+export type monitorsUpdateWithoutParametersInput = {
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  interval_minutes?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.Enummonitors_statusFieldUpdateOperationsInput | $Enums.monitors_status
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  telegram_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_monitor_notificationsTG?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_event_notificationsTG?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_monitor_notificationsMAX?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_event_notificationsMAX?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
+  last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  monitor_results?: Prisma.monitor_resultsUpdateManyWithoutMonitorsNestedInput
+}
+
+export type monitorsUncheckedUpdateWithoutParametersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  target?: Prisma.StringFieldUpdateOperationsInput | string
+  interval_minutes?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.Enummonitors_statusFieldUpdateOperationsInput | $Enums.monitors_status
+  created_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  telegram_user_id?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  platform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  send_monitor_notificationsTG?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_event_notificationsTG?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_monitor_notificationsMAX?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  send_event_notificationsMAX?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subdomain_scan_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subdomain_scan_interval_hours?: Prisma.IntFieldUpdateOperationsInput | number
+  last_subdomain_scan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  event_monitoring_enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  monitor_results?: Prisma.monitor_resultsUncheckedUpdateManyWithoutMonitorsNestedInput
 }
 
 
@@ -738,10 +883,12 @@ export type monitorsUncheckedUpdateWithoutMonitor_resultsInput = {
 
 export type MonitorsCountOutputType = {
   monitor_results: number
+  parameters: number
 }
 
 export type MonitorsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   monitor_results?: boolean | MonitorsCountOutputTypeCountMonitor_resultsArgs
+  parameters?: boolean | MonitorsCountOutputTypeCountParametersArgs
 }
 
 /**
@@ -761,6 +908,13 @@ export type MonitorsCountOutputTypeCountMonitor_resultsArgs<ExtArgs extends runt
   where?: Prisma.monitor_resultsWhereInput
 }
 
+/**
+ * MonitorsCountOutputType without action
+ */
+export type MonitorsCountOutputTypeCountParametersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.monitor_parametersWhereInput
+}
+
 
 export type monitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -778,7 +932,9 @@ export type monitorsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: boolean
   last_subdomain_scan_at?: boolean
+  event_monitoring_enabled?: boolean
   monitor_results?: boolean | Prisma.monitors$monitor_resultsArgs<ExtArgs>
+  parameters?: boolean | Prisma.monitors$parametersArgs<ExtArgs>
   _count?: boolean | Prisma.MonitorsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["monitors"]>
 
@@ -800,11 +956,13 @@ export type monitorsSelectScalar = {
   subdomain_scan_enabled?: boolean
   subdomain_scan_interval_hours?: boolean
   last_subdomain_scan_at?: boolean
+  event_monitoring_enabled?: boolean
 }
 
-export type monitorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "target" | "interval_minutes" | "status" | "created_at" | "telegram_user_id" | "platform" | "type" | "send_monitor_notificationsTG" | "send_event_notificationsTG" | "send_monitor_notificationsMAX" | "send_event_notificationsMAX" | "subdomain_scan_enabled" | "subdomain_scan_interval_hours" | "last_subdomain_scan_at", ExtArgs["result"]["monitors"]>
+export type monitorsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "target" | "interval_minutes" | "status" | "created_at" | "telegram_user_id" | "platform" | "type" | "send_monitor_notificationsTG" | "send_event_notificationsTG" | "send_monitor_notificationsMAX" | "send_event_notificationsMAX" | "subdomain_scan_enabled" | "subdomain_scan_interval_hours" | "last_subdomain_scan_at" | "event_monitoring_enabled", ExtArgs["result"]["monitors"]>
 export type monitorsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   monitor_results?: boolean | Prisma.monitors$monitor_resultsArgs<ExtArgs>
+  parameters?: boolean | Prisma.monitors$parametersArgs<ExtArgs>
   _count?: boolean | Prisma.MonitorsCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -812,6 +970,7 @@ export type $monitorsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "monitors"
   objects: {
     monitor_results: Prisma.$monitor_resultsPayload<ExtArgs>[]
+    parameters: Prisma.$monitor_parametersPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -829,6 +988,7 @@ export type $monitorsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     subdomain_scan_enabled: boolean
     subdomain_scan_interval_hours: number
     last_subdomain_scan_at: Date | null
+    event_monitoring_enabled: boolean
   }, ExtArgs["result"]["monitors"]>
   composites: {}
 }
@@ -1170,6 +1330,7 @@ readonly fields: monitorsFieldRefs;
 export interface Prisma__monitorsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   monitor_results<T extends Prisma.monitors$monitor_resultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.monitors$monitor_resultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$monitor_resultsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  parameters<T extends Prisma.monitors$parametersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.monitors$parametersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$monitor_parametersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1214,6 +1375,7 @@ export interface monitorsFieldRefs {
   readonly subdomain_scan_enabled: Prisma.FieldRef<"monitors", 'Boolean'>
   readonly subdomain_scan_interval_hours: Prisma.FieldRef<"monitors", 'Int'>
   readonly last_subdomain_scan_at: Prisma.FieldRef<"monitors", 'DateTime'>
+  readonly event_monitoring_enabled: Prisma.FieldRef<"monitors", 'Boolean'>
 }
     
 
@@ -1583,6 +1745,30 @@ export type monitors$monitor_resultsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.Monitor_resultsScalarFieldEnum | Prisma.Monitor_resultsScalarFieldEnum[]
+}
+
+/**
+ * monitors.parameters
+ */
+export type monitors$parametersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the monitor_parameters
+   */
+  select?: Prisma.monitor_parametersSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the monitor_parameters
+   */
+  omit?: Prisma.monitor_parametersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.monitor_parametersInclude<ExtArgs> | null
+  where?: Prisma.monitor_parametersWhereInput
+  orderBy?: Prisma.monitor_parametersOrderByWithRelationInput | Prisma.monitor_parametersOrderByWithRelationInput[]
+  cursor?: Prisma.monitor_parametersWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Monitor_parametersScalarFieldEnum | Prisma.Monitor_parametersScalarFieldEnum[]
 }
 
 /**

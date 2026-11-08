@@ -28,6 +28,35 @@ function MonitorsPage({ page }: MonitorsPageProps) {
   const [MaxSendEventNotifications, MaxSetSendEventNotifications] =
     useState(false);
   //////////////////////////////////////////////
+  const [responseTimeState, SetResponseTimeState] =
+      useState(false);
+  const [responseTime, SetResponseTime] =
+      useState(0);
+///
+  const [bodySizeState, SetBodySizeState] =
+      useState(false);
+  const [BodySize, SetBodySize] =
+      useState(0);
+  ///
+  const [portsState, SetPortsState] =
+      useState(false);
+  ///
+  const [serverStatusState, SetServerStatusState] =
+      useState(false);
+  ///
+  const [DnsInfoState, SetDnsInfoState] =
+      useState(false);
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////////////
+
+
   type ResultMyMonitor = {
     id: number;
     target: string;
@@ -93,6 +122,17 @@ function MonitorsPage({ page }: MonitorsPageProps) {
         send_event_notificationsMAX: MaxSendEventNotifications,
 
         includeSubdomains: includeSubdomains,
+
+        // Параметры отслеживания событий
+        responseTimeState: responseTimeState,
+        responseTime: responseTime,
+
+        bodySizeState: bodySizeState,
+        bodySize: BodySize,
+
+        portsState: portsState,
+        serverStatusState: serverStatusState,
+        dnsInfoState: DnsInfoState,
       }),
     });
     console.log("Добавление монитора завершено:", URL, min);
@@ -210,39 +250,116 @@ function MonitorsPage({ page }: MonitorsPageProps) {
             />
             События
           </label>
+          <hr />
+          <hr />
+          <div> Параметры событий </div>
 
-          <div>Получать уведомление, если обнаружено изменение</div>
+
+        <div>
+          <label>
+            Максимальная задержка в ms
+            <input
+                type="checkbox"
+                checked={responseTimeState}
+                onChange={(event) =>
+                    SetResponseTimeState(event.target.checked)
+                }
+            />
+            <input
+                type="number"
+                value={responseTime}
+                onChange={(event) => SetResponseTime(Number(event.target.value))}
+            />
+          </label>
+
+        </div>
+
+          <div>
+          <label>
+            Изменниение в размере тела BodySize между последними сканами
+            <input
+                type="checkbox"
+                checked={bodySizeState}
+                onChange={(event) =>
+                    SetBodySizeState(event.target.checked)
+                }
+            />
+
+            <input
+                type="number"
+                value={BodySize}
+                onChange={(event) => SetBodySize(Number(event.target.value))}
+            />
+          </label>
+          </div>
+
+
+
+
+          <div>
+            <label>
+Измение отрытиых портов              <input
+                  type="checkbox"
+                  checked={portsState}
+                  onChange={(event) =>
+                      SetPortsState(event.target.checked)
+                  }
+              />
+
+
+            </label>
+
+
+          </div>
+
+
+
+
+
+          <div>
+            <label>
+              Измение статуса сервера         <input
+                type="checkbox"
+                checked={serverStatusState}
+                onChange={(event) =>
+                    SetServerStatusState(event.target.checked)
+                }
+            />
+
+
+            </label>
+
+
+          </div>
+
+
+
+          <div>
+            <label>
+              Измение dnsInfoIPv4         <input
+                type="checkbox"
+                checked={DnsInfoState}
+                onChange={(event) =>
+                    SetDnsInfoState(event.target.checked)
+                }
+            />
+
+
+            </label>
+
+
+          </div>
+
+
+
+
+
+
+          <hr />
+          <hr />
         </div>
         <hr />
-        <div>
-          <div>Уведомления в MAX</div>
 
-          <label>
-            <input
-              type="checkbox"
-              checked={MaxSendMonitorNotifications}
-              onChange={(event) =>
-                MaxSetSendMonitorNotifications(event.target.checked)
-              }
-            />
-            Результаты проверок
-          </label>
-
-          <div>Получать уведомление после каждой проверки</div>
-
-          <label>
-            <input
-              type="checkbox"
-              checked={MaxSendEventNotifications}
-              onChange={(event) =>
-                MaxSetSendEventNotifications(event.target.checked)
-              }
-            />
-            События
-          </label>
-
-          <div>Получать уведомление, если обнаружено изменение</div>
-        </div>
         <button onClick={() => insertMonitorURL(min)}>Мониторить</button>{" "}
       </div>
       <hr />
@@ -334,19 +451,7 @@ function MonitorsPage({ page }: MonitorsPageProps) {
                 </td>
               </tr>
 
-              <tr>
-                <td>MAX</td>
-                <td>
-                  {monitor.send_monitor_notificationsMAX
-                    ? "Включены"
-                    : "Выключены"}
-                </td>
-                <td>
-                  {monitor.send_event_notificationsMAX
-                    ? "Включены"
-                    : "Выключены"}
-                </td>
-              </tr>
+
             </tbody>
           </table>
 

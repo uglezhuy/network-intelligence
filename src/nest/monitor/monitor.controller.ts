@@ -52,6 +52,18 @@ export class MonitorController {
         send_monitor_notificationsMAX: boolean;
         send_event_notificationsMAX: boolean;
         includeSubdomains: boolean;
+
+        // Параметры отслеживания событий
+        responseTimeState: boolean;
+        responseTime: number;
+
+        bodySizeState: boolean;
+        bodySize: number;
+
+        portsState: boolean;
+        serverStatusState: boolean;
+        dnsInfoState: boolean;
+
     }) {
         return this.monitorService.addMonitor(data);
     }

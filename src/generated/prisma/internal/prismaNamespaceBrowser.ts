@@ -57,7 +57,8 @@ export const ModelName = {
   monitors: 'monitors',
   scans: 'scans',
   telegram_bot_state: 'telegram_bot_state',
-  telegram_max_web_users: 'telegram_max_web_users'
+  telegram_max_web_users: 'telegram_max_web_users',
+  monitor_parameters: 'monitor_parameters'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -122,7 +123,8 @@ export const MonitorsScalarFieldEnum = {
   send_event_notificationsMAX: 'send_event_notificationsMAX',
   subdomain_scan_enabled: 'subdomain_scan_enabled',
   subdomain_scan_interval_hours: 'subdomain_scan_interval_hours',
-  last_subdomain_scan_at: 'last_subdomain_scan_at'
+  last_subdomain_scan_at: 'last_subdomain_scan_at',
+  event_monitoring_enabled: 'event_monitoring_enabled'
 } as const
 
 export type MonitorsScalarFieldEnum = (typeof MonitorsScalarFieldEnum)[keyof typeof MonitorsScalarFieldEnum]
@@ -158,6 +160,18 @@ export const Telegram_max_web_usersScalarFieldEnum = {
 } as const
 
 export type Telegram_max_web_usersScalarFieldEnum = (typeof Telegram_max_web_usersScalarFieldEnum)[keyof typeof Telegram_max_web_usersScalarFieldEnum]
+
+
+export const Monitor_parametersScalarFieldEnum = {
+  id: 'id',
+  monitor_id: 'monitor_id',
+  parameter: 'parameter',
+  enabled: 'enabled',
+  threshold: 'threshold',
+  min_diff_to_report: 'min_diff_to_report'
+} as const
+
+export type Monitor_parametersScalarFieldEnum = (typeof Monitor_parametersScalarFieldEnum)[keyof typeof Monitor_parametersScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -239,4 +253,11 @@ export const telegram_max_web_usersOrderByRelevanceFieldEnum = {
 } as const
 
 export type telegram_max_web_usersOrderByRelevanceFieldEnum = (typeof telegram_max_web_usersOrderByRelevanceFieldEnum)[keyof typeof telegram_max_web_usersOrderByRelevanceFieldEnum]
+
+
+export const monitor_parametersOrderByRelevanceFieldEnum = {
+  parameter: 'parameter'
+} as const
+
+export type monitor_parametersOrderByRelevanceFieldEnum = (typeof monitor_parametersOrderByRelevanceFieldEnum)[keyof typeof monitor_parametersOrderByRelevanceFieldEnum]
 

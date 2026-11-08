@@ -22,6 +22,18 @@ type MonitorDto = {
     send_event_notificationsMAX: boolean;
 
     includeSubdomains: boolean;
+
+    responseTimeState: boolean;
+    responseTime: number;
+
+    bodySizeState: boolean;
+    bodySize: number;
+
+    portsState: boolean;
+    serverStatusState: boolean;
+    dnsInfoState: boolean;
+
+
 };
 
 @Injectable()
@@ -311,32 +323,68 @@ export class MonitorService {
     }
 
     // Добавление монитора
+
     async addMonitor(data: MonitorDto) {
+        const parameters = [
+            {
+                parameter: 'responseTime',
+                enabled: data.responseTimeState,
+                threshold: data.responseTime,
+                min_diff_to_report: null,
+            },
+            {
+                parameter: 'bodySize',
+                enabled: data.bodySizeState,
+                threshold: data.bodySize,
+                min_diff_to_report: null,
+            },
+            {
+                parameter: 'ports',
+                enabled: data.portsState,
+                threshold: null,
+                min_diff_to_report: null,
+            },
+            {
+                parameter: 'serverStatus',
+                enabled: data.serverStatusState,
+                threshold: null,
+                min_diff_to_report: null,
+            },
+            {
+                parameter: 'dnsInfo',
+                enabled: data.dnsInfoState,
+                threshold: null,
+                min_diff_to_report: null,
+            },
+        ];
         try {
-            const monitor =
-                await this.prisma.monitors.create({
-                    data: {
-                        target: data.target,
-                        interval_minutes: data.interval_minutes,
-                        subdomain_scan_interval_hours: data.minCrtSh,
-                        status: 'active',
-                        type: 'monitors',
-                        platform: data.platform,
-                        telegram_user_id: BigInt(
-                            data.telegram_user_id,
-                        ),
-                        send_monitor_notificationsTG:
-                            data.send_monitor_notificationsTG,
-                        send_event_notificationsTG:
-                            data.send_event_notificationsTG,
-                        send_monitor_notificationsMAX:
-                            data.send_monitor_notificationsMAX,
-                        send_event_notificationsMAX:
-                            data.send_event_notificationsMAX,
-                        subdomain_scan_enabled:
-                            data.includeSubdomains,
+            const monitor = await this.prisma.monitors.create({
+                data: {
+                    target: data.target,
+                    interval_minutes: data.interval_minutes,
+                    subdomain_scan_interval_hours: data.minCrtSh,
+                    status: 'active',
+                    type: 'monitors',
+                    platform: data.platform,
+                    telegram_user_id: BigInt(data.telegram_user_id),
+
+                    send_monitor_notificationsTG:
+                    data.send_monitor_notificationsTG,
+                    send_event_notificationsTG:
+                    data.send_event_notificationsTG,
+                    send_monitor_notificationsMAX:
+                    data.send_monitor_notificationsMAX,
+                    send_event_notificationsMAX:
+                    data.send_event_notificationsMAX,
+
+                    subdomain_scan_enabled: data.includeSubdomains,
+
+                    // Сохраняем параметры мониторинга
+                    parameters: {
+                        create: parameters,
                     },
-                });
+                },
+            });
 
             runMonitor(
                 monitor.id,
@@ -371,6 +419,7 @@ export class MonitorService {
             );
         }
     }
+
 
     // Получение результатов мониторинга по ID
     async getMonitorResult(monitorId: number) {
