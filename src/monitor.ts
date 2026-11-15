@@ -7,7 +7,6 @@ import { saveInMonitor_results } from "./database/results.js";
 import { checkStateMonitorById } from "./database/results.js";
 import { saveInMonitor_resultsAPICrt } from "./database/results.js";
 
-import { monitor_events } from "./monitor_events.js";
 
 
 // import { MaxPrintResultMonitor } from "./maxBot/tgPrintResultMonitor.js";
@@ -162,8 +161,15 @@ async function runMonitor(
             // События проверяются всегда.
             // Уведомления ниже только определяют,
             // нужно ли отправлять найденное событие.
+            const response = await fetch(
+                `http://localhost:3001/api/monitor/events/${monitorId}`,
+                {
+                    method: "POST"
+                }
+            );
 
-            const tgEvents = await monitor_events(monitorId);
+            const tgEvents = await response.json();
+
 
             // /////////////////////for MAX////////////////////////
             // Отключено: maxBot удалён
