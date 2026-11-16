@@ -162,11 +162,13 @@ async function runMonitor(
             // Уведомления ниже только определяют,
             // нужно ли отправлять найденное событие.
             const response = await fetch(
-                `http://localhost:3001/api/monitor/events/${monitorId}`,
+                `http://localhost:8080/api/monitor/results/2resolt/${monitorId}`,
                 {
-                    method: "POST"
+                    method: "GET"
                 }
             );
+            console.log("HTTP статус:", response.status);
+            console.log("Ответ успешный:", response.ok);
 
             const tgEvents = await response.json();
 
@@ -189,12 +191,18 @@ async function runMonitor(
             //////////////////////////////////////// for Telegram ///////////////////////////////////////////////////
 
             if (send_monitor_notificationsTG && telegramUserId) {
+                console.log("========================result===================",result );
+                console.log("=========================telegramUserId==================", telegramUserId );
+
                 await tgPrintResultScan(
                     result,
                     telegramUserId
                 );
             }
 
+
+
+            // это все в далгейгем надо сбудетсдалть чреез for что выводит ьвсе изменения
             if (send_event_notificationsTG && telegramUserId) {
                 console.log("tgEvents ready");
 

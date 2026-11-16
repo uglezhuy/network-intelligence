@@ -59,10 +59,6 @@ export class ScanService {
         console.log('Сохраняем поддомены');
         try {
 
-
-
-
-
             subdomains = await analyzersAPICrt(url.hostname);
 
             await this.prisma.scans.create({

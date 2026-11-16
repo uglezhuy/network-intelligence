@@ -190,7 +190,7 @@ ${openPorts}
                 },
 
                 body: JSON.stringify({
-                    chat_id: telegramUserId,
+                    chat_id: telegramUserId.toString(),
                     text: message
                 })
             }

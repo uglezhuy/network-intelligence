@@ -1,6 +1,7 @@
 package ru.networkintelligence.monitor.monitoring;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,9 @@ import ru.networkintelligence.monitor.monitoring.getDataLast2Monitors.MonitorRes
 import ru.networkintelligence.monitor.monitoring.getDataParameterMonitorsDyID.MonitorParameter;
 import ru.networkintelligence.monitor.monitoring.getDataParameterMonitorsDyID.MonitorParameterRepository;
 
+import ru.networkintelligence.monitor.monitoring.saveMonitorEvents.MonitorEvent;
+import ru.networkintelligence.monitor.monitoring.saveMonitorEvents.MonitorEventRepository;
+
 @Service
 public class MonitorService {
     public record ComparisonResult(List<MonitorResult> results, List<ParameterChange> changes) {}
@@ -23,15 +27,17 @@ public class MonitorService {
 
     private final MonitorParameterRepository monitorParameterRepository;
 
+    private final MonitorEventRepository monitorEventRepository;
 
 
 
-
-    public MonitorService(MonitorRepository monitorRepository, MonitorComparator monitorComparator,        MonitorParameterRepository monitorParameterRepository) {
+    public MonitorService(MonitorRepository monitorRepository, MonitorComparator monitorComparator,        MonitorParameterRepository monitorParameterRepository, MonitorEventRepository monitorEventRepository) {
 
         this.monitorRepository = monitorRepository;
         this.monitorComparator = monitorComparator;
         this.monitorParameterRepository = monitorParameterRepository;
+
+        this.monitorEventRepository=monitorEventRepository;
     }
 
     public long countResults() {
@@ -41,15 +47,6 @@ public class MonitorService {
 
 
     public ComparisonResult getLastTwoResults(Long monitorId) {
-
-
-
-
-
-
-
-
-
 
 
 
@@ -100,6 +97,22 @@ public class MonitorService {
 
         List<ParameterChange> changes =
                 monitorComparator.difference(prevRoot, lastRoot, parameters);
+
+        List<MonitorEvent> events = new ArrayList<>();
+
+        for (ParameterChange change : changes) {
+
+            MonitorEvent event = new MonitorEvent();
+
+            event.setMonitorId(monitorId);
+            event.setParameter(change.name);
+            event.setOldValue(change.oldValue);
+            event.setNewValue(change.newValue);
+
+            events.add(event);
+        }
+
+        monitorEventRepository.saveAll(events);
 
 
         return new ComparisonResult(results, changes);
